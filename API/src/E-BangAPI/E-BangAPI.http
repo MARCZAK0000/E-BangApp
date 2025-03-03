@@ -1,0 +1,6 @@
+@E_BangAPI_HostAddress = http://localhost:5098
+
+GET {{E_BangAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
