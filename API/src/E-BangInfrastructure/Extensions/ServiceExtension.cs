@@ -28,8 +28,9 @@ namespace E_BangInfrastructure.Extensions
                 .AddDefaultTokenProviders();
 
             services.AddDataProtection();
-            services.AddAuthorization();
-            services.AddAuthentication();
+            services.AddCustomAuthentication();
+            services.AddCustomAuthorization();
+            services.AddCorsPolicy(configuration);
 
             services.AddIdentityApiEndpoints<Account>()
                 .AddEntityFrameworkStores<ProjectDbContext>();
