@@ -10,6 +10,8 @@ public class Worker : BackgroundService
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
     private IDatabaseService _databaseService;
+    
+    private IEmailServices _emailServices;
     public Worker(ILogger<Worker> logger, IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
@@ -18,20 +20,38 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _databaseService = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IDatabaseService>();
-        while (!stoppingToken.IsCancellationRequested)
+        try
         {
-
-            if (_logger.IsEnabled(LogLevel.Information))
+            _databaseService = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IDatabaseService>();
+            _emailServices = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEmailServices>();
+            IList<int> sendIds = new List<int>();
+            _logger.LogCritical("Service worker initialized");
+            while (!stoppingToken.IsCancellationRequested)
             {
-                var emails = await _databaseService.CurrentEmailsInQueueAsync(stoppingToken);
-                if (emails.Count > 0)
+                var currentEmail = await _databaseService.CurrentEmailsInQueueAsync(stoppingToken);
+                if (currentEmail.Count > 0)
                 {
-                    _logger.LogInformation(emails.Count.ToString());
+                    foreach (var item in currentEmail)
+                    {
+                        if (!await _emailServices.SendMailAsync(item, stoppingToken))
+                        {
+                            _logger.LogError($"Email weren't send:\r\nInformations: \r\nTo: {item.AddressTo}\r\n");
+                        }
+                        else
+                        {
+                            sendIds.Add(item.Id);
+                        }
+                    }
+                    await _databaseService.SetIsSendAsync(sendIds, stoppingToken);
+                    await _databaseService.ClearEmailQueueAsync();
                 }
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                await Task.Delay(1000 * 60, stoppingToken);
             }
-            await Task.Delay(1000 * 60, stoppingToken);
         }
+        catch (Exception err)
+        {
+            _logger.LogError("Unexptected error: {0}", err.Message);
+        }
+        
     }
 }

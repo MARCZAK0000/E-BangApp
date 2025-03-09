@@ -1,0 +1,39 @@
+CREATE PROCEDURE Handling.usp_EmailRemover
+AS
+BEGIN 
+DECLARE @actProdName NVARCHAR(255) = OBJECT_NAME(@@PROCID)
+--CHECK FOR POSSIBLE TRANSACTION 
+IF @@TRANCOUNT = 0 
+	BEGIN TRAN
+ELSE 
+	SAVE TRAN @actProdName
+	
+	--CREATE TMP VARIABLES
+	DECLARE @EmailID INT
+	DECLARE @EmailAddress NVARCHAR(150)
+	DECLARE @EmailBody NVARCHAR(MAX)
+	DECLARE @CreatedTime DATETIME
+
+	--DECLARE CURSOR 
+	DECLARE EmailCursor CURSOR FOR 
+	SELECT EmailID, EmailAddress, EmailBody, CreatedTime FROM Recent.Email
+
+	--OPEN CURSOR
+	OPEN EmailCursor
+
+	--FETCH INTO CURSOR 
+	FETCH EmailCursor INTO @EmailID, @EmailAddress, @EmailBody, @CreatedTime
+
+	--OPEN LOOP
+	WHILE @@FETCH_STATUS = 0 
+	BEGIN 
+		
+		PRINT('')	
+		
+	END
+
+	--CLOSE Cursor 
+	CLOSE EmailCursor
+	DEALLOCATE EmailCursor
+COMMIT
+END

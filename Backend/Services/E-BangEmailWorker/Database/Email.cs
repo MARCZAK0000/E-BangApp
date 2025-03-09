@@ -19,6 +19,7 @@ namespace E_BangEmailWorker.Database
             get => JsonSerializer.Deserialize<EmailBody>(EmailBody)!;
             set => JsonSerializer.Serialize(value);
         }
+        public bool IsSend { get; set; }
         [DataType(DataType.DateTime)]
         public DateTime CreatedTime { get; set; }
     }

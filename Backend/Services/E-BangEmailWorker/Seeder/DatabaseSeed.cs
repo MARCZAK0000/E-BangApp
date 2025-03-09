@@ -41,7 +41,7 @@ namespace E_BangEmailWorker.Seeder
                     await _serviceDbContext.SaveChangesAsync();
                 }
             }
-            _logger.LogInformation("DbConfiguration Initalized");
+            _logger.LogCritical("DbConfiguration Initalized");
         }
         public async Task<bool> CheckConfigurationValues()
         {
@@ -67,7 +67,7 @@ namespace E_BangEmailWorker.Seeder
                 await _serviceDbContext.SaveChangesAsync();
                 _logger.LogWarning("DbConfiguration: Password changed");
             }
-            _logger.LogInformation("DbConfiguration: Configuration correct");
+            _logger.LogCritical("DbConfiguration: Configuration correct");
             return true;
         }
     }

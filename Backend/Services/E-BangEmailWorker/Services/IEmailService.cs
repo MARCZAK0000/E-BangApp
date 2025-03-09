@@ -14,10 +14,10 @@ public abstract class IEmailServices {
         var message = new MimeMessage();
         message.From.Add(send.AddressHost);
         message.To.Add(send.AddressTo);
-        message.Subject =  send.EmailBody.Subject;
+        message.Subject =  send.EmailBody.subject;
         var builder = new BodyBuilder
         {
-            HtmlBody = send.EmailBody.Body
+            HtmlBody = send.EmailBody.body
         };
         message.Body = builder.ToMessageBody();
         return message;

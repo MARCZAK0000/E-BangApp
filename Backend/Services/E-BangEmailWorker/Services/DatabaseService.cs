@@ -30,20 +30,41 @@ namespace E_BangEmailWorker.Services
 
                 var listOfMails = emails.Select(pr =>
                     new SendMailDto(
+                        pr.EmailID,
                         new MailboxAddress(nameof(_emailConnectionOptions.EmailName), _emailConnectionOptions.EmailName),
                         new MailboxAddress("client", pr.EmailAddress),
                         pr.EmailBodyJson
                     )).ToList();
-                await _serviceDbContext.Database.ExecuteSqlRawAsync("EXEC Handling.usp_EmailRemover", token);
                 await transaction.CommitAsync(token);
                 return listOfMails;
             }
             catch (Exception)
             {
-                transaction.Rollback();
+                await transaction.RollbackAsync(token);
                 throw;
             }
-
+        }
+        public async Task SetIsSendAsync(IList<int> ids, CancellationToken token)
+        {
+            using IDbContextTransaction dbContextTransaction = await _serviceDbContext.Database.BeginTransactionAsync(token);
+            try
+            {
+                var emails = await _serviceDbContext.Emails.Where(pr=>ids.Contains(pr.EmailID)).ToListAsync(token);
+                foreach (var item in emails)
+                {
+                    item.IsSend = true;
+                }
+                await dbContextTransaction.CommitAsync(token);
+            }
+            catch (Exception)
+            {
+                await dbContextTransaction.RollbackAsync(token);
+                throw;  
+            }
+        }
+        public async Task ClearEmailQueueAsync()
+        {
+            await _serviceDbContext.Database.ExecuteSqlRawAsync("[HANDLING].[usp_EmailRemover]");
         }
     }
 }
