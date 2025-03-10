@@ -7,25 +7,26 @@ namespace E_BangEmailWorker.Seeder
 {
     public class DatabaseSeed
     {
-        private readonly ServiceDbContext _serviceDbContext;
+        private ServiceDbContext _serviceDbContext = null!;
         private readonly EmailConnectionOptions _connectionOptions;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ILogger<DatabaseSeed> _logger;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         public DatabaseSeed(IServiceProvider serviceProvider,
             EmailConnectionOptions connectionOptions,
             IPasswordHasher passwordHasher,
-            ILogger<DatabaseSeed> logger)
+            ILogger<DatabaseSeed> logger, IServiceScopeFactory serviceScopeFactory)
         {
-            _serviceProvider = serviceProvider;
             _connectionOptions = connectionOptions;
             _passwordHasher = passwordHasher;
             _logger = logger;
-            _serviceDbContext = serviceProvider.GetRequiredService<ServiceDbContext>();
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public async Task InvokeSeed()
         {
+            using var scope = _serviceScopeFactory.CreateScope();
+            _serviceDbContext = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
             if (await _serviceDbContext.Database.CanConnectAsync())
             {
                 if (!await _serviceDbContext.EmailSettings.AnyAsync())
@@ -45,7 +46,8 @@ namespace E_BangEmailWorker.Seeder
         }
         public async Task<bool> CheckConfigurationValues()
         {
-
+            using var scope = _serviceScopeFactory.CreateScope();
+            _serviceDbContext = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
             if (!await _serviceDbContext.Database.CanConnectAsync())
             {
                 return false;

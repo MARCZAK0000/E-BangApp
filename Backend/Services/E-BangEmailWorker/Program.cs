@@ -16,7 +16,7 @@ public class Program
             builder.Services.AddScoped<IEmailServices, EmailServices>();
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
             builder.Services.AddScoped<IDatabaseService, DatabaseService>();
-            builder.Services.AddScoped<DatabaseSeed>();
+            builder.Services.AddSingleton<DatabaseSeed>();
             builder.Services.AddDbContext<ServiceDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnectionString"));
@@ -33,7 +33,7 @@ public class Program
         builder.Services.AddHostedService<Worker>();
         var host = builder.Build();
 
-        var scope = host.Services.CreateScope();
+        using var scope = host.Services.CreateScope();
         var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeed>();
         await seeder.InvokeSeed();
         if (!await seeder.CheckConfigurationValues())

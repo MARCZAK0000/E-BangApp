@@ -22,8 +22,9 @@ public class Worker : BackgroundService
     {
         try
         {
-            _databaseService = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IDatabaseService>();
-            _emailServices = _serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEmailServices>();
+            using var scope = _serviceScopeFactory.CreateScope();
+            _databaseService = scope.ServiceProvider.GetRequiredService<IDatabaseService>();
+            _emailServices = scope.ServiceProvider.GetRequiredService<IEmailServices>();
             IList<int> sendIds = new List<int>();
             _logger.LogCritical("Service worker initialized");
             while (!stoppingToken.IsCancellationRequested)
