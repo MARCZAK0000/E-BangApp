@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using E_BangAzureWorker.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_BangAzureWorker.Database
@@ -9,7 +9,9 @@ namespace E_BangAzureWorker.Database
         {
         }
 
-        public DbSet<Container> Containers { get; set; } 
+        public DbSet<BlobContainer> Containers { get; set; }
+
+        public DbSet<BlobContainerRoot> Roots { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -9,6 +9,6 @@ namespace E_BangAzureWorker.Model
     public interface IContainerSettings
     {
         string RootPath { get; set; }
-        List<Container> Containers { get; set; }
+        List<BlobContainer> Containers { get; set; }
     }
 }

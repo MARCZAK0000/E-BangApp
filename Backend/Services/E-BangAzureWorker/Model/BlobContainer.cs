@@ -1,7 +1,7 @@
 ﻿
 namespace E_BangAzureWorker.Model
 {
-    public class Container
+    public class BlobContainer
     {
         public int Id { get ; set ; }
         public string Name { get ; set ; }
@@ -9,5 +9,7 @@ namespace E_BangAzureWorker.Model
         public string RootFilePath { get ; set ; }
         public bool Enabled { get ; set ; } = false;
         public DateTime LastUpdateTime { get ; set ; }
+        public int BlobRootPathID {  get ; set ; }
+        public BlobContainerRoot BlobContainerRoot { get ; set ; }
     }
 }

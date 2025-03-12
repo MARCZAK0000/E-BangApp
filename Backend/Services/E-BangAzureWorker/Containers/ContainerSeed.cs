@@ -8,7 +8,6 @@ namespace E_BangAzureWorker.Containers
     public class ContainerSeed
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
-
         private readonly ILogger<ContainerSeed> _logger;
 
         private readonly IContainerSettings _containerSettings;
@@ -43,11 +42,30 @@ namespace E_BangAzureWorker.Containers
                 using IDbContextTransaction transaction = await _serviceDbContext.Database.BeginTransactionAsync();
                 try
                 {
+                    var blobRoot = new BlobContainerRoot
+                    {
+                        Id = 1,
+                        RootPath = _containerSettings.RootPath,
+                        LastUpdateTime = DateTime.Now,
+                    };
 
+                    await _serviceDbContext.Roots.AddAsync(blobRoot);
+                    await _serviceDbContext.Containers.AddRangeAsync(_containerSettings.Containers.Select(pr=> new BlobContainer
+                    {
+                        Id = pr.Id,
+                        Name = pr.Name,
+                        Description = pr.Description,
+                        Enabled = pr.Enabled,
+                        LastUpdateTime = DateTime.Now,
+                        RootFilePath = pr.RootFilePath,
+                        BlobRootPathID = blobRoot.Id
+                    }));
+                    await transaction.CommitAsync();    
                 }
-                catch (Exception)
+                catch (Exception err)
                 {
-
+                    await transaction.RollbackAsync();
+                    _logger.LogError("Error with database at {DateTime}: {err}", DateTime.Now, err);
                     throw;
                 }
             }
