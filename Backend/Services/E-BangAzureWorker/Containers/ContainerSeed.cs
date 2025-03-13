@@ -49,7 +49,7 @@ namespace E_BangAzureWorker.Containers
                         LastUpdateTime = DateTime.Now,
                     };
 
-                    await _serviceDbContext.Roots.AddAsync(blobRoot);
+                    await _serviceDbContext.ContainerRoot.AddAsync(blobRoot);
                     await _serviceDbContext.Containers.AddRangeAsync(_containerSettings.Containers.Select(pr=> new BlobContainer
                     {
                         Id = pr.Id,
@@ -71,7 +71,7 @@ namespace E_BangAzureWorker.Containers
             }
             catch (Exception err)
             {
-                _logger.LogCritical("Cannot connect to Database in {0}", nameof(ContainerSeed));
+                _logger.LogCritical("Error in {container} at {DateTime}: {err}", nameof(ContainerSeed), DateTime.Now, err);
                 throw;
             }
             

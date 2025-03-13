@@ -11,7 +11,7 @@ namespace E_BangAzureWorker.Database
 
         public DbSet<BlobContainer> Containers { get; set; }
 
-        public DbSet<BlobContainerRoot> Roots { get; set; }
+        public DbSet<BlobContainerRoot> ContainerRoot { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
