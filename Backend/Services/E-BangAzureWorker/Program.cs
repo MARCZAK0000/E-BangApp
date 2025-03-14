@@ -1,6 +1,6 @@
-using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using E_BangAzureWorker;
+using E_BangAzureWorker.Azurite;
 using E_BangAzureWorker.Containers;
 using E_BangAzureWorker.Database;
 using E_BangAzureWorker.Model;
@@ -24,9 +24,12 @@ internal class Program
         {
             logger.LogInformation("Application started at {DateTime}", DateTime.Now);
             var builder = Host.CreateApplicationBuilder(args);
+            #region Services
             builder.Services.AddHostedService<Worker>();
             builder.Services.AddSingleton<ContainerSeed>();
             builder.Services.AddSingleton<ContainerConnections>();
+            builder.Services.AddSingleton<EmulatorInvoke>();
+
             builder.Services.AddSingleton(
                 pr => new BlobServiceClient
                 (builder.Configuration.GetConnectionString("BlobStorageConnectionString"),
@@ -34,26 +37,32 @@ internal class Program
 
             builder.Services.AddDbContext<ServiceDbContext>(x =>
                 x.UseSqlServer(builder.Configuration.GetConnectionString("DbConnectionString")));
+            #endregion
 
+            #region Options Pattern
             builder.Services
                 .AddOptions<ContainerSettings>()
                 .BindConfiguration("ContainerSettings");
             builder.Services
                 .AddSingleton<IContainerSettings>
                     (sp => sp.GetRequiredService<IOptions<ContainerSettings>>().Value);
-
+            #endregion
             var host = builder.Build();
             using var scope = host.Services.CreateScope();
             var seeder = scope.ServiceProvider.GetRequiredService<ContainerSeed>();
             var connections = scope.ServiceProvider.GetRequiredService<ContainerConnections>();
+            var emulator = scope.ServiceProvider.GetRequiredService<EmulatorInvoke>();
             await seeder.InvokeSeed();
             await connections.ValidateSettingsAsync();
+            emulator.RunEmulator();
             host.Run();
         }
         catch (Exception err)
         {
             logger.LogError(err.ToString());
+            if (System.Diagnostics.Debugger.IsAttached)
+                System.Diagnostics.Debugger.Break();
         }
-        
+
     }
 }

@@ -16,4 +16,16 @@ public class Worker : BackgroundService
             
         }
     }
+    public override void Dispose()
+    {
+        base.Dispose();
+    }
+    public override Task StartAsync(CancellationToken cancellationToken)
+    {
+        return base.StartAsync(cancellationToken);
+    }
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        return base.StopAsync(cancellationToken);
+    }
 }
