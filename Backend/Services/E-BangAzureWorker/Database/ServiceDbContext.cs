@@ -7,6 +7,7 @@ namespace E_BangAzureWorker.Database
     {
         public ServiceDbContext(DbContextOptions options) : base(options)
         {
+
         }
 
         public DbSet<BlobContainer> Containers { get; set; }
