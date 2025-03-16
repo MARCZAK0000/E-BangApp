@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace E_BangAzureWorker.Model
+﻿namespace E_BangAzureWorker.Model
 {
     public interface IRabbitMQSettings
     {
-        string Host { get; set; }
-        string QueueName { get; set; }
+        string Host { get; }
+        string ReciverQueueName { get; }
+        string SenderQueueName { get; }
     }
     public class RabbitMQSettings : IRabbitMQSettings
     {
         public string Host { get; set; }
-        public string QueueName { get; set; }
+        public string ReciverQueueName { get; set; }
+        public string SenderQueueName { get; set; }
     }
 }

@@ -26,9 +26,9 @@ public class Worker : BackgroundService
 
         await _rabbitMQService!.HandleReciverQueueAsync(stoppingToken);
 
-        _eventPublisher!.MessageReceived += async (obj, sender) =>
+        _eventPublisher!.ReceivedMessageAsync += async (sender, obj) =>
         {
-            await _rabbitMQService.HandleSendQueueAsync(stoppingToken);
+            await _rabbitMQService.HandleSendQueueAsync(obj, stoppingToken);
         };
         while (!stoppingToken.IsCancellationRequested)
         {

@@ -1,9 +1,17 @@
-﻿namespace E_BangAzureWorker.EventPublisher
-{
-    public class EventMessageArgs : EventArgs
-    {
-        public string AccountID { get; set; }
+﻿using E_BangAzureWorker.AzureFactory;
+using RabbitMQ.Client.Events;
 
-        public string EmailID { get; set; }
+namespace E_BangAzureWorker.EventPublisher
+{
+    public class EventMessageArgs : AsyncEventArgs
+    {
+        public EventMessageArgs(string accountID, AzureStrategyEnum azureStrategyEnum)
+        {
+            AccountID = accountID;
+            AzureStrategyEnum = azureStrategyEnum;
+        }
+
+        public string AccountID { get; set; }
+        public AzureStrategyEnum AzureStrategyEnum { get; set; }
     }
 }

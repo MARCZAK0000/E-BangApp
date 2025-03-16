@@ -1,12 +1,17 @@
-﻿namespace E_BangAzureWorker.EventPublisher
+﻿using RabbitMQ.Client.Events;
+
+namespace E_BangAzureWorker.EventPublisher
 {
     public class EventPublisher : IEventPublisher
     {
-        public event EventHandler<EventMessageArgs>? MessageReceived;
+        public event AsyncEventHandler<EventMessageArgs>? ReceivedMessageAsync;
 
-        public void OnRecivedMessage(object? sender, EventMessageArgs args)
+        public async Task OnRecivedMessage(object? sender, EventMessageArgs args)
         {
-            MessageReceived?.Invoke(this, args);
+            if(ReceivedMessageAsync != null)
+            {
+                await ReceivedMessageAsync.Invoke(this, args);
+            }
         }
     }
 }

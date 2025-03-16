@@ -11,7 +11,7 @@ namespace E_BangAzureWorker.Repository
             return await connection.CreateChannelAsync(null, token);
         }
 
-        public async Task<IConnection> CreateConnectionAsync(CancellationToken token, Action<IRabbitMQSettings>? action = null)
+        public async Task<IConnection> CreateConnectionAsync(CancellationToken token, Action<RabbitMQSettings>? action = null)
         {
             var rabbitMqSettings = new RabbitMQSettings();
             action?.Invoke(rabbitMqSettings);
@@ -23,20 +23,10 @@ namespace E_BangAzureWorker.Repository
             return await connectionFactory.CreateConnectionAsync(token);
         }
 
-        public void Dispose(params IChannel[] channels)
-        {
-            channels.ToList().ForEach(channel => channel.Dispose());
-        }
-
-        public void Dispose(params IConnection[] connecitons)
-        {
-            connecitons.ToList().ForEach(connection => connection.Dispose());
-        }
-
-        public void Dispose(IConnection connection, IChannel channel)
+        public void Dispose(IConnection connection, params IChannel[] channels)
         {
             connection.Dispose();
-            channel.Dispose();
+            channels.ToList().ForEach(channel => channel.Dispose());
         }
     }
 }

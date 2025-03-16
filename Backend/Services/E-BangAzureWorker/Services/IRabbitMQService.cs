@@ -1,10 +1,12 @@
-﻿namespace E_BangAzureWorker.Services
+﻿using E_BangAzureWorker.EventPublisher;
+
+namespace E_BangAzureWorker.Services
 {
     public interface IRabbitMQService
     {
-        Task HandleReciverQueueAsync();
+        Task HandleReciverQueueAsync(CancellationToken cancellationToken);
 
-        Task HandleSendQueueAsync();
+        Task HandleSendQueueAsync(EventMessageArgs args, CancellationToken cancellationToken);
 
         void HandleDispose();
 
