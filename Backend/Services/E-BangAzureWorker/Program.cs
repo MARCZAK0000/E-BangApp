@@ -10,10 +10,9 @@ using E_BangAzureWorker.Model;
 using E_BangAzureWorker.Repository;
 using E_BangAzureWorker.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Options;
 
-internal class Program
+public class Program
 {
     private static async Task Main(string[] args)
     {
@@ -30,7 +29,7 @@ internal class Program
         {
             logger.LogInformation("Application started at {DateTime}", DateTime.Now);
             var builder = Host.CreateApplicationBuilder(args);
-        #region Services
+            #region Services
             builder.Services.AddHostedService<Worker>();
             builder.Services.AddSingleton<ContainerSeed>();
             builder.Services.AddSingleton<ContainerConnections>();
@@ -47,17 +46,19 @@ internal class Program
                 x.UseSqlServer(builder.Configuration.GetConnectionString("DbConnectionString")));
             builder.Services.AddScoped<IAzureFactory, AzureFactory>();
             builder.Services.AddScoped<AzureAddFileRepository>();
+            builder.Services.AddScoped<AzureRemoveFileRepository>();
             builder.Services.AddScoped<Func<AzureStrategyEnum, IAzureBase>>(sp => key =>
             {
                 return key switch
                 {
                     AzureStrategyEnum.Add => sp.GetRequiredService<AzureAddFileRepository>(),
+                    AzureStrategyEnum.Remove => sp.GetRequiredService<AzureRemoveFileRepository>(),
                     _ => throw new ArgumentException("Invalide Service"),
                 };
             });
-        #endregion
+            #endregion
 
-        #region Options Pattern
+            #region Options Pattern
             builder.Services
                 .AddOptions<RabbitMQSettings>()
                 .BindConfiguration("");
@@ -70,7 +71,7 @@ internal class Program
                 .BindConfiguration("ContainerSettings");
             builder.Services.AddSingleton<IRabbitMQSettings>
                 (sp => sp.GetRequiredService<IOptions<RabbitMQSettings>>().Value);
-        #endregion
+            #endregion
             var host = builder.Build();
             using var scope = host.Services.CreateScope();
             var seeder = scope.ServiceProvider.GetRequiredService<ContainerSeed>();

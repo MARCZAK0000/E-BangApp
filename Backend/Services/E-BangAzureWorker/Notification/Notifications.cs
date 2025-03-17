@@ -18,12 +18,6 @@ namespace E_BangAzureWorker.Notification
                 case AzureFactory.AzureStrategyEnum.Remove:
                     model.Message = FileDeleted;
                     break;
-                case AzureFactory.AzureStrategyEnum.List_Add:
-                    model.Message = ListFilesAdded; 
-                    break;
-                case AzureFactory.AzureStrategyEnum.List_Remove:
-                    model.Message = ListFilesDeleted;
-                    break;
                 default:
                     throw new ArgumentException("Invalide Enum");
             }
@@ -33,9 +27,5 @@ namespace E_BangAzureWorker.Notification
         private readonly static string FileDeleted = "File was sucessfully deleted";
 
         private readonly static string FileAdded = "File was sucessfully added";
-
-        private readonly static string ListFilesDeleted = "List of files was sucessfully deleted";
-
-        private readonly static string ListFilesAdded = "List of files was sucessfully added";
     }
 }
