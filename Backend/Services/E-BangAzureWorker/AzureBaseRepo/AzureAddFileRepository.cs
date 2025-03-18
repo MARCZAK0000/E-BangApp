@@ -17,8 +17,10 @@ namespace E_BangAzureWorker.AzureBaseRepo
             _containerSettings = containerSettings;
         }
 
-        public async Task<bool> HandleAzureAsync(MessageModel model, CancellationToken token)
+        public async Task<FileChangesResponse> HandleAzureAsync(MessageModel model, CancellationToken token)
         {
+            var fileChangesResponse = new FileChangesResponse();
+            fileChangesResponse.FileChangesInformations = [];
             var containerInfo = _containerSettings
                 .Containers
                 .FirstOrDefault(pr => pr.Id == model.ContainerID)
@@ -44,7 +46,16 @@ namespace E_BangAzureWorker.AzureBaseRepo
                             , cancellationToken: token);
                         }
                         ;
-                        return true;
+                        fileChangesResponse.IsDone = true;
+                        fileChangesResponse.IsRemoved = false;
+                        fileChangesResponse.FileChangesInformations.Add(
+                            new FileChangesInformations
+                            {
+                                ContainerId = containerInfo.Id,
+                                FileName = model.AccountID,
+                                FileType = blobHeader.ContentType
+                            });
+                        return fileChangesResponse ;
                     }
                 case 2:
                 case 3:
@@ -54,8 +65,8 @@ namespace E_BangAzureWorker.AzureBaseRepo
                         {
                             await container
                                 .DeleteBlobIfExistsAsync
-                                    (string.Format(model.AccountID + "_" + item.DataName), DeleteSnapshotsOption.None, cancellationToken: token);
-                            var blobClient = container.GetBlobClient(blobName: model.AccountID);
+                                    (string.Format(model.AccountID+"_"+model.ProductID+ "_" + item.DataName), DeleteSnapshotsOption.None, cancellationToken: token);
+                            var blobClient = container.GetBlobClient(blobName: string.Format(model.AccountID + "_" + model.ProductID + "_" + item.DataName));
                             blobHeader.ContentType = item.DataType;
                             if (item.Data == null || item.Data == Array.Empty<byte>())
                                 throw new ArgumentNullException("Invalid File");
@@ -64,10 +75,19 @@ namespace E_BangAzureWorker.AzureBaseRepo
                                 await blobClient.UploadAsync(content: stream
                                 , options: new BlobUploadOptions { HttpHeaders = blobHeader }
                                 , cancellationToken: token);
-                            }
-                            ;
+                            };
+                            fileChangesResponse.FileChangesInformations.Add(
+                            new FileChangesInformations
+                            {
+                                ContainerId = containerInfo.Id,
+                                FileName = model.AccountID + "_" + model.ProductID + "_" + item.DataName,
+                                FileType = blobHeader.ContentType
+                            });
                         }
-                        return true;
+                        fileChangesResponse.IsDone = true;
+                        fileChangesResponse.IsRemoved = false;
+                        
+                        return fileChangesResponse;
                     }
                 default: throw new ArgumentException("Invalid Enum");
             }

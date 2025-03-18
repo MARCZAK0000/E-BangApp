@@ -17,8 +17,10 @@ namespace E_BangAzureWorker.AzureBaseRepo
             _containerSettings = containerSettings;
         }
 
-        public async Task<bool> HandleAzureAsync(MessageModel model, CancellationToken token)
+        public async Task<FileChangesResponse> HandleAzureAsync(MessageModel model, CancellationToken token)
         {
+            var fileChangesResponse = new List<FileChangesResponse>();
+            fileChangesResponse.FileChangesInformations = [];
             var containerInfo = _containerSettings
                 .Containers
                 .FirstOrDefault(pr => pr.Id == model.ContainerID)
@@ -41,7 +43,7 @@ namespace E_BangAzureWorker.AzureBaseRepo
                         {
                             await container
                                 .DeleteBlobIfExistsAsync
-                                    (string.Format(model.AccountID + "_" + item.DataName), DeleteSnapshotsOption.None, cancellationToken: token);
+                                    (string.Format(model.AccountID + "_" + model.ProductID + "_" + item.DataName), DeleteSnapshotsOption.None, cancellationToken: token);
                         }
                         return true;
                     }
