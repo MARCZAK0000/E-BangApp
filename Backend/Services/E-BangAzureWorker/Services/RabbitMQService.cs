@@ -67,8 +67,8 @@ namespace E_BangAzureWorker.Services
                 var message = Encoding.UTF8.GetString(body);
                 var messageModel = JsonHelper.Deserialize<MessageModel>(message);
                 _logger.LogInformation("Message Recived at {DateTime} from AccountID: {Id}", DateTime.Now, messageModel.AccountID);
-                var isSend = await _azureFactory.RoundRobin(messageModel.AzureStrategyEnum).HandleAzureAsync(messageModel, cancellationToken);
-                if (isSend)
+                var result = await _azureFactory.RoundRobin(messageModel.AzureStrategyEnum).HandleAzureAsync(messageModel, cancellationToken);
+                if (result.IsDone)
                 {
                     await _eventPublisher.OnRecivedMessage(this, new EventMessageArgs(messageModel.AccountID, messageModel.AzureStrategyEnum));
                 }

@@ -4,6 +4,6 @@ namespace E_BangAzureWorker.AzureFactory
 {
     public interface IAzureBase
     {
-        Task<bool> HandleAzureAsync(MessageModel model, CancellationToken token);
+        Task<FileChangesResponse> HandleAzureAsync(MessageModel model, CancellationToken token);
     }
 }

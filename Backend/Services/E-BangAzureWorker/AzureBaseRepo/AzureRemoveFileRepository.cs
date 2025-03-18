@@ -19,7 +19,7 @@ namespace E_BangAzureWorker.AzureBaseRepo
 
         public async Task<FileChangesResponse> HandleAzureAsync(MessageModel model, CancellationToken token)
         {
-            var fileChangesResponse = new List<FileChangesResponse>();
+            var fileChangesResponse = new FileChangesResponse();
             fileChangesResponse.FileChangesInformations = [];
             var containerInfo = _containerSettings
                 .Containers
@@ -33,7 +33,15 @@ namespace E_BangAzureWorker.AzureBaseRepo
                 case 1:
                     {
                         await container.DeleteBlobIfExistsAsync(blobName: model.AccountID, DeleteSnapshotsOption.None, cancellationToken: token);
-                        return true;
+                        fileChangesResponse.IsDone = true;
+                        fileChangesResponse.IsRemoved = true;
+                        fileChangesResponse.FileChangesInformations.Add(new FileChangesInformations
+                        {
+                            ContainerId = containerInfo.Id,
+                            FileName = model.AccountID,
+                            FileType = blobHeader.ContentType
+                        });
+                        return fileChangesResponse;
                     }
                 case 2:
                 case 3:
@@ -44,8 +52,17 @@ namespace E_BangAzureWorker.AzureBaseRepo
                             await container
                                 .DeleteBlobIfExistsAsync
                                     (string.Format(model.AccountID + "_" + model.ProductID + "_" + item.DataName), DeleteSnapshotsOption.None, cancellationToken: token);
+                            fileChangesResponse.FileChangesInformations.Add(new FileChangesInformations
+                            {
+                                ContainerId = containerInfo.Id,
+                                FileName = string.Format(model.AccountID + "_" + model.ProductID + "_" + item.DataName),
+                                FileType = blobHeader.ContentType
+                            });
                         }
-                        return true;
+                        fileChangesResponse.IsDone = true;
+                        fileChangesResponse.IsRemoved = true;
+                        
+                        return fileChangesResponse;
                     }
                 default: throw new ArgumentException("Invalid Enum");
             }

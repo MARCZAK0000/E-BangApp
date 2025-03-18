@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace E_BangAzureWorker.Model
+﻿namespace E_BangAzureWorker.Model
 {
-    class FileChangesResponse
+    public class FileChangesResponse
     {
+        public bool IsDone { get; set; }
+        public bool IsRemoved { get; set; }
+        public List<FileChangesInformations> FileChangesInformations { get; set; }
+
+        public override string ToString()
+        {
+            return $"Done: {IsDone}\r\n" +
+                $"RemovedFile?:{IsRemoved}\r\n" +
+                $"FileChangesCount: {FileChangesInformations.Count}";
+        }
     }
 }
