@@ -5,6 +5,8 @@ using E_BangAzureWorker.AzureFactory;
 using E_BangAzureWorker.Azurite;
 using E_BangAzureWorker.Containers;
 using E_BangAzureWorker.Database;
+using E_BangAzureWorker.DatabaseFactory;
+using E_BangAzureWorker.DbRepository;
 using E_BangAzureWorker.EventPublisher;
 using E_BangAzureWorker.Model;
 using E_BangAzureWorker.Repository;
@@ -55,6 +57,15 @@ public class Program
                     AzureStrategyEnum.Remove => sp.GetRequiredService<AzureRemoveFileRepository>(),
                     _ => throw new ArgumentException("Invalide Service"),
                 };
+            });
+            builder.Services.AddScoped<IDbFactory, DbFactory>();
+            builder.Services.AddScoped<DbAddFiles>();
+            builder.Services.AddScoped<DbRemoveFIles>();
+            builder.Services.AddScoped<Func<bool, IDbBase>>(sp => key =>
+            {
+                if (key)
+                    return sp.GetRequiredService<DbRemoveFIles>();
+                return sp.GetRequiredService<DbAddFiles>();
             });
             #endregion
 
