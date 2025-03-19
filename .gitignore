@@ -16,7 +16,12 @@ Backend/Services/E-BangEmailWorker/bin
 Backend/Services/E-BangEmailWorker/obj
 Backend/Services/E-BangEmailWorker/Properties
 Backend/Services/.vs
-Backend/BangEmailWorker/.vs
-Backend/BangAzureWorker/.vs
+Backend/Services/BangEmailWorker/.vs
+Backend/Services/BangAzureWorker/.vs
+Backend/Services/BangNotificationWorker/.vs
+Backend/Services/E-BangNotificationWorker/bin
+Backend/Services/E-BangNotificationWorker/obj
+Backend/Services/E-BangNotificationWorker/Properties
+
 
 
