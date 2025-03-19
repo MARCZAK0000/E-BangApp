@@ -3,7 +3,7 @@ using E_BangAzureWorker.Model;
 
 namespace E_BangAzureWorker.Comaperer
 {
-    class BlobContainerComparer : IEqualityComparer<BlobContainer>
+    public class BlobContainerComparer : IEqualityComparer<BlobContainer>
     {
         public bool Equals(BlobContainer? x, BlobContainer? y)
         {

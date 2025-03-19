@@ -39,7 +39,9 @@ namespace E_BangAzureWorker.AzureBaseRepo
                         {
                             ContainerId = containerInfo.Id,
                             FileName = model.AccountID,
-                            FileType = blobHeader.ContentType
+                            FileType = blobHeader.ContentType,
+                            AccountID = model.AccountID,
+                            ProductID = model.ProductID
                         });
                         return fileChangesResponse;
                     }
@@ -56,7 +58,9 @@ namespace E_BangAzureWorker.AzureBaseRepo
                             {
                                 ContainerId = containerInfo.Id,
                                 FileName = string.Format(model.AccountID + "_" + model.ProductID + "_" + item.DataName),
-                                FileType = blobHeader.ContentType
+                                FileType = blobHeader.ContentType,
+                                AccountID = model.AccountID,
+                                ProductID = model.ProductID
                             });
                         }
                         fileChangesResponse.IsDone = true;

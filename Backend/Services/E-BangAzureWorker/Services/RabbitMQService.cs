@@ -1,4 +1,5 @@
 ﻿using E_BangAzureWorker.AzureFactory;
+using E_BangAzureWorker.DatabaseFactory;
 using E_BangAzureWorker.EventPublisher;
 using E_BangAzureWorker.JSON;
 using E_BangAzureWorker.Model;
@@ -22,17 +23,21 @@ namespace E_BangAzureWorker.Services
 
         private readonly IRabbitMQSettings _rabbitMQSettings;
 
+        private readonly IDbFactory _dbFactory;
+
         public RabbitMQService(IRabbitRepository rabbitRepository,
             IEventPublisher eventPublisher,
             ILogger<RabbitMQService> logger,
             IAzureFactory azureFactory,
-            IRabbitMQSettings rabbitMQSettings)
+            IRabbitMQSettings rabbitMQSettings,
+            IDbFactory dbFactory)
         {
             _rabbitRepository = rabbitRepository;
             _eventPublisher = eventPublisher;
             _logger = logger;
             _azureFactory = azureFactory;
             _rabbitMQSettings = rabbitMQSettings;
+            _dbFactory = dbFactory;
         }
 
         private IConnection? Connection { get; set; }
@@ -70,7 +75,11 @@ namespace E_BangAzureWorker.Services
                 var result = await _azureFactory.RoundRobin(messageModel.AzureStrategyEnum).HandleAzureAsync(messageModel, cancellationToken);
                 if (result.IsDone)
                 {
-                    await _eventPublisher.OnRecivedMessage(this, new EventMessageArgs(messageModel.AccountID, messageModel.AzureStrategyEnum));
+                    var isDb = await _dbFactory.RoundRobin(result.IsDone).HandleAsync(result.FileChangesInformations, cancellationToken);
+                    if (isDb)
+                    {
+                        await _eventPublisher.OnRecivedMessage(this, new EventMessageArgs(messageModel.AccountID, messageModel.AzureStrategyEnum));
+                    }
                 }
 
                 await ReciverChannel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false, cancellationToken);

@@ -4,6 +4,6 @@ namespace E_BangAzureWorker.DbRepository
 {
     public interface IDbBase
     {
-        Task<bool> HandleAsync(FileChangesInformations fileChangesInformations, CancellationToken token);
+        Task<bool> HandleAsync(FileChangesResponse fileChangesInformations, CancellationToken token);
     }
 }

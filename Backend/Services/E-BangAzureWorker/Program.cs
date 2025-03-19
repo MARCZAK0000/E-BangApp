@@ -82,6 +82,13 @@ public class Program
                 .BindConfiguration("ContainerSettings");
             builder.Services.AddSingleton<IRabbitMQSettings>
                 (sp => sp.GetRequiredService<IOptions<RabbitMQSettings>>().Value);
+
+
+            builder.Services
+                .AddOptions<EmulatorSettings>()
+                .BindConfiguration("ContainerSettings");
+            builder.Services.AddSingleton<IEmulatorSettingss>
+                (sp => sp.GetRequiredService<IOptions<EmulatorSettings>>().Value);
             #endregion
             var host = builder.Build();
             using var scope = host.Services.CreateScope();

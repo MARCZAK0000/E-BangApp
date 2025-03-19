@@ -11,5 +11,7 @@ namespace E_BangAzureWorker.Model
         public DateTime LastUpdateTime { get ; set ; }
         public int BlobRootPathID {  get ; set ; }
         public BlobContainerRoot BlobContainerRoot { get ; set ; }
+
+        public List<BlobItems> Items { get ; set ; }
     }
 }
