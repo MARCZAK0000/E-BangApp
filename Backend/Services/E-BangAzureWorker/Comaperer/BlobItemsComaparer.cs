@@ -18,7 +18,7 @@ namespace E_BangAzureWorker.Comaperer
 
         public int GetHashCode([DisallowNull] BlobItems obj)
         {
-            throw new NotImplementedException();
+            return obj.GetHashCode();
         }
     }
 }

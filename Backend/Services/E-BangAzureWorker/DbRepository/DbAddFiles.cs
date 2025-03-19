@@ -1,7 +1,6 @@
 ﻿using E_BangAzureWorker.Database;
 using E_BangAzureWorker.Model;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Update;
 using System.Data;
 
 namespace E_BangAzureWorker.DbRepository
@@ -19,7 +18,7 @@ namespace E_BangAzureWorker.DbRepository
 
         public async Task<bool> HandleAsync(List<FileChangesInformations> fileChangesInformations, CancellationToken token)
         {
-            var blobItems = fileChangesInformations.Select(x=>new BlobItems
+            var blobItems = fileChangesInformations.Select(x => new BlobItems
             {
                 AccountId = x.AccountID,
                 BlobItemName = x.FileName,
@@ -34,12 +33,12 @@ namespace E_BangAzureWorker.DbRepository
             try
             {
                 await _dbContext.Items.AddRangeAsync(blobItems, token);
-                await dbTransaction.CommitAsync(token); 
+                await dbTransaction.CommitAsync(token);
                 return true;
             }
             catch (Exception)
             {
-                _logger.LogError("Rollback transaction when removing files at {DateTime}", DateTime.Now)
+                _logger.LogError("Rollback transaction when adding files at {DateTime}", DateTime.Now)
                 await dbTransaction.RollbackAsync(token);
                 throw;
             }
