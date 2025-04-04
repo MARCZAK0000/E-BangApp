@@ -1,5 +1,8 @@
+using E_BangAPI.BackgroundWorker;
 using E_BangAPI.Middleware;
+using E_BangAPI.MinimalApi;
 using E_BangApplication.Exetensions;
+using E_BangDomain.Entities;
 using E_BangInfrastructure.Extensions;
 using NLog.Web;
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +15,8 @@ builder.Host.UseNLog();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration, builder.Environment.IsDevelopment());
 builder.Services.AddScoped<ErrorHandlerMiddleware>();
-//builder.Services.AddScoped<TransactionHandlerMiddleware>();
+builder.Services.AddHostedService<BackgroundMessagerWorker>();
+builder.Services.AddScoped<TransactionHandlerMiddleware>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,5 +35,18 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseMiddleware<TransactionHandlerMiddleware>();
-app.AppInfrastructure();
+app.MapIdentityApiFilterable<Account>(new IdentityApiEndpointRouteBuilderOptions
+{
+    ExcludeRegisterPost = false,
+    ExcludeLoginPost = false,
+    ExcludeRefreshPost = false,
+    ExcludeConfirmEmailGet = false,
+    ExcludeResendConfirmationEmailPost = false,
+    ExcludeForgotPasswordPost = true,
+    ExcludeResetPasswordPost = true,
+    ExcludeManageGroup = true,
+    Exclude2faPost = false,
+    ExcludegInfoGet = true,
+    ExcludeInfoPost = true,
+});
 app.Run();

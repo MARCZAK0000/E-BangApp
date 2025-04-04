@@ -9,9 +9,9 @@ public class Worker : BackgroundService
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    private IDatabaseService _databaseService;
+    private IDatabaseService? _databaseService;
     
-    private IEmailServices _emailServices;
+    private IEmailServices? _emailServices;
     public Worker(ILogger<Worker> logger, IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
@@ -36,7 +36,7 @@ public class Worker : BackgroundService
                     {
                         if (!await _emailServices.SendMailAsync(item, stoppingToken))
                         {
-                            _logger.LogError($"Email weren't send:\r\nInformations: \r\nTo: {item.AddressTo}\r\n");
+                            _logger.LogError("Email weren't send:\r\nInformations: \r\nTo: {item.AddressTo}\r\n", item.AddressTo);
                         }
                         else
                         {

@@ -1,5 +1,9 @@
-﻿using E_BangDomain.Entities;
+﻿using E_BangApplication.BackgroundTask;
+using E_BangApplication.IQueueService;
+using E_BangDomain.Entities;
+using E_BangInfrastructure.BackgroundTask;
 using E_BangInfrastructure.Database;
+using E_BangInfrastructure.QueueService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
@@ -43,14 +47,11 @@ namespace E_BangInfrastructure.Extensions
                 options.Password.RequireDigit = true;
                 options.Password.RequireUppercase = true;
             });
+
+            //RabbitMqHandler
+            services.AddSingleton<IMessageSenderHandlerQueue, MessageSenderHandlerQueue>();
+            services.AddTransient<IMessageTask, MessageTask>();
         }
 
-        public static void AppInfrastructure(this IApplicationBuilder app)
-        {
-            app.UseEndpoints(pr =>
-            {
-                pr.MapIdentityApi<Account>();
-            });
-        }
     }
 }
