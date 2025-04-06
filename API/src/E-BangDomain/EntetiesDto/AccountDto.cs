@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace E_BangDomain.EntetiesDto
 {
-    internal class AccountDto
+    public class AccountDto
     {
     }
 }

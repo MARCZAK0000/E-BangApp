@@ -1,6 +1,6 @@
 ﻿using E_BangDomain.ModelDtos.MessageSender;
 
-namespace E_BangApplication.BackgroundTask
+namespace E_BangDomain.BackgroundTask
 {
     public interface IMessageTask
     {

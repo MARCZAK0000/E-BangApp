@@ -1,5 +1,5 @@
-﻿using E_BangApplication.BackgroundTask;
-using E_BangApplication.Exceptions;
+﻿using E_BangApplication.Exceptions;
+using E_BangDomain.BackgroundTask;
 using E_BangDomain.ModelDtos.MessageSender;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;

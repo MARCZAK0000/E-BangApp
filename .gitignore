@@ -22,6 +22,8 @@ Backend/Services/BangNotificationWorker/.vs
 Backend/Services/E-BangNotificationWorker/bin
 Backend/Services/E-BangNotificationWorker/obj
 Backend/Services/E-BangNotificationWorker/Properties
-
+Shared/.vs
+Shared/E-BangAppEmailBuilder/bin
+Shared/E-BangAppEmailBuilder/obj
 
 
