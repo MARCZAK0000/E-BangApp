@@ -1,20 +1,26 @@
-﻿namespace E_BangAppEmailBuilder.src.Builder
+﻿using E_BangAppEmailBuilder.src.BuildersDto.Header;
+using E_BangAppEmailBuilder.src.Enums;
+
+namespace E_BangAppEmailBuilder.src.Builder
 {
     public class EmailBuilder
     {
         private EmailMessage response = new EmailMessage();
-
-        public EmailBuilder GenerateHeader(string email, string? customeMessage = null)
+        /// <summary>
+        /// Generate Default Header Template
+        /// </summary>
+        /// <param name="options">Insert Email Address</param>
+        /// <returns>Chain Method</returns>
+        public EmailBuilder GenerateHeader(HeaderDefaultBuilderOptions options)
         {
-            if (customeMessage != null)
-            {
-                response.Header = customeMessage;
-                return this;
-            }
-
+            response.Header = options.Email;
             return this;
         }
-
+        public EmailBuilder GenerateHeader(HeaderCustomBuilderOptions options)
+        {
+            response.Header = options.CustomMessage; 
+            return this;
+        }
         public EmailBuilder GenerateBody(string email)
         {
 
