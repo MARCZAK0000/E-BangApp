@@ -1,43 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using E_BangAppEmailBuilder.src.BuildersDto.Body;
+using E_BangAppEmailBuilder.src.Enums;
 
 namespace E_BangAppEmailBuilder.src.Templates
 {
     public class ReadTemplates : IReadTemplates
     {
-        private string _defualtFooterTemplate;
+        private static string _defualtFooterTemplate = string.Empty;
 
-        private string _defualtHeaderTemplate;
+        private static string _defualtHeaderTemplate = string.Empty;
 
-        private string _defaultBodyTemplate;
+        private static List<BodyEmailTemplateTypeOptions> _defaultBodyTemplate = Enumerable.Empty<BodyEmailTemplateTypeOptions>().ToList();
 
-        private static object _lockObject = new object();
+        private static string _defaultFullHtmlTemplate = string.Empty;
 
-        private static ReadTemplates _instance = null;
-        private ReadTemplates() 
+        private static object _lockObject = new();
+
+        private static ReadTemplates _instance = null!;
+        private ReadTemplates()
         {
-            _defaultBodyTemplate = string.Empty;
-            _defualtFooterTemplate = string.Empty;
-            _defualtHeaderTemplate = string.Empty;
+
         }
         public static ReadTemplates GetInstance()
         {
-            if(_instance == null)
+            if (_instance == null)
             {
                 lock (_lockObject)
                 {
                     if (_instance == null)
                     {
                         _instance = new ReadTemplates();
+                        _defaultBodyTemplate = ReadFromFile.ReadBodyTemplateFromFile();
+                        _defualtFooterTemplate = ReadFromFile.ReadTemplateFromFile("DefaultFooter.txt");
+                        _defualtHeaderTemplate = ReadFromFile.ReadTemplateFromFile("DefaultHeader.txt");
+                        _defaultFullHtmlTemplate = ReadFromFile.ReadTemplateFromFile("DefaultFullHtml.txt");
                     }
                 }
             }
             return _instance;
         }
-        
+
         public string GetDefaultFooterTemplate()
         {
             return _defualtFooterTemplate;
@@ -48,14 +49,18 @@ namespace E_BangAppEmailBuilder.src.Templates
             return _defualtHeaderTemplate;
         }
 
-        public string GetDefaultBodyTemplate()
+        public string GetDefaultBodyTemplate(string templateName)
         {
-            return _defaultBodyTemplate;
+            return _defaultBodyTemplate
+                .Where(pr=>pr.TemplateTypeName.Equals(templateName, StringComparison.CurrentCultureIgnoreCase))
+                .FirstOrDefault()?.TemplateTypeName ?? string.Empty;
         }
 
         public string GetFullDefaultTemplate()
         {
-            throw new NotImplementedException();
+            return _defaultFullHtmlTemplate;
         }
+
+
     }
 }

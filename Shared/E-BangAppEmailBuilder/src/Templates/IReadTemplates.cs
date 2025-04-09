@@ -4,7 +4,7 @@
     {
         string GetDefaultHeaderTemplate();
         string GetDefaultFooterTemplate();
-        string GetDefaultBodyTemplate();
+        string GetDefaultBodyTemplate(string parameter);
         string GetFullDefaultTemplate();
     }
 }
