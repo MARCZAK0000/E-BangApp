@@ -1,7 +1,15 @@
-﻿namespace E_BangAppEmailBuilder.src.BuildersDto.Body
+﻿using E_BangAppEmailBuilder.src.Enums;
+
+namespace E_BangAppEmailBuilder.src.BuildersDto.Body
 {
     public class ConfirmEmailTokenBodyBuilder : EmailBodyBuilderBase
     {
-        public override string TemplateName => "confirmemail";
+        internal override string TemplateName
+        {
+            get
+            {
+                return Enum.GetName<EEnumEmailBodyBuilderType>(EEnumEmailBodyBuilderType.ConfirmEmail)!;
+            }
+        }
     }
 }

@@ -34,9 +34,9 @@ namespace E_BangAppEmailBuilder.src.Builder
         public EmailBuilder GenerateHeader(HeaderDefaultBuilderOptions options)
         {
             string defaultTemplate = _readTemplates.GetDefaultHeaderTemplate();
-            if (defaultTemplate.Contains("{email}"))
+            if (defaultTemplate.Contains("[email]"))
             {
-                _header = defaultTemplate.Replace("{email}", options.Email);
+                _header = defaultTemplate.Replace("[email]", options.Email);
             }
             else
             {
@@ -75,9 +75,9 @@ namespace E_BangAppEmailBuilder.src.Builder
         public EmailBuilder GenerateFooter()
         {
             var template = _readTemplates.GetDefaultFooterTemplate();
-            if (template.Contains("{year}", StringComparison.OrdinalIgnoreCase))
+            if (template.Contains("[year]", StringComparison.OrdinalIgnoreCase))
             {
-                _footer = template.Replace("{year}", DateTime.Now.Year.ToString());
+                _footer = template.Replace("[year]", DateTime.Now.Year.ToString());
             }
             else
             {
@@ -104,7 +104,7 @@ namespace E_BangAppEmailBuilder.src.Builder
                 {
                     return this;
                 }
-                _body = template.Replace("email", registrationParameters.Email).Replace("token", registrationParameters.Token);
+                _body = template.Replace("[email]", registrationParameters.Email).Replace("[token]", registrationParameters.Token);
             }
             return this;
         }
@@ -121,9 +121,9 @@ namespace E_BangAppEmailBuilder.src.Builder
         public EmailMessage BuildMessage()
         {
             string template = _readTemplates.GetFullDefaultTemplate();
-            string message = template.Replace("{header}", _header)
-                .Replace("{body}", _body)
-                .Replace("{footer}", _footer);
+            string message = template.Replace("[header]", _header)
+                .Replace("[body]", _body)
+                .Replace("[footer]", _footer);
             return new EmailMessage(message);
         }
     }

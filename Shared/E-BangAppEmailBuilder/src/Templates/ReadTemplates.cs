@@ -53,7 +53,7 @@ namespace E_BangAppEmailBuilder.src.Templates
         {
             return _defaultBodyTemplate
                 .Where(pr=>pr.TemplateTypeName.Equals(templateName, StringComparison.CurrentCultureIgnoreCase))
-                .FirstOrDefault()?.TemplateTypeName ?? string.Empty;
+                .FirstOrDefault()?.TemplateBody ?? string.Empty;
         }
 
         public string GetFullDefaultTemplate()

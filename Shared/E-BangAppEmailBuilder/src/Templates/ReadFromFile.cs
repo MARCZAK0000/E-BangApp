@@ -1,6 +1,5 @@
 ﻿using E_BangAppEmailBuilder.src.BuildersDto.Body;
 using E_BangAppEmailBuilder.src.Enums;
-using System.Reflection;
 
 namespace E_BangAppEmailBuilder.src.Templates
 {
@@ -8,13 +7,11 @@ namespace E_BangAppEmailBuilder.src.Templates
     {
         internal static string ReadTemplateFromFile(string fileName)
         {
-            string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
-            if (string.IsNullOrEmpty(currentDirectory)) return string.Empty;
-            string folderName = "Files";
-            string filePath = Path.Combine(currentDirectory, folderName, fileName);
+            string rootPath = GetProjectDirectoryPath();
+            string filePath = Path.Combine(rootPath, fileName);
             if (File.Exists(filePath))
             {
-                return string.Join(Environment.NewLine, File.ReadLines("filePath"));
+                return string.Join(Environment.NewLine, File.ReadLines(filePath));
             }
             else
             {
@@ -24,24 +21,23 @@ namespace E_BangAppEmailBuilder.src.Templates
         internal static List<BodyEmailTemplateTypeOptions> ReadBodyTemplateFromFile()
         {
             var templateList = new List<BodyEmailTemplateTypeOptions>();
-            string currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
-            if (string.IsNullOrEmpty(currentDirectory)) 
-                throw new Exception("Invalid Directory");
-            string folderName = "Files";
-            string combinePath = Path.Combine(currentDirectory, folderName);
-            if (!Directory.Exists(combinePath))
+            var folderPath = GetProjectDirectoryPath();
+
+            if (!Directory.Exists(folderPath))
             {
                 throw new Exception("Invalid Directory");
             }
-            var files = Directory.GetFiles(combinePath).Where(pr=>pr.Contains("body", StringComparison.OrdinalIgnoreCase));
+            var files = Directory.GetFiles(folderPath).Where(pr => pr.Contains("body", StringComparison.OrdinalIgnoreCase)).ToList();
             foreach (var file in files)
             {
-                string filePath = Path.Combine(combinePath, file);
+                string filePath = Path.Combine(folderPath, file);
                 if (File.Exists(filePath))
                 {
+                    string fileName = file.Remove(startIndex: file.IndexOf("Body"))
+                        .Replace(folderPath+"\\", string.Empty);
                     string templateTypeName = Enum.GetNames<EEnumEmailBodyBuilderType>()
                         .Where(pr => pr.ToLower()
-                            .Contains(file.Remove(startIndex: file.IndexOf("Body")).ToLower(), StringComparison.CurrentCultureIgnoreCase))
+                            .Contains(fileName, StringComparison.CurrentCultureIgnoreCase))
                                 .FirstOrDefault()
                                     ?? string.Empty;
                     if (string.IsNullOrEmpty(templateTypeName))
@@ -56,6 +52,13 @@ namespace E_BangAppEmailBuilder.src.Templates
                 }
             }
             return templateList;
+        }
+        private static string GetProjectDirectoryPath()
+        {
+            string currentAsemblyDirectory = Directory.GetCurrentDirectory();
+            string rootFolder = Directory.GetParent(currentAsemblyDirectory)?.Parent?.Parent?.Parent?.FullName ?? string.Empty;
+            return Path.Combine(rootFolder, "E-BangAppEmailBuilder", "Files");
+
         }
     }
 }
