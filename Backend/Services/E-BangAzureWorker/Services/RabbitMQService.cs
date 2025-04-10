@@ -1,4 +1,4 @@
-﻿using E_BangAzureWorker.AzureFactory;
+﻿using E_BangAzureWorker.AzureStrategy;
 using E_BangAzureWorker.DatabaseFactory;
 using E_BangAzureWorker.EventPublisher;
 using E_BangAzureWorker.JSON;
@@ -19,25 +19,25 @@ namespace E_BangAzureWorker.Services
 
         private readonly ILogger<RabbitMQService> _logger;
 
-        private readonly IAzureFactory _azureFactory;
+        private readonly IAzureStrategy _azureStrategy;
 
         private readonly IRabbitMQSettings _rabbitMQSettings;
 
-        private readonly IDbFactory _dbFactory;
+        private readonly IDbStrategy _dbStrategy;
 
         public RabbitMQService(IRabbitRepository rabbitRepository,
             IEventPublisher eventPublisher,
             ILogger<RabbitMQService> logger,
-            IAzureFactory azureFactory,
+            IAzureStrategy azureStategy,
             IRabbitMQSettings rabbitMQSettings,
-            IDbFactory dbFactory)
+            IDbStrategy dbFactory)
         {
             _rabbitRepository = rabbitRepository;
             _eventPublisher = eventPublisher;
             _logger = logger;
-            _azureFactory = azureFactory;
+            _azureStrategy = azureStategy;
             _rabbitMQSettings = rabbitMQSettings;
-            _dbFactory = dbFactory;
+            _dbStrategy = dbFactory;
         }
 
         private IConnection? Connection { get; set; }
@@ -72,10 +72,10 @@ namespace E_BangAzureWorker.Services
                 var message = Encoding.UTF8.GetString(body);
                 var messageModel = JsonHelper.Deserialize<MessageModel>(message);
                 _logger.LogInformation("Message Recived at {DateTime} from AccountID: {Id}", DateTime.Now, messageModel.AccountID);
-                var result = await _azureFactory.RoundRobin(messageModel.AzureStrategyEnum).HandleAzureAsync(messageModel, cancellationToken);
+                var result = await _azureStrategy.AzureBlobStrategy(messageModel, cancellationToken);
                 if (result.IsDone)
                 {
-                    var isDb = await _dbFactory.RoundRobin(result.IsDone).HandleAsync(result.FileChangesInformations, cancellationToken);
+                    var isDb = await _dbStrategy.StrategyRoundRobin(result.IsDone, result.FileChangesInformations, cancellationToken);
                     if (isDb)
                     {
                         await _eventPublisher.OnRecivedMessage(this, new EventMessageArgs(messageModel.AccountID, messageModel.AzureStrategyEnum));

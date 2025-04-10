@@ -41,7 +41,7 @@ namespace E_BangAzureWorker.DbRepository
             }
             catch (Exception)
             {
-                _logger.LogError("Rollback transaction when removing files at {DateTime}", DateTime.Now)
+                _logger.LogError("Rollback transaction when removing files at {DateTime}", DateTime.Now);
                 await dbContextTransaction.RollbackAsync(token);
                 throw;
             }

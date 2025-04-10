@@ -7,6 +7,7 @@ using MimeKit;
 
 namespace E_BangEmailWorker.Services
 {
+    [Obsolete]
     public class DatabaseService : IDatabaseService
     {
         private readonly ServiceDbContext _serviceDbContext;

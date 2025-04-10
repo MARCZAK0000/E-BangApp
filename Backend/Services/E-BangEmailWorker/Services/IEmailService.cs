@@ -1,6 +1,7 @@
 using E_BangEmailWorker.Model;
 using MimeKit;
 
+[Obsolete]
 public abstract class IEmailServices {
     public IEmailServices()
     {

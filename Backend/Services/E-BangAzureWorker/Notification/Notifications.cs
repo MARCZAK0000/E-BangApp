@@ -1,4 +1,5 @@
-﻿using E_BangAzureWorker.EventPublisher;
+﻿using E_BangAzureWorker.AzureStrategy;
+using E_BangAzureWorker.EventPublisher;
 using E_BangAzureWorker.Model;
 
 namespace E_BangAzureWorker.Notification
@@ -12,10 +13,10 @@ namespace E_BangAzureWorker.Notification
             
             switch(args.AzureStrategyEnum)
             {
-                case AzureFactory.AzureStrategyEnum.Add:
+                case AzureStrategyEnum.Add:
                     model.Message = FileAdded;
                     break;
-                case AzureFactory.AzureStrategyEnum.Remove:
+                case AzureStrategyEnum.Remove:
                     model.Message = FileDeleted;
                     break;
                 default:

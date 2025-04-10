@@ -5,6 +5,7 @@ using System.Net;
 
 namespace E_BangEmailWorker.Services
 {
+    [Obsolete]
     public class EmailServices : IEmailServices
     {
         public EmailServices(EmailConnectionOptions emailConnectionOptions, ILogger<EmailServices> logger)

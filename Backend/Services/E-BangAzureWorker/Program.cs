@@ -1,7 +1,7 @@
 using Azure.Storage.Blobs;
 using E_BangAzureWorker;
 using E_BangAzureWorker.AzureBaseRepo;
-using E_BangAzureWorker.AzureFactory;
+using E_BangAzureWorker.AzureStrategy;
 using E_BangAzureWorker.Azurite;
 using E_BangAzureWorker.Containers;
 using E_BangAzureWorker.Database;
@@ -46,7 +46,7 @@ public class Program
 
             builder.Services.AddDbContext<ServiceDbContext>(x =>
                 x.UseSqlServer(builder.Configuration.GetConnectionString("DbConnectionString")));
-            builder.Services.AddScoped<IAzureFactory, AzureFactory>();
+            builder.Services.AddScoped<IAzureStrategy, AzureStrategy>();
             builder.Services.AddScoped<AzureAddFileRepository>();
             builder.Services.AddScoped<AzureRemoveFileRepository>();
             builder.Services.AddScoped<Func<AzureStrategyEnum, IAzureBase>>(sp => key =>
@@ -58,7 +58,7 @@ public class Program
                     _ => throw new ArgumentException("Invalide Service"),
                 };
             });
-            builder.Services.AddScoped<IDbFactory, DbFactory>();
+            builder.Services.AddScoped<IDbStrategy, DbStrategy>();
             builder.Services.AddScoped<DbAddFiles>();
             builder.Services.AddScoped<DbRemoveFIles>();
             builder.Services.AddScoped<Func<bool, IDbBase>>(sp => key =>

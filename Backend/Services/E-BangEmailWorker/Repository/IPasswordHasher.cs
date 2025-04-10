@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E_BangEmailWorker.Services
+namespace E_BangEmailWorker.Repository
 {
     public interface IPasswordHasher
     {

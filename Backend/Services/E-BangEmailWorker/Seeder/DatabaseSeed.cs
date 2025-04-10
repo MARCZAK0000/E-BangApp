@@ -1,6 +1,6 @@
 using E_BangEmailWorker.Database;
 using E_BangEmailWorker.OptionsPattern;
-using E_BangEmailWorker.Services;
+using E_BangEmailWorker.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_BangEmailWorker.Seeder

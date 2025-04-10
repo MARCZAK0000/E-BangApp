@@ -1,6 +1,6 @@
 ﻿using E_BangAzureWorker.Model;
 
-namespace E_BangAzureWorker.AzureFactory
+namespace E_BangAzureWorker.AzureStrategy
 {
     public interface IAzureBase
     {

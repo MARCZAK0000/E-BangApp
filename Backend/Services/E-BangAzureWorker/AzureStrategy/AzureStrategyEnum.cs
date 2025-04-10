@@ -1,4 +1,4 @@
-﻿namespace E_BangAzureWorker.AzureFactory
+﻿namespace E_BangAzureWorker.AzureStrategy
 {
     public enum AzureStrategyEnum
     {

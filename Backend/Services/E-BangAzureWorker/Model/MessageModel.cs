@@ -1,4 +1,4 @@
-﻿using E_BangAzureWorker.AzureFactory;
+﻿using E_BangAzureWorker.AzureStrategy;
 
 namespace E_BangAzureWorker.Model
 {

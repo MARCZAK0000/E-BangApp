@@ -19,5 +19,12 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
     <PackageReference Include="MimeKit" Version="4.10.0" />
     <PackageReference Include="NLog" Version="5.4.0" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="E-BangAppEmailBuilder">
+      <HintPath>..\..\..\Shared\E-BangAppEmailBuilder\bin\Debug\net9.0\E-BangAppEmailBuilder.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

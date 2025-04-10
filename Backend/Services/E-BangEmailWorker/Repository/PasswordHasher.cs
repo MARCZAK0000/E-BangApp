@@ -2,7 +2,7 @@
 using System.Text;
 using E_BangEmailWorker.Helper;
 
-namespace E_BangEmailWorker.Services
+namespace E_BangEmailWorker.Repository
 {
     public class PasswordHasher : IPasswordHasher
     {

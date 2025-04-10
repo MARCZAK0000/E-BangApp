@@ -1,7 +1,7 @@
 ﻿using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs;
-using E_BangAzureWorker.AzureFactory;
 using E_BangAzureWorker.Model;
+using E_BangAzureWorker.AzureStrategy;
 
 namespace E_BangAzureWorker.AzureBaseRepo
 {

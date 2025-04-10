@@ -38,7 +38,7 @@ namespace E_BangAzureWorker.DbRepository
             }
             catch (Exception)
             {
-                _logger.LogError("Rollback transaction when adding files at {DateTime}", DateTime.Now)
+                _logger.LogError("Rollback transaction when adding files at {DateTime}", DateTime.Now);
                 await dbTransaction.RollbackAsync(token);
                 throw;
             }
