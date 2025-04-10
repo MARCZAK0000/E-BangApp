@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>E_BangAppRabbitSharedClass</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="E-BangAppEmailBuilder">
+      <HintPath>..\E-BangAppEmailBuilder\bin\Debug\net9.0\E-BangAppEmailBuilder.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -11,14 +11,13 @@ namespace E_BangEmailWorker.Repository
     public class EmailRepository : IEmailRepository
     {
         private readonly EmailConnectionOptions _emailConnectionOptions;
-        private readonly ILogger<EmailServices> _logger;
+        private readonly ILogger<EmailRepository> _logger;
 
-        public EmailRepository(EmailConnectionOptions emailConnectionOptions, ILogger<EmailServices> logger)
+        public EmailRepository(EmailConnectionOptions emailConnectionOptions, ILogger<EmailRepository> logger)
         {
             _emailConnectionOptions = emailConnectionOptions;
             _logger = logger;
         }
-
         public async Task<bool> SendEmailAsync(MimeMessage messageToSend, CancellationToken token)
         {
             try

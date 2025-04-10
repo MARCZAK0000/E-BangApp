@@ -4,17 +4,18 @@ namespace E_BangEmailWorker.Model
 {
     public class SendMailDto
     {
-        public int Id { get; set; }
-        public MailboxAddress AddressHost { get; }
+       public MailboxAddress AddressHost { get; }
         public MailboxAddress AddressTo { get; }
-        public EmailBody EmailBody { get; }
+        public string EmailBody { get; }
 
-        public SendMailDto(int id,MailboxAddress addressHost, MailboxAddress to, EmailBody emailBody)
+        public string EmailSubject { get; }
+
+        public SendMailDto(string to, string emailBody, string emailSubject)
         {
-            Id = id;
-            AddressHost = addressHost;
-            AddressTo = to;
+            AddressHost = new MailboxAddress("host", "ebangapp1998@gmail.com");
+            AddressTo = new MailboxAddress("client", to);
             EmailBody = emailBody;
+            EmailSubject = emailSubject;
         }
     }
 }

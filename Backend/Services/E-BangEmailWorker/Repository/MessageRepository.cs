@@ -4,15 +4,18 @@ namespace E_BangEmailWorker.Repository
 {
     public class MessageRepository : IMessageRepository
     {
-
-        public Task<MimeMessage> BuildMessage(SendMailDto sendMailDto)
+        public MimeMessage BuildMessage(SendMailDto sendMailDto, CancellationToken token)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> GenerateMessage(RabbitMessageDto parameters)
-        {
-            throw new NotImplementedException();
+            var message = new MimeMessage();
+            message.From.Add(sendMailDto.AddressHost);
+            message.To.Add(sendMailDto.AddressTo);
+            message.Subject = sendMailDto.EmailSubject;
+            var builder = new BodyBuilder
+            {
+               HtmlBody = sendMailDto.EmailBody
+            };
+            message.Body = builder.ToMessageBody();
+            return message;
         }
     }
 }

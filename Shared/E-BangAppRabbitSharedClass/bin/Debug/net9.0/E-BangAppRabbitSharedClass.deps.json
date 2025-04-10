@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "E-BangAppRabbitSharedClass/1.0.0": {
+        "dependencies": {
+          "E-BangAppEmailBuilder": "1.0.0.0"
+        },
+        "runtime": {
+          "E-BangAppRabbitSharedClass.dll": {}
+        }
+      },
+      "E-BangAppEmailBuilder/1.0.0.0": {
+        "runtime": {
+          "E-BangAppEmailBuilder.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "E-BangAppRabbitSharedClass/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "E-BangAppEmailBuilder/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

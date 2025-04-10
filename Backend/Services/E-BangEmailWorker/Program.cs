@@ -19,9 +19,7 @@ public class Program
         var builder = Host.CreateApplicationBuilder(args);
 
         #region Service Registration
-            builder.Services.AddScoped<IEmailServices, EmailServices>();
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
-            builder.Services.AddScoped<IDatabaseService, DatabaseService>(); //Obsolete 
             builder.Services.AddScoped<IEmailRepository, EmailRepository>();
             builder.Services.AddScoped<IDatabaseRepository, DatabaseRepository>();
             builder.Services.AddScoped<IMessageRepository, MessageRepository>();

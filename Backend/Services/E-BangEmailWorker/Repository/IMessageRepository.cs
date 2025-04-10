@@ -5,8 +5,7 @@ namespace E_BangEmailWorker.Repository
 {
     public interface IMessageRepository
     {
-        Task<string> GenerateMessage(RabbitMessageDto parameters);
-        Task<MimeMessage> BuildMessage(SendMailDto sendMailDto);
+        MimeMessage BuildMessage(SendMailDto sendMailDto, CancellationToken token);
 
     }
 }
