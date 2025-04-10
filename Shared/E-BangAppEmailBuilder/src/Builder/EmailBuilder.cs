@@ -121,6 +121,20 @@ namespace E_BangAppEmailBuilder.src.Builder
         public EmailMessage BuildMessage()
         {
             string template = _readTemplates.GetFullDefaultTemplate();
+            if(string.IsNullOrEmpty(_header))
+            {
+                string toRemove = "[header]";
+                template = template.Remove(template.IndexOf(toRemove), toRemove.Length);
+            }
+            if(string.IsNullOrEmpty(_footer))
+            {
+                string toRemove = "[footer]";
+                template = template.Remove(template.IndexOf(toRemove), toRemove.Length);
+            }
+            if(string.IsNullOrEmpty(_body))
+            {
+                throw new Exception("Empty Body");
+            }
             string message = template.Replace("[header]", _header)
                 .Replace("[body]", _body)
                 .Replace("[footer]", _footer);

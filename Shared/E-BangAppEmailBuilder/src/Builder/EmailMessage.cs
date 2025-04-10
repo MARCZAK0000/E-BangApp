@@ -9,6 +9,10 @@
         {
             Message = message;
         }
-        
+        public override string ToString()
+        {
+            return $"EmailMessage: {Message}";
+        }
+
     }
 }
