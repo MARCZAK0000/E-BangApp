@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("E-BangAppRabbitSharedClass")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cb56b5284483099ec5d30729c714ba262ebaf99a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+215983a16a45445ad2683fe106dc04840551b159")]
 [assembly: System.Reflection.AssemblyProductAttribute("E-BangAppRabbitSharedClass")]
 [assembly: System.Reflection.AssemblyTitleAttribute("E-BangAppRabbitSharedClass")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

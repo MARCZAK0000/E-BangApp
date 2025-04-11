@@ -1,5 +1,5 @@
-﻿using E_BangAppEmailBuilder.src.BuildersDto.Body;
-using E_BangAppEmailBuilder.src.Enums;
+﻿using E_BangAppEmailBuilder.src.Enums;
+using E_BangAppRabbitSharedClass.BuildersDto.Body;
 
 namespace E_BangAppEmailBuilder.src.Templates
 {
@@ -34,7 +34,7 @@ namespace E_BangAppEmailBuilder.src.Templates
                 if (File.Exists(filePath))
                 {
                     string fileName = file.Remove(startIndex: file.IndexOf("Body"))
-                        .Replace(folderPath+"\\", string.Empty);
+                        .Replace(folderPath + "\\", string.Empty);
                     string templateTypeName = Enum.GetNames<EEnumEmailBodyBuilderType>()
                         .Where(pr => pr.ToLower()
                             .Contains(fileName, StringComparison.CurrentCultureIgnoreCase))

@@ -17,5 +17,10 @@ namespace E_BangEmailWorker.Repository
             message.Body = builder.ToMessageBody();
             return message;
         }
+
+        public string GenerateMessage(EmailBody body, CancellationToken token)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

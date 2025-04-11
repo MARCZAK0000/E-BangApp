@@ -1,4 +1,4 @@
-﻿using E_BangAppEmailBuilder.src.BuildersDto.Body;
+﻿using E_BangAppRabbitSharedClass.RabbitMessageChilds;
 
 namespace E_BangAppRabbitSharedClass.RabbitModel
 {
@@ -6,7 +6,7 @@ namespace E_BangAppRabbitSharedClass.RabbitModel
     {
         public string AddressTo { get; set; }
         public string Subject { get; set; }
-        public EmailBodyBuilderBase Body { get; set; }
+        public EmailBody Body { get; set; }
     }
 
 }

@@ -1,4 +1,4 @@
-﻿namespace E_BangAppEmailBuilder.src.BuildersDto.Header
+﻿namespace E_BangAppRabbitSharedClass.BuildersDto.Header
 {
     public class HeaderCustomBuilderOptions
     {

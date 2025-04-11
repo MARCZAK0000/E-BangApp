@@ -59,7 +59,7 @@ namespace E_BangEmailWorker.Services
                     var message = Encoding.UTF8.GetString(body);
                     var messageModel = JsonSerializer.Deserialize<EmailServiceRabbitMessageModel>(message);
                     _logger.LogInformation("Message Recived at {DateTime} from AccountID: {Id}", DateTime.Now, messageModel!.AddressTo);
-                    string emailRawHTML = _emailBuilderStrategy.EmailBuilderRoundRobin(messageModel.Body);
+                    string emailRawHTML = _emailBuilderStrategy.EmailBuilderRoundRobin(messageModel.Body.Body);
                     MimeMessage mimeMessage = _messageRepository.BuildMessage(new SendMailDto(messageModel.AddressTo, emailRawHTML, messageModel.Subject), token);
                     bool isSend = await _emailRepository.SendEmailAsync(mimeMessage, token);
                     if (!isSend)

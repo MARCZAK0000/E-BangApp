@@ -1,5 +1,4 @@
-﻿using E_BangAppEmailBuilder.src.BuildersDto.Body;
-using E_BangAppEmailBuilder.src.Enums;
+﻿using E_BangAppRabbitSharedClass.BuildersDto.Body;
 
 namespace E_BangAppEmailBuilder.src.Templates
 {
@@ -52,7 +51,7 @@ namespace E_BangAppEmailBuilder.src.Templates
         public string GetDefaultBodyTemplate(string templateName)
         {
             return _defaultBodyTemplate
-                .Where(pr=>pr.TemplateTypeName.Equals(templateName, StringComparison.CurrentCultureIgnoreCase))
+                .Where(pr => pr.TemplateTypeName.Equals(templateName, StringComparison.CurrentCultureIgnoreCase))
                 .FirstOrDefault()?.TemplateBody ?? string.Empty;
         }
 
