@@ -1,15 +1,17 @@
-﻿using E_BangAppEmailBuilder.src.Templates;
+﻿using E_BangAppEmailBuilder.src.EmailBodyStrategy;
+using E_BangAppEmailBuilder.src.EmailBodyStrategy.StrategyBase;
+using E_BangAppEmailBuilder.src.Templates;
 using E_BangAppRabbitSharedClass.BuildersDto.Body;
 using E_BangAppRabbitSharedClass.BuildersDto.Footer;
 using E_BangAppRabbitSharedClass.BuildersDto.Header;
 namespace E_BangAppEmailBuilder.src.Builder
 {
-    public class EmailBuilder
+    internal class EmailBuilder
     {
         private string _header;
         private string _body;
         private string _footer;
-        public EmailBuilder()
+        internal EmailBuilder()
         {
             _header = string.Empty;
             _body = string.Empty;
@@ -19,48 +21,25 @@ namespace E_BangAppEmailBuilder.src.Builder
 
         private readonly IReadTemplates _readTemplates = ReadTemplates.GetInstance();
 
+        private readonly IGenerateBodyStrategy _generateBodyStrategy = GenerateBodyStrategy.GetInstance();
         #region Header 
 
 
-
-        /// <summary>
-        ///     It's round robin method to generate header depends of object type
-        /// </summary>
-        /// <remarks>
-        ///     This method uses the <see cref="object"/> object to set the header with depends on object type.
-        ///     It is designed to work as part of a chainable method call.
-        /// </remarks>
-        /// <returns>
-        ///     Returns the current instance of <see cref="EmailBuilder"/> to facilitate method chaining.
-        /// </returns>
-        public EmailBuilder GenerateHeader(object header)
-        {
-
-            if (header != null && header is HeaderCustomBuilderOptions custom)
-            {
-                GenerateHeader(custom);
-            }
-            if (header != null && header is HeaderDefaultBuilderOptions defaultHeader)
-            {
-                GenerateHeader(defaultHeader);
-            }
-            return this;
-        }
         /// <summary>
         ///     Generates a defualt header for the email based on the provided options.
         /// </summary>
         /// <remarks>
-        ///     This method uses the <see cref="HeaderDefaultBuilderOptions"/> object to set the header with a default message.
+        ///     This method uses the <see cref="HeaderDefaultTemplateBuilder"/> object to set the header with a default message.
         ///     It is designed to work as part of a chainable method call.
         /// </remarks>
         /// <param name="options">
-        ///     An instance of <see cref="HeaderDefaultBuilderOptions"/> containing customization details for the header.
+        ///     An instance of <see cref="HeaderDefaultTemplateBuilder"/> containing customization details for the header.
         /// </param>
         /// <returns>
         ///     Returns the current instance of <see cref="EmailBuilder"/> to facilitate method chaining.
         /// </returns>
         /// 
-        private EmailBuilder GenerateHeader(HeaderDefaultBuilderOptions options)
+        public EmailBuilder GenerateHeader(HeaderDefaultTemplateBuilder options)
         {
             string defaultTemplate = _readTemplates.GetDefaultHeaderTemplate();
             if (defaultTemplate.Contains("[email]"))
@@ -106,30 +85,20 @@ namespace E_BangAppEmailBuilder.src.Builder
         /// <returns>
         ///     Returns the current instance of <see cref="EmailBuilder"/> to facilitate method chaining.
         /// </returns>
-        public EmailBuilder GenerateFooter(object defaultFooter)
+        public EmailBuilder GenerateFooter(FooterDefualtTemplateBuilder defaultFooter)
         {
-            if(defaultFooter != null && defaultFooter is FooterDefualtTemplateBuilder)
+            var template = _readTemplates.GetDefaultFooterTemplate();
+            if (template.Contains("[year]", StringComparison.OrdinalIgnoreCase))
             {
-                var template = _readTemplates.GetDefaultFooterTemplate();
-                if (template.Contains("[year]", StringComparison.OrdinalIgnoreCase))
-                {
-                    _footer = template.Replace("[year]", DateTime.Now.Year.ToString());
-                }
-                else
-                {
-                    _footer = template;
-                }
+                _footer = template.Replace("[year]", DateTime.Now.Year.ToString());
+            }
+            else
+            {
+                _footer = template;
             }
             return this;
 
         }
-
-
-
-
-
-
-
 
         #endregion
 
@@ -146,52 +115,14 @@ namespace E_BangAppEmailBuilder.src.Builder
         /// <returns>Returns an instance of <see cref="EmailBuilder"/> with the generated body.</returns>
         public EmailBuilder GenerateBody(object parameters)
         {
-            if (parameters is RegistrationBodyBuilder registrationParameters)
-            {
-                GenerateRegistrationBody(registrationParameters);
-            }
-            if (parameters is ConfirmEmailTokenBodyBuilder confirmEmailTokenBodyBuilder){
-                GenerateConfirmEmailBody(confirmEmailTokenBodyBuilder);
-            }
+            IGenerateBodyBase strategy = _generateBodyStrategy.SwitchStrategy(parameters);
+            _body = strategy.GenerateBody(parameters);
             return this;
 
         }
-        /// <summary>
-        ///     Generates Defaul Body For Registration
-        ///     <para>Uses <see cref="RegistrationBodyBuilder"/> to create a Registration body</para>
-        /// </summary>
-        /// <returns>Returns an instance of <see cref="EmailBuilder"/> with the generated body.</returns>
-        private EmailBuilder GenerateRegistrationBody(RegistrationBodyBuilder registrationBodyBuilder)
-        {
-            string template = _readTemplates.GetDefaultBodyTemplate(registrationBodyBuilder.TemplateName);
-            if (string.IsNullOrEmpty(template))
-            {
-                throw new InvalidOperationException("Empty Body Template");
-            }
-            _body = template.Replace("[email]", registrationBodyBuilder.Email).Replace("[token]", registrationBodyBuilder.Token);
-            return this;
-        }
-        /// <summary>
-        ///     Generates Defaul Body For Confrim Email
-        ///     <para>Uses <see cref="ConfirmEmailTokenBodyBuilder"/> to create a Registration body</para>
-        /// </summary>
-        /// <returns>Returns an instance of <see cref="EmailBuilder"/> with the generated body.</returns>
-        private EmailBuilder GenerateConfirmEmailBody(ConfirmEmailTokenBodyBuilder token)
-        {
-            string template = _readTemplates.GetDefaultBodyTemplate(token.TemplateName);
-            if (string.IsNullOrEmpty(template))
-            {
-                throw new InvalidOperationException("Empty Body Template");
-            }
-            _body = template.Replace("[email]", token.Email).Replace("[token]", token.Token);
-            return this;
-        }
-
-
-
-
         #endregion
 
+        #region Build Message
         /// <summary>
         ///     Builds a complete email message by replacing placeholders in the full default template.
         /// </summary>
@@ -201,6 +132,7 @@ namespace E_BangAppEmailBuilder.src.Builder
         /// <returns>
         ///     Returns a new instance of <see cref="EmailMessage"/> containing the fully constructed message.
         /// </returns>
+
         public EmailMessage BuildMessage()
         {
             string template = _readTemplates.GetFullDefaultTemplate();
@@ -223,6 +155,6 @@ namespace E_BangAppEmailBuilder.src.Builder
                 .Replace("[footer]", _footer);
             return new EmailMessage(message);
         }
-        
+        #endregion
     }
 }

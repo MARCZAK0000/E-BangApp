@@ -3,17 +3,17 @@ using E_BangAppRabbitSharedClass.BuildersDto.Body;
 
 namespace E_BangAppEmailBuilder.src.EmailBodyStrategy
 {
-    internal class GenerateBodyStrategy : IGenerateBodyStrategy
+    public class GenerateBodyStrategy : IGenerateBodyStrategy
     {
-        private static GenerateBodyStrategy _instance = null!;
+        private static GenerateBodyStrategy _instance = null;
+        private static object _instanceLock = new object(); 
+        private GenerateBodyStrategy() { }
 
-
-        private static object obj = new object();
-        internal static GenerateBodyStrategy GetInstance()
+        public static GenerateBodyStrategy GetInstance()
         {
-            if (_instance == null)
+            if(_instance == null)
             {
-                lock (obj)
+                lock (_instanceLock)
                 {
                     if(_instance == null)
                     {
@@ -22,17 +22,20 @@ namespace E_BangAppEmailBuilder.src.EmailBodyStrategy
                 }
             }
             return _instance;
+            
         }
-
-        internal IGenerateBodyBase SwitchStrategy(object parameters)
+        private readonly Dictionary<Type, IGenerateBodyBase> strategyDictionary = new()
         {
-            switch(parameters)
+            {typeof(RegistrationBodyBuilder), new GenerateRegistrationBody()},
+            {typeof(ConfirmEmailTokenBodyBuilder), new GenerateConfirmEmailBody()},
+        };
+        public IGenerateBodyBase SwitchStrategy(object parameters)
+        {
+            if(strategyDictionary.TryGetValue(parameters.GetType(), out var strategy))
             {
-                case RegistrationBodyBuilder:
-                    return new GenerateRegistrationBody();
-                case ConfirmEmailTokenBodyBuilder:
-                    return new GenerateConfirmEmailBody
+                return strategy;
             }
+            throw new Exception("Invalid Strategy");
         }
 
         

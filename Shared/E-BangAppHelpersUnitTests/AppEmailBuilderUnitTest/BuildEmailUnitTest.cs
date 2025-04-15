@@ -1,6 +1,8 @@
-﻿using E_BangAppEmailBuilder.src.Builder;
-using E_BangAppEmailBuilder.src.BuildersDto.Body;
-using E_BangAppEmailBuilder.src.BuildersDto.Header;
+﻿using E_BangAppEmailBuilder.src.Abstraction;
+using E_BangAppEmailBuilder.src.Builder;
+using E_BangAppRabbitSharedClass.BuildersDto.Body;
+using E_BangAppRabbitSharedClass.BuildersDto.Footer;
+using E_BangAppRabbitSharedClass.BuildersDto.Header;
 using Shouldly;
 namespace E_BangAppHelpersUnitTests.AppEmailBuilderUnitTest
 {
@@ -10,21 +12,24 @@ namespace E_BangAppHelpersUnitTests.AppEmailBuilderUnitTest
 
         public void EmailBuilderShouldBeOk()
         {
-            var emailBuilder = new EmailBuilder();
-
-            EmailMessage message = emailBuilder.GenerateHeader(new HeaderDefaultBuilderOptions()
+            IBuilderEmail builderEmail = new BuilderEmail();
+            HeaderDefaultTemplateBuilder header = new HeaderDefaultTemplateBuilder()
             {
-                Email = "jj.marczak@gmail.com"
-            }).GenerateBody(new RegistrationBodyBuilder
+                Email = "test@test.com"
+            };
+            RegistrationBodyBuilder body = new RegistrationBodyBuilder()
             {
-                Email = "jj.marczak@gmail.com",
-                Token = "http://test.com/asdasdas1231e2"
-            })
-            .GenerateFooter()
-            .BuildMessage();
+                Email = "test@test.com",
+                Token = "http://test.com/asdasdas1231e2",
+            };
+            FooterDefualtTemplateBuilder footer = new FooterDefualtTemplateBuilder()
+            {
+                Year = DateTime.Now.Year.ToString(),
+            };
+            var message = builderEmail.GenerateMessage(header,body,footer);
             message.ShouldNotBeNull();
             message.Message.ShouldNotBeNull();
-            message.Message.ShouldContain("jj.marczak@gmail.com");
+            message.Message.ShouldContain("test@test.com");
             message.Message.ShouldContain("http://test.com/asdasdas1231e2");
             message.Message.ShouldContain(DateTime.Now.Year.ToString());
 
@@ -32,30 +37,45 @@ namespace E_BangAppHelpersUnitTests.AppEmailBuilderUnitTest
         [Fact]
         public void EmailHeaderShouldBeEmpty()
         {
-            var emailBuilder = new EmailBuilder();
-            EmailMessage message = emailBuilder
-                .GenerateBody(new RegistrationBodyBuilder
-                {
-                    Token = "http://test.com/asdasdas1231e2"
-                })
-                .GenerateFooter()
-                .BuildMessage();
-            message.ShouldNotBeNull();
+            IBuilderEmail builderEmail = new BuilderEmail();
+            HeaderDefaultTemplateBuilder header = new HeaderDefaultTemplateBuilder()
+            {
+               
+            };
+            RegistrationBodyBuilder body = new RegistrationBodyBuilder()
+            {
+                Email = "test@test.com",
+                Token = "http://test.com/asdasdas1231e2",
+            };
+            FooterDefualtTemplateBuilder footer = new FooterDefualtTemplateBuilder()
+            {
+                Year = DateTime.Now.Year.ToString(),
+            };
+            var message = builderEmail.GenerateMessage(header, body, footer);
             message.Message.ShouldNotBeNull();
-            message.Message.ShouldNotContain("jj.marczak@gmail.com");
+            message.Message.ShouldNotContain("test@test.com");
             message.Message.ShouldContain(DateTime.Now.Year.ToString());
-
         }
         [Fact]
         public void EmailShouldHaveError()
         {
-            var emailBuilder = new EmailBuilder();
+
+            IBuilderEmail builderEmail = new BuilderEmail();
+            HeaderDefaultTemplateBuilder header = new HeaderDefaultTemplateBuilder()
+            {
+
+            };
+            
+            FooterDefualtTemplateBuilder footer = new FooterDefualtTemplateBuilder()
+            {
+                Year = DateTime.Now.Year.ToString(),
+            };
 
             Action action = () =>
             {
-                EmailMessage message = emailBuilder.BuildMessage();
+                EmailMessage message = builderEmail.GenerateMessage(header, null, footer);
             };
-            action.ShouldThrow<Exception>("Empty Body");
+            action.ShouldThrow<Exception>("Invalid Strategy");
         }
 
     }

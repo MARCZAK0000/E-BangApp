@@ -1,6 +1,6 @@
 ﻿namespace E_BangAppEmailBuilder.src.EmailBodyStrategy.StrategyBase
 {
-    internal interface IGenerateBodyBase
+    public interface IGenerateBodyBase
     {
         string GenerateBody(object parameters);
     }

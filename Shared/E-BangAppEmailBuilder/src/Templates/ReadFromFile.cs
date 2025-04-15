@@ -1,5 +1,7 @@
-﻿using E_BangAppEmailBuilder.src.Enums;
+﻿
 using E_BangAppRabbitSharedClass.BuildersDto.Body;
+using E_BangAppRabbitSharedClass.Enums;
+
 
 namespace E_BangAppEmailBuilder.src.Templates
 {

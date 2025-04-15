@@ -1,4 +1,4 @@
-﻿namespace E_BangAppEmailBuilder.src.Enums
+﻿namespace E_BangAppRabbitSharedClass.Enums
 {
     public enum EEnumEmailBodyBuilderType
     {

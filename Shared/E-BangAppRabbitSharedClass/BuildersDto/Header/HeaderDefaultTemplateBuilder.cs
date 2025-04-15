@@ -1,6 +1,6 @@
 ﻿namespace E_BangAppRabbitSharedClass.BuildersDto.Header
 {
-    public class HeaderDefaultBuilderOptions
+    public class HeaderDefaultTemplateBuilder
     {
         public string Email { get; set; }   
     }

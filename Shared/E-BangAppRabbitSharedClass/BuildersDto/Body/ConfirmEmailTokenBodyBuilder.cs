@@ -1,4 +1,4 @@
-﻿using E_BangAppEmailBuilder.src.Enums;
+﻿using E_BangAppRabbitSharedClass.Enums;
 
 namespace E_BangAppRabbitSharedClass.BuildersDto.Body
 {

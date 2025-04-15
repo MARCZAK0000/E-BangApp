@@ -7,10 +7,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Reference Include="E-BangAppEmailBuilder">
-      <HintPath>..\E-BangAppEmailBuilder\bin\Debug\net9.0\E-BangAppEmailBuilder.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

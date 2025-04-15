@@ -2,7 +2,7 @@
 
 namespace E_BangAppEmailBuilder.src.EmailBodyStrategy
 {
-    internal interface IGenerateBodyStrategy
+    public interface IGenerateBodyStrategy
     {
         IGenerateBodyBase SwitchStrategy(object parameters);
     }
