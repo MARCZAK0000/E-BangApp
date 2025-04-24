@@ -1,4 +1,4 @@
-﻿using E_BangApplication.IQueueService;
+﻿using E_BangDomain.IQueueService;
 
 namespace E_BangAPI.BackgroundWorker
 {

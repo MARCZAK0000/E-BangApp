@@ -1,4 +1,4 @@
-﻿namespace E_BangApplication.IQueueService
+﻿namespace E_BangDomain.IQueueService
 {
     public interface IMessageSenderHandlerQueue
     {

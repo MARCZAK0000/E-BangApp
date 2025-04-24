@@ -18,6 +18,9 @@ namespace E_BangInfrastructure.Database
         public DbSet<Actions> Actions { get; set; }
 
         public DbSet<ActionInRole> ActionInRoles { get; set; }
+        public DbSet<Shop> Shop { get; set; }
+        public DbSet<ShopType> ShopTypes { get; set; }
+        public DbSet<ShopBranchesInformations> ShopAddressInformations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

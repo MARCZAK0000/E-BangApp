@@ -1,8 +1,9 @@
-﻿using E_BangAppRabbitSharedClass.RabbitModel;
-using E_BangEmailWorker.EmailMessageBuilderFactory;
+﻿using E_BangAppEmailBuilder.src.Abstraction;
+using E_BangAppRabbitSharedClass.RabbitModel;
 using E_BangEmailWorker.Model;
 using E_BangEmailWorker.OptionsPattern;
 using E_BangEmailWorker.Repository;
+using E_BangEmailWorker.Exceptions;
 using MimeKit;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -22,7 +23,7 @@ namespace E_BangEmailWorker.Services
 
         private readonly RabbitOptions _rabbitOptions;
 
-        private readonly IEmailBuilderStrategy _emailBuilderStrategy;
+        private readonly IBuilderEmail _builderEmail;
 
         private readonly ILogger<RabbitQueueService> _logger;
         public RabbitQueueService(IRabbitRepository rabbitRepository,
@@ -30,7 +31,7 @@ namespace E_BangEmailWorker.Services
             IDatabaseRepository databaseRepository,
             RabbitOptions rabbitOptions,
             ILogger<RabbitQueueService> logger,
-            IEmailBuilderStrategy emailBuilderStrategy,
+            IBuilderEmail builderEmail,
             IMessageRepository messageRepository)
         {
             _rabbitRepository = rabbitRepository;
@@ -38,7 +39,7 @@ namespace E_BangEmailWorker.Services
             _databaseRepository = databaseRepository;
             _rabbitOptions = rabbitOptions;
             _logger = logger;
-            _emailBuilderStrategy = emailBuilderStrategy;
+            _builderEmail = builderEmail;
             _messageRepository = messageRepository;
         }
 
@@ -59,13 +60,15 @@ namespace E_BangEmailWorker.Services
                     var message = Encoding.UTF8.GetString(body);
                     var messageModel = JsonSerializer.Deserialize<EmailServiceRabbitMessageModel>(message);
                     _logger.LogInformation("Message Recived at {DateTime} from AccountID: {Id}", DateTime.Now, messageModel!.AddressTo);
-                    string emailRawHTML = _emailBuilderStrategy.EmailBuilderRoundRobin(messageModel.Body.Body);
+                    string emailRawHTML = _builderEmail
+                        .GenerateMessage(messageModel.Body.Header, messageModel.Body.Body, messageModel.Body.Footer)
+                        .Message;
                     MimeMessage mimeMessage = _messageRepository.BuildMessage(new SendMailDto(messageModel.AddressTo, emailRawHTML, messageModel.Subject), token);
                     bool isSend = await _emailRepository.SendEmailAsync(mimeMessage, token);
                     if (!isSend)
                     {
                         _logger.LogError("There is a problem with email message: {messageModel}", messageModel);
-                        throw new Exception("Email Message Problem");
+                        throw new MesseageNotSendException("Email Message Problem");
                     }
                     await _databaseRepository.SaveEmailInfo(messageModel, token);
                     await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false, token);

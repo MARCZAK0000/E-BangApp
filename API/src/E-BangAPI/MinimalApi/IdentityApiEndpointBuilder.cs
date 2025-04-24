@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using E_BangDomain.Repository;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Http.Metadata;
@@ -35,9 +36,10 @@ namespace E_BangAPI.MinimalApi
 
             var timeProvider = endpoints.ServiceProvider.GetRequiredService<TimeProvider>();
             var bearerTokenOptions = endpoints.ServiceProvider.GetRequiredService<IOptionsMonitor<BearerTokenOptions>>();
-            var emailSender = endpoints.ServiceProvider.GetRequiredService<IEmailSender<TUser>>();
+            var emailSender = endpoints.ServiceProvider.GetRequiredService<IEmailRepository>();
             var linkGenerator = endpoints.ServiceProvider.GetRequiredService<LinkGenerator>();
             var mediatr = endpoints.ServiceProvider.GetRequiredService<IMediator>();
+            
 
             // We'll figure out a unique endpoint name based on the final route pattern during endpoint generation.
             string? confirmEmailEndpointName = null;
@@ -223,7 +225,7 @@ namespace E_BangAPI.MinimalApi
                         var code = await userManager.GeneratePasswordResetTokenAsync(user);
                         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-                        await emailSender.SendPasswordResetCodeAsync(user, resetRequest.Email, HtmlEncoder.Default.Encode(code));
+                        //await emailSender.SendPasswordResetCodeAsync(user, resetRequest.Email, HtmlEncoder.Default.Encode(code));
                     }
 
                     // Don't reveal that the user does not exist or is not confirmed, so don't return a 200 if we would have
@@ -438,8 +440,15 @@ namespace E_BangAPI.MinimalApi
 
                 var confirmEmailUrl = linkGenerator.GetUriByName(context, confirmEmailEndpointName, routeValues)
                     ?? throw new NotSupportedException($"Could not find endpoint named '{confirmEmailEndpointName}'.");
+                if(!isChange)
+                {
+                    await emailSender.SendEmailConfirmAccountAsync(email, HtmlEncoder.Default.Encode(confirmEmailUrl), CancellationToken.None);
 
-                await emailSender.SendConfirmationLinkAsync(user, email, HtmlEncoder.Default.Encode(confirmEmailUrl));
+                }
+                else
+                {
+                    await emailSender.SendRegistrationConfirmAccountEmailAsync(email, HtmlEncoder.Default.Encode(confirmEmailUrl), CancellationToken.None);
+                }
             }
 
             return new IdentityEndpointsConventionBuilder(routeGroup);

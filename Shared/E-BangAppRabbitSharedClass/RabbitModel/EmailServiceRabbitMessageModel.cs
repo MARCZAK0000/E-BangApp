@@ -8,5 +8,4 @@ namespace E_BangAppRabbitSharedClass.RabbitModel
         public string Subject { get; set; }
         public EmailBody Body { get; set; }
     }
-
 }

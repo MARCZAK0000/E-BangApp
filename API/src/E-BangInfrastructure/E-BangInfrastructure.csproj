@@ -24,4 +24,10 @@
     <ProjectReference Include="..\E-BangDomain\E-BangDomain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="E-BangAppRabbitSharedClass">
+      <HintPath>..\..\..\Shared\E-BangAppRabbitSharedClass\bin\Debug\net9.0\E-BangAppRabbitSharedClass.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

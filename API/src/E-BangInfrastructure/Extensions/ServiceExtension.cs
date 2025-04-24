@@ -1,9 +1,11 @@
-﻿using E_BangApplication.IQueueService;
-using E_BangDomain.BackgroundTask;
+﻿using E_BangDomain.BackgroundTask;
 using E_BangDomain.Entities;
+using E_BangDomain.IQueueService;
+using E_BangDomain.Repository;
 using E_BangInfrastructure.BackgroundTask;
 using E_BangInfrastructure.Database;
 using E_BangInfrastructure.QueueService;
+using E_BangInfrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -49,6 +51,11 @@ namespace E_BangInfrastructure.Extensions
             //RabbitMqHandler
             services.AddSingleton<IMessageSenderHandlerQueue, MessageSenderHandlerQueue>();
             services.AddTransient<IMessageTask, MessageTask>();
+
+            services.AddScoped<IEmailRepository, EmailRepository>();
+            services.AddScoped<IRabbitSenderRepository , IRabbitSenderRepository>();
+            services.AddScoped<IShopRepository, ShopRepostiory>();
+
         }
 
     }

@@ -1,9 +1,12 @@
-﻿namespace E_BangAppRabbitSharedClass.RabbitMessageChilds
+﻿using E_BangAppRabbitSharedClass.BuildersDto.Footer;
+using E_BangAppRabbitSharedClass.BuildersDto.Header;
+
+namespace E_BangAppRabbitSharedClass.RabbitMessageChilds
 {
     public class EmailBody
     {
-        public object Header { get; set; }
+        public HeaderDefaultTemplateBuilder Header { get; set; }
         public object Body { get; set; }
-        public object Footer { get; set; }
+        public FooterDefualtTemplateBuilder Footer { get; set; }
     }
 }

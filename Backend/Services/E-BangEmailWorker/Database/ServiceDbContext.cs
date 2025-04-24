@@ -13,8 +13,6 @@ namespace E_BangEmailWorker.Database
             {
                 pr.HasKey(x => x.EmailID);
                 pr.HasIndex(x => x.EmailAddress);
-                pr.Property(x => x.EmailBody)
-                    .HasColumnType("nvarchar(max)");
 
             });
 
