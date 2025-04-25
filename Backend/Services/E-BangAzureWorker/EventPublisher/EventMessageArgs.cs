@@ -1,4 +1,5 @@
-﻿using E_BangAzureWorker.AzureStrategy;
+﻿using E_BangAppRabbitSharedClass.AzureRabbitModel;
+using E_BangAzureWorker.AzureStrategy;
 using RabbitMQ.Client.Events;
 
 namespace E_BangAzureWorker.EventPublisher

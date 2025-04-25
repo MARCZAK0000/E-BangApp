@@ -1,4 +1,4 @@
-﻿namespace E_BangAzureWorker.AzureStrategy
+﻿namespace E_BangAppRabbitSharedClass.AzureRabbitModel
 {
     public enum AzureStrategyEnum
     {

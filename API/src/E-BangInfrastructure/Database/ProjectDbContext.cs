@@ -21,6 +21,11 @@ namespace E_BangInfrastructure.Database
         public DbSet<Shop> Shop { get; set; }
         public DbSet<ShopType> ShopTypes { get; set; }
         public DbSet<ShopBranchesInformations> ShopAddressInformations { get; set; }
+        public DbSet<ShopStaff> Staff { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductInformations> ProductInformations { get; set; }
+        public DbSet<ProductPriceCount> ProductPrice { get; set; }
+        public DbSet<ProductHistoryPrice> ProductHistoryPrice { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

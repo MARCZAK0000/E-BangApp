@@ -1,6 +1,6 @@
-﻿namespace E_BangAzureWorker.Model
+﻿namespace E_BangAppRabbitSharedClass.AzureRabbitModel
 {
-    public class MessageData
+    public class AzureMessageData
     {
         public string DataName { get; set; }
         public string DataType { get; set; }

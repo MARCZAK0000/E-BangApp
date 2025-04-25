@@ -55,7 +55,7 @@ namespace E_BangInfrastructure.Extensions
             services.AddScoped<IEmailRepository, EmailRepository>();
             services.AddScoped<IRabbitSenderRepository , IRabbitSenderRepository>();
             services.AddScoped<IShopRepository, ShopRepostiory>();
-
+            services.AddScoped<IProductRepository, ProductRepository>();
         }
 
     }

@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs;
 using E_BangAzureWorker.Model;
 using E_BangAzureWorker.AzureStrategy;
+using E_BangAppRabbitSharedClass.AzureRabbitModel;
 
 namespace E_BangAzureWorker.AzureBaseRepo
 {
@@ -17,7 +18,7 @@ namespace E_BangAzureWorker.AzureBaseRepo
             _containerSettings = containerSettings;
         }
 
-        public async Task<FileChangesResponse> HandleAzureAsync(MessageModel model, CancellationToken token)
+        public async Task<FileChangesResponse> HandleAzureAsync(AzureMessageModel model, CancellationToken token)
         {
             var fileChangesResponse = new FileChangesResponse();
             fileChangesResponse.FileChangesInformations = [];
@@ -32,6 +33,10 @@ namespace E_BangAzureWorker.AzureBaseRepo
             {
                 case 1:
                     {
+                        if(model.AccountID == null)
+                        {
+                            throw new ArgumentNullException("Invalid AccountID");
+                        }
                         await container.DeleteBlobIfExistsAsync(blobName: model.AccountID, DeleteSnapshotsOption.None, cancellationToken: token);
                         fileChangesResponse.IsDone = true;
                         fileChangesResponse.IsRemoved = true;
@@ -46,20 +51,18 @@ namespace E_BangAzureWorker.AzureBaseRepo
                         return fileChangesResponse;
                     }
                 case 2:
-                case 3:
                     {
                         var files = model.Data.ToList();
                         foreach (var item in files)
                         {
                             await container
                                 .DeleteBlobIfExistsAsync
-                                    (string.Format(model.AccountID + "_" + model.ProductID + "_" + item.DataName), DeleteSnapshotsOption.None, cancellationToken: token);
+                                    (item.DataName, DeleteSnapshotsOption.None, cancellationToken: token);
                             fileChangesResponse.FileChangesInformations.Add(new FileChangesInformations
                             {
                                 ContainerId = containerInfo.Id,
-                                FileName = string.Format(model.AccountID + "_" + model.ProductID + "_" + item.DataName),
+                                FileName = item.DataName,
                                 FileType = blobHeader.ContentType,
-                                AccountID = model.AccountID,
                                 ProductID = model.ProductID
                             });
                         }

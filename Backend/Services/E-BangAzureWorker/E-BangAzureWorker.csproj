@@ -16,4 +16,10 @@
     <PackageReference Include="nlog" Version="5.4.0" />
     <PackageReference Include="RabbitMQ.Client" Version="7.1.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="E-BangAppRabbitSharedClass">
+      <HintPath>..\..\..\Shared\E-BangAppRabbitSharedClass\bin\Debug\net9.0\E-BangAppRabbitSharedClass.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

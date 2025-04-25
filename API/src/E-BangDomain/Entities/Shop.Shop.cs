@@ -12,7 +12,7 @@ namespace E_BangDomain.Entities
         public string ShopName { get; set; } 
         public string ShopDescription { get; set; }
         public int ShopTypeId { get; set; }
-        public DateTime LastModifiedTime { get; set; }
+        public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
     }
 
     public partial class Shop

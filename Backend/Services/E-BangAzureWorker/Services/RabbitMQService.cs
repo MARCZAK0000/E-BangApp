@@ -1,4 +1,5 @@
-﻿using E_BangAzureWorker.AzureStrategy;
+﻿using E_BangAppRabbitSharedClass.AzureRabbitModel;
+using E_BangAzureWorker.AzureStrategy;
 using E_BangAzureWorker.DatabaseFactory;
 using E_BangAzureWorker.EventPublisher;
 using E_BangAzureWorker.JSON;
@@ -70,7 +71,7 @@ namespace E_BangAzureWorker.Services
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                var messageModel = JsonHelper.Deserialize<MessageModel>(message);
+                var messageModel = JsonHelper.Deserialize<AzureMessageModel>(message);
                 _logger.LogInformation("Message Recived at {DateTime} from AccountID: {Id}", DateTime.Now, messageModel.AccountID);
                 var result = await _azureStrategy.AzureBlobStrategy(messageModel, cancellationToken);
                 if (result.IsDone)

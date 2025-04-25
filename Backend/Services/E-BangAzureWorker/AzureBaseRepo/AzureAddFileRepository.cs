@@ -1,7 +1,9 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using E_BangAppRabbitSharedClass.AzureRabbitModel;
 using E_BangAzureWorker.AzureStrategy;
 using E_BangAzureWorker.Model;
+using System.Xml.Serialization;
 
 namespace E_BangAzureWorker.AzureBaseRepo
 {
@@ -17,7 +19,8 @@ namespace E_BangAzureWorker.AzureBaseRepo
             _containerSettings = containerSettings;
         }
 
-        public async Task<FileChangesResponse> HandleAzureAsync(MessageModel model, CancellationToken token)
+        public async Task<FileChangesResponse> HandleAzureAsync(AzureMessageModel
+            model, CancellationToken token)
         {
             var fileChangesResponse = new FileChangesResponse();
             fileChangesResponse.FileChangesInformations = [];
@@ -32,6 +35,8 @@ namespace E_BangAzureWorker.AzureBaseRepo
             {
                 case 1:
                     {
+                        string fileName = model.AccountID 
+                            ?? throw new ArgumentNullException("Invalid Account ID");
                         await container.DeleteBlobIfExistsAsync(blobName: model.AccountID, DeleteSnapshotsOption.None, cancellationToken: token);
                         var newBlob = container.GetBlobClient(blobName: model.AccountID);
                         var file = model.Data.FirstOrDefault() ??
@@ -60,15 +65,16 @@ namespace E_BangAzureWorker.AzureBaseRepo
                         return fileChangesResponse ;
                     }
                 case 2:
-                case 3:
                     {
                         var files = model.Data.ToList();
                         foreach (var item in files)
                         {
-                            await container
-                                .DeleteBlobIfExistsAsync
-                                    (string.Format(model.AccountID+"_"+model.ProductID+ "_" + item.DataName), DeleteSnapshotsOption.None, cancellationToken: token);
-                            var blobClient = container.GetBlobClient(blobName: string.Format(model.AccountID + "_" + model.ProductID + "_" + item.DataName));
+                            //await container
+                            //    .DeleteBlobIfExistsAsync
+                            //        (string.Format(model.ProductID+ "_" + item.DataName), DeleteSnapshotsOption.None, cancellationToken: token);
+                            string fileGuid = Guid.NewGuid().ToString();    
+                            var fileName = model.ProductID +"_"+ fileGuid;
+                            var blobClient = container.GetBlobClient(blobName: fileName); 
                             blobHeader.ContentType = item.DataType;
                             if (item.Data == null || item.Data == Array.Empty<byte>())
                                 throw new ArgumentNullException("Invalid File");
@@ -82,9 +88,8 @@ namespace E_BangAzureWorker.AzureBaseRepo
                             new FileChangesInformations
                             {
                                 ContainerId = containerInfo.Id,
-                                FileName = model.AccountID + "_" + model.ProductID + "_" + item.DataName,
+                                FileName = fileName,
                                 FileType = blobHeader.ContentType,
-                                AccountID = model.AccountID,
                                 ProductID = model.ProductID,
                             });
                         }
