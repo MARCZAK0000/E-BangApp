@@ -10,7 +10,7 @@ namespace E_BangAppHelpersUnitTests.AppEmailBuilderUnitTest
     {
         [Fact]
 
-        public void EmailBuilderShouldBeOk()
+        public void RegistrationEmailBuildeShouldBeOk()
         {
             IBuilderEmail builderEmail = new BuilderEmail();
             HeaderDefaultTemplateBuilder header = new HeaderDefaultTemplateBuilder()
@@ -33,6 +33,30 @@ namespace E_BangAppHelpersUnitTests.AppEmailBuilderUnitTest
             message.Message.ShouldContain("http://test.com/asdasdas1231e2");
             message.Message.ShouldContain(DateTime.Now.Year.ToString());
 
+        }
+
+        [Fact]
+        public void ConfirmEmailShouldBeOK()
+        {
+            IBuilderEmail builderEmail = new BuilderEmail();
+            HeaderDefaultTemplateBuilder header = new HeaderDefaultTemplateBuilder()
+            {
+                Email = "test@test.com"
+            };
+            ConfirmEmailTokenBodyBuilder body = new ConfirmEmailTokenBodyBuilder()
+            {
+                Token = "http://test.com/asdasdas1231e2",
+            };
+            FooterDefualtTemplateBuilder footer = new FooterDefualtTemplateBuilder()
+            {
+                Year = DateTime.Now.Year.ToString(),
+            };
+            var message = builderEmail.GenerateMessage(header, body, footer);
+            message.ShouldNotBeNull();
+            message.Message.ShouldNotBeNull();
+            message.Message.ShouldContain("test@test.com");
+            message.Message.ShouldContain("http://test.com/asdasdas1231e2");
+            message.Message.ShouldContain(DateTime.Now.Year.ToString());
         }
         [Fact]
         public void EmailHeaderShouldBeEmpty()
@@ -77,6 +101,8 @@ namespace E_BangAppHelpersUnitTests.AppEmailBuilderUnitTest
             };
             action.ShouldThrow<Exception>("Invalid Strategy");
         }
+
+        
 
     }
 }
