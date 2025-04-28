@@ -1,0 +1,19 @@
+# Pobranie oficjalnego obrazu .NET 9
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS buildenv
+
+#Skopiowanie csproj do kontenera
+COPY *.csproj ./
+
+#Pobranie wszelkich zależnosci z kontenera 
+RUN dotnet restore 
+
+#Skopiowanie wszelkich plików
+COPY . /app
+
+#Publishowanie aplikacji (zbuildowanie)
+RUN dotnet publish -c Release -o Out
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0
+WORKDIR /app
+
+ENTRYPOINT ["dotnet", "E-BangEmailWorker.dll"]

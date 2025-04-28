@@ -1,0 +1,20 @@
+# Oficjalny image .net 9 
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS buildenv
+
+#kopiowanie csproj to katalogu ./ na kontenerze 
+COPY *.csproj ./
+
+#restorowanie wszelkich zaleznosci 
+RUN dotnet restore 
+
+#skopiowanie plikow z folderu do folder /app na kontenerze
+COPY . /app 
+
+#publishowanie aplikacji
+RUN dotnet publish -c Release -o Out
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0
+WORKDIR /app
+#uruchomienie aplikacji 
+ENTRYPOINT ["dotnet", "E-BangAzureWorker.dll"]
+
