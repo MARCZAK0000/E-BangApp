@@ -1,0 +1,6 @@
+@E_BangNotificationService_HostAddress = http://localhost:5241
+
+GET {{E_BangNotificationService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
