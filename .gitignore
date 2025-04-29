@@ -26,6 +26,7 @@ Shared/E-BangAppHelpersUnitTests/obj
 Backend/Services/E-BangNotificationService/bin
 Backend/Services/E-BangNotificationService/obj
 Backend/Services/E-BangNotificationService/Properties
-
+Backend/Services/E-BangNotificationService/*.json
+.github
 
 
