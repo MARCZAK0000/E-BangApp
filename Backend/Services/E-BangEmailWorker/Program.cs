@@ -1,4 +1,3 @@
-using E_BangAppEmailBuilder.src.Abstraction;
 using E_BangEmailWorker;
 using E_BangEmailWorker.Database;
 using E_BangEmailWorker.OptionsPattern;
@@ -20,7 +19,7 @@ public class Program
         builder.Services.AddScoped<IDatabaseRepository, DatabaseRepository>();
         builder.Services.AddScoped<IMessageRepository, MessageRepository>();
         builder.Services.AddScoped<IRabbitQueueService, RabbitQueueService>();
-        builder.Services.AddScoped<IBuilderEmail, BuilderEmail>();  
+        builder.Services.AddScoped<IBuilderEmail, BuilderEmail>();
         builder.Services.AddSingleton<DatabaseSeed>();
         builder.Services.AddDbContext<ServiceDbContext>(options =>
         {

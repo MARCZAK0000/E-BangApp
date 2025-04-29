@@ -1,0 +1,21 @@
+services:
+  adminer: 
+    image: adminer
+    restart: no
+    ports:
+      - "8080:8080"
+    networks:
+      - postgresnet
+
+  db:
+    image: postgres
+    restart: no
+    environment:
+      POSTGRES_PASSWORD: dockersql
+    ports:
+      - "5432:5432"
+    networks:
+      - postgresnet
+
+networks:
+  postgresnet:

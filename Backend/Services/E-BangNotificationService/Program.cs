@@ -15,7 +15,6 @@ internal class Program
         // Add services to the container.
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
-        builder.Services.AddControllers();
         builder.Services.AddScoped<ErrorHandlingMiddleware>();
         builder.Services.AddScoped<MigrationHandler>();
         builder.Services.AddSignalR();
@@ -40,10 +39,13 @@ internal class Program
         }
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.MapControllers();
         app.MapHub<NotificationHub>("hub/notification");
 
         app.UseMiddleware<ErrorHandlingMiddleware>();
+
+        var health = app.MapGroup("api/health");
+
+        //health.MapGet("/")
         app.Run();
     }
 }
