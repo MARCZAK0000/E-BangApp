@@ -1,0 +1,42 @@
+﻿
+using E_BangNotificationService.AppInfo;
+
+namespace E_BangNotificationService.BackgroundWorker
+{
+    public class NotificationWorker : BackgroundService
+    {
+        private readonly IInformations _informations;
+        
+        private readonly ILogger<NotificationWorker> _logger;
+
+        public NotificationWorker(IInformations informations, ILogger<NotificationWorker> logger)
+        {
+            _informations = informations;
+            _logger = logger;
+        }
+
+        public override Task StartAsync(CancellationToken cancellationToken)
+        {
+            _informations.InitTime = DateTime.Now;
+            _informations.IsWorking = true;
+            _logger.LogInformation("{Date}: Init Connection", DateTime.Now);
+            return base.StartAsync(cancellationToken);
+        }
+        public override Task StopAsync(CancellationToken cancellationToken)
+        {
+            _informations.IsWorking = false;
+            _informations.ClosedTime = DateTime.Now;
+            _logger.LogInformation("{Date}: Close Connection", DateTime.Now);
+            return base.StopAsync(cancellationToken);
+        }
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                _informations.CurrentTime = DateTime.Now;
+                _informations.IsWorking = true;
+                await Task.Delay(1000, stoppingToken);
+            }
+        }
+    }
+}
