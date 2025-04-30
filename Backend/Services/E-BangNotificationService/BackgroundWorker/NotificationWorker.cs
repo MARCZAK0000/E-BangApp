@@ -1,5 +1,5 @@
-﻿
-using E_BangNotificationService.AppInfo;
+﻿using E_BangNotificationService.AppInfo;
+using E_BangNotificationService.Service;
 
 namespace E_BangNotificationService.BackgroundWorker
 {
@@ -9,10 +9,14 @@ namespace E_BangNotificationService.BackgroundWorker
         
         private readonly ILogger<NotificationWorker> _logger;
 
-        public NotificationWorker(IInformations informations, ILogger<NotificationWorker> logger)
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+
+        public NotificationWorker(IInformations informations, 
+            ILogger<NotificationWorker> logger, IServiceScopeFactory serviceScopeFactory)
         {
             _informations = informations;
             _logger = logger;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -31,12 +35,24 @@ namespace E_BangNotificationService.BackgroundWorker
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                _informations.CurrentTime = DateTime.Now;
-                _informations.IsWorking = true;
-                await Task.Delay(1000, stoppingToken);
+                using var scope = _serviceScopeFactory.CreateScope();
+                IRabbitMQService rabbitMQService = scope.ServiceProvider.GetRequiredService<IRabbitMQService>();
+                await rabbitMQService.CreateListenerQueueAsync(stoppingToken);
+
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    _informations.CurrentTime = DateTime.Now;
+                    _informations.IsWorking = true;
+                    await Task.Delay(1000, stoppingToken);
+                }
             }
+            catch (Exception ex)
+            {
+                _logger.LogError("Something unexpected happens at {datetime}: {ex}", DateTime.Now, ex.Message);
+            }
+            
         }
     }
 }

@@ -2,13 +2,17 @@ using E_BangNotificationService.AppInfo;
 using E_BangNotificationService.BackgroundWorker;
 using E_BangNotificationService.Middleware;
 using E_BangNotificationService.NotificationEntities;
+using E_BangNotificationService.OptionsPattern;
+using E_BangNotificationService.Repository;
+using E_BangNotificationService.Service;
 using E_BangNotificationService.SignalRHub;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 
 internal class Program
 {
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -24,11 +28,20 @@ internal class Program
             options.UseNpgsql(connectionString);
         });
         builder.Services.AddSingleton<IInformations, Informations>();
+        builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
+        builder.Services.AddScoped<IRabbitRepository, RabbitRepository>();
+        builder.Services.AddScoped<IPostgresDbRepostiory, PostgresDbRepostiory>();   
         builder.Services.AddHostedService<NotificationWorker>();
+
+        #region Options Pattern
+        builder.Services.AddOptions<RabbitOptions>()
+            .BindConfiguration("RabbitOptions");
+        builder.Services.AddSingleton(sp=>sp.GetRequiredService<IOptions<RabbitOptions>>().Value);
+        #endregion
         var app = builder.Build();
         using var scope = app.Services.CreateScope();
         var migration = scope.ServiceProvider.GetRequiredService<MigrationHandler>();
-        migration.MigrateDb();
+        await migration.MigrateDb();
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
@@ -39,13 +52,23 @@ internal class Program
         }
         app.UseHttpsRedirection();
         app.UseRouting();
+        app.UseMiddleware<ErrorHandlingMiddleware>();
         app.MapHub<NotificationHub>("hub/notification");
 
-        app.UseMiddleware<ErrorHandlingMiddleware>();
-
         var health = app.MapGroup("api/health");
+        var notification = app.MapGroup("api/notification");
 
-        //health.MapGet("/")
+        health.MapGet("/", (IInformations informations) =>
+        {
+            return Results.Ok(informations);
+        });
+
+        notification.MapGet("/", async (string AccountID, bool IsRead, CancellationToken token) =>
+        {
+            return Results.Ok();
+        });
+
+
         app.Run();
     }
 }

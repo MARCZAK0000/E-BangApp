@@ -1,7 +1,9 @@
-﻿namespace E_BangNotificationService.SignalRTypedHub
+﻿using E_BangAppRabbitSharedClass.RabbitModel;
+
+namespace E_BangNotificationService.SignalRTypedHub
 {
     public interface INotificationClient
     {
-        Task RecivedMessage(string message);
+        Task RecivedMessage(NotificationRabbitMessageModel message);
     }
 }

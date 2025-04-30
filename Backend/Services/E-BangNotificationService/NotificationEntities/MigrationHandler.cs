@@ -11,15 +11,15 @@ namespace E_BangNotificationService.NotificationEntities
             _notification = notification;
         }
 
-        public void MigrateDb()
+        public async Task MigrateDb()
         {
-            _notification.Database.EnsureCreated(); 
-            if(_notification.Database.CanConnect())
+            await _notification.Database.EnsureCreatedAsync(); 
+            if(await _notification.Database.CanConnectAsync())
             {
-                var pendingMigrations = _notification.Database.GetPendingMigrations();
+                var pendingMigrations = await _notification.Database.GetPendingMigrationsAsync();
                 if (pendingMigrations.Any())
                 {
-                    _notification.Database.Migrate();
+                    await _notification.Database.MigrateAsync();
                 }
             }
         }

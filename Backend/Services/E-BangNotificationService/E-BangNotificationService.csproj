@@ -16,4 +16,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="E-BangAppRabbitSharedClass">
+      <HintPath>..\..\..\Shared\E-BangAppRabbitSharedClass\bin\Debug\net9.0\E-BangAppRabbitSharedClass.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
