@@ -1,3 +1,4 @@
+using E_BangAppEmailBuilder.src.Abstraction;
 using E_BangEmailWorker;
 using E_BangEmailWorker.Database;
 using E_BangEmailWorker.OptionsPattern;
@@ -19,6 +20,8 @@ public class Program
         builder.Services.AddScoped<IDatabaseRepository, DatabaseRepository>();
         builder.Services.AddScoped<IMessageRepository, MessageRepository>();
         builder.Services.AddScoped<IRabbitQueueService, RabbitQueueService>();
+        builder.Services.AddScoped<IRabbitRepository, RabbitRepository>();
+        builder.Services.AddScoped<IBuilderEmail, BuilderEmail>();
         builder.Services.AddSingleton<DatabaseSeed>();
         builder.Services.AddDbContext<ServiceDbContext>(options =>
         {
@@ -43,6 +46,7 @@ public class Program
 
         using var scope = host.Services.CreateScope();
         var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeed>();
+        await seeder.MigrateAsync();
         await seeder.InvokeSeed();
         if (!await seeder.CheckConfigurationValues())
         {

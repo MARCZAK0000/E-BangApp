@@ -7,7 +7,6 @@ namespace E_BangEmailWorker.Seeder
 {
     public class DatabaseSeed
     {
-        private ServiceDbContext _serviceDbContext = null!;
         private readonly EmailConnectionOptions _connectionOptions;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ILogger<DatabaseSeed> _logger;
@@ -23,15 +22,30 @@ namespace E_BangEmailWorker.Seeder
             _serviceScopeFactory = serviceScopeFactory;
         }
 
+        public async Task MigrateAsync()
+        {
+            using var scope = _serviceScopeFactory.CreateScope();
+            ServiceDbContext serviceDbContext = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
+            await serviceDbContext.Database.EnsureCreatedAsync();
+            if (await serviceDbContext.Database.CanConnectAsync())
+            {
+                var pendingMigrations = await serviceDbContext.Database.GetPendingMigrationsAsync();
+                if (pendingMigrations.Any())
+                {
+                    await serviceDbContext.Database.MigrateAsync();
+                }
+            }
+        }
+
         public async Task InvokeSeed()
         {
             using var scope = _serviceScopeFactory.CreateScope();
-            _serviceDbContext = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
-            if (await _serviceDbContext.Database.CanConnectAsync())
+            ServiceDbContext serviceDbContext = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
+            if (await serviceDbContext.Database.CanConnectAsync())
             {
-                if (!await _serviceDbContext.EmailSettings.AnyAsync())
+                if (!await serviceDbContext.EmailSettings.AnyAsync())
                 {
-                    await _serviceDbContext.EmailSettings.AddAsync(new EmailSettings()
+                    await serviceDbContext.EmailSettings.AddAsync(new EmailSettings()
                     {
                         EmailName = _connectionOptions.EmailName,
                         Password = _passwordHasher.GeneratePasswordHash(_connectionOptions.Password, _connectionOptions.Salt),
@@ -39,7 +53,7 @@ namespace E_BangEmailWorker.Seeder
                         SmptHost = _connectionOptions.SmptHost,
                         Salt = _connectionOptions.Salt
                     });
-                    await _serviceDbContext.SaveChangesAsync();
+                    await serviceDbContext.SaveChangesAsync();
                 }
             }
             _logger.LogCritical("DbConfiguration Initalized");
@@ -47,12 +61,12 @@ namespace E_BangEmailWorker.Seeder
         public async Task<bool> CheckConfigurationValues()
         {
             using var scope = _serviceScopeFactory.CreateScope();
-            _serviceDbContext = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
-            if (!await _serviceDbContext.Database.CanConnectAsync())
+            ServiceDbContext serviceDbContext = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
+            if (!await serviceDbContext.Database.CanConnectAsync())
             {
                 return false;
             }
-            var configuration = await _serviceDbContext.EmailSettings.FirstOrDefaultAsync();
+            var configuration = await serviceDbContext.EmailSettings.FirstOrDefaultAsync();
             if (configuration is null)
             {
                 return false;
@@ -66,7 +80,7 @@ namespace E_BangEmailWorker.Seeder
                 configuration.Salt = _connectionOptions.Salt;
                 configuration.Password = _passwordHasher.GeneratePasswordHash(_connectionOptions.Password, _connectionOptions.Salt);
                 configuration.LastUpdateTime = DateTime.Now;
-                await _serviceDbContext.SaveChangesAsync();
+                await serviceDbContext.SaveChangesAsync();
                 _logger.LogWarning("DbConfiguration: Password changed");
             }
             _logger.LogCritical("DbConfiguration: Configuration correct");

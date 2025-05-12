@@ -1,0 +1,27 @@
+# Use the .NET SDK image for building the application
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS buildenv
+
+# Set the working directory
+WORKDIR /src
+
+# Copy the .csproj file and restore dependencies
+COPY *.csproj ./
+RUN dotnet restore
+
+# Copy the rest of the application code
+COPY . .
+
+# Publish the application
+RUN dotnet publish -c Release -o /app
+
+# Use the ASP.NET Core runtime image for running the application
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the published output from the build stage
+COPY --from=buildenv /app .
+
+# Set the entry point for the application
+ENTRYPOINT ["dotnet", "E-BangNotificationService.dll"]

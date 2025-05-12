@@ -1,0 +1,36 @@
+# Use the .NET SDK image for building the application
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS buildenv
+
+# Set the working directory
+WORKDIR /src
+
+#Copy nuget config
+COPY nuget.config .
+
+#Copt local nuget packages 
+COPY .nuget ./.nuget 
+
+#Copy csproj to container
+COPY Backend/Services/E-BangNotificationService/*.csproj ./E-BangNotificationService/
+
+#Restore Dependencies 
+RUN dotnet restore E-BangNotificationService/E-BangNotificationService.csproj
+
+#Copy rest of files to container
+COPY Backend/Services/E-BangNotificationService/ ./E-BangNotificationService/
+
+# Publish the application
+RUN dotnet publish E-BangNotificationService/E-BangNotificationService.csproj -c Release -o /app
+
+# Use the ASP.NET Core runtime image for running the application
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the published output from the build stage
+COPY --from=buildenv /app .
+
+# Set the entry point for the application
+ENTRYPOINT ["dotnet", "E-BangNotificationService.dll"]
+

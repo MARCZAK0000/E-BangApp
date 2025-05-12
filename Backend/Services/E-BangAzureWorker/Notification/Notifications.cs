@@ -1,4 +1,5 @@
-﻿using E_BangAzureWorker.AzureStrategy;
+﻿using E_BangAppRabbitSharedClass.AzureRabbitModel;
+using E_BangAzureWorker.AzureStrategy;
 using E_BangAzureWorker.EventPublisher;
 using E_BangAzureWorker.Model;
 

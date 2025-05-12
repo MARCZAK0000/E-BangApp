@@ -17,9 +17,9 @@ public class Worker : BackgroundService
     {
         try
         {
-            IServiceScope scope = _serviceScopeFactory.CreateScope();
-            IRabbitQueueService rabbitQueue = scope.ServiceProvider.GetService<RabbitQueueService>()!;
-            await rabbitQueue.HandleRabbitQueue(stoppingToken);
+            using IServiceScope scope = _serviceScopeFactory.CreateScope();
+            IRabbitQueueService rabbitQueue = scope.ServiceProvider.GetRequiredService<IRabbitQueueService>();
+            await rabbitQueue.HandleRabbitQueueAsync(stoppingToken);
             while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(1000, stoppingToken);
@@ -27,8 +27,21 @@ public class Worker : BackgroundService
         }
         catch (Exception err)
         {
-            _logger.LogError("Unexptected error: {0}", err.Message);
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                System.Diagnostics.Debugger.Break();
+            }
+            _logger.LogError("Unexptected error in worker: {0}", err.Message);
         }
-
+    }
+    public override Task StartAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Worker initalized at {Date}", DateTime.Now);
+        return base.StartAsync(cancellationToken);
+    }
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation($"Stop {DateTime.Now}");
+        return base.StopAsync(cancellationToken);
     }
 }

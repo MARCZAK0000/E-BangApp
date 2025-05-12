@@ -43,7 +43,7 @@ namespace E_BangEmailWorker.Services
             _messageRepository = messageRepository;
         }
 
-        public async Task HandleRabbitQueue(CancellationToken token)
+        public async Task HandleRabbitQueueAsync(CancellationToken token)
         {
             try
             {

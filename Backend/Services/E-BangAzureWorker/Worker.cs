@@ -12,10 +12,10 @@ public class Worker : BackgroundService
 {
     private IRabbitMQService? _rabbitMQService;
     private IEventPublisher? _eventPublisher;
-    private readonly ILogger _logger;
+    private readonly ILogger<Worker> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public Worker(ILogger logger, IServiceScopeFactory serviceScopeFactory)
+    public Worker(ILogger<Worker> logger, IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
         _serviceScopeFactory = serviceScopeFactory;
@@ -23,24 +23,33 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-
-        await _rabbitMQService!.HandleReciverQueueAsync(stoppingToken);
-
-        _eventPublisher!.ReceivedMessageAsync += async (sender, obj) =>
+        try
         {
-            await _rabbitMQService.HandleSendQueueAsync(obj, stoppingToken);
-        };
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            await Task.Delay(1000, stoppingToken); 
+            using var scope = _serviceScopeFactory.CreateScope();
+            _eventPublisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            _rabbitMQService = scope.ServiceProvider.GetRequiredService<IRabbitMQService>();
+            await _rabbitMQService.HandleReciverQueueAsync(stoppingToken);
+
+            _eventPublisher!.ReceivedMessageAsync += async (sender, obj) =>
+            {
+                await _rabbitMQService.HandleSendQueueAsync(obj, stoppingToken);
+            };
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                await Task.Delay(1000, stoppingToken);
+            }
         }
+        catch (Exception err)
+        {
+            _logger.LogError("Error ocured at {Date} in Worker: {ex}", DateTime.Now, err.Message);
+            throw;
+        }
+        
     }
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Worker Initailized at {DateTime}", DateTime.Now);
-        using var scope = _serviceScopeFactory.CreateScope();  
-        _eventPublisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
-        _rabbitMQService = scope.ServiceProvider.GetRequiredService<IRabbitMQService>();
+        
 
         return base.StartAsync(cancellationToken);
     }

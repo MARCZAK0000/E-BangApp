@@ -50,7 +50,7 @@ namespace E_BangNotificationService.BackgroundWorker
             }
             catch (Exception ex)
             {
-                _logger.LogError("Something unexpected happens at {datetime}: {ex}", DateTime.Now, ex.Message);
+                _logger.LogError("Something unexpected happens at {datetime}: {ex}, {ex.endpoint}", DateTime.Now, ex.Message,ex.Source);
             }
             
         }

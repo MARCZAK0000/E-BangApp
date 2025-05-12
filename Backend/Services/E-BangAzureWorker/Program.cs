@@ -1,4 +1,5 @@
 using Azure.Storage.Blobs;
+using E_BangAppRabbitSharedClass.AzureRabbitModel;
 using E_BangAzureWorker;
 using E_BangAzureWorker.AzureBaseRepo;
 using E_BangAzureWorker.AzureStrategy;
@@ -72,17 +73,18 @@ public class Program
             #region Options Pattern
             builder.Services
                 .AddOptions<RabbitMQSettings>()
-                .BindConfiguration("");
-            builder.Services
-                .AddSingleton<IContainerSettings>
-                    (sp => sp.GetRequiredService<IOptions<ContainerSettings>>().Value);
+                .BindConfiguration("RabbitMQSetting");
+
+            builder.Services.AddSingleton<IRabbitMQSettings>
+              (sp => sp.GetRequiredService<IOptions<RabbitMQSettings>>().Value);
 
             builder.Services
                 .AddOptions<ContainerSettings>()
                 .BindConfiguration("ContainerSettings");
-            builder.Services.AddSingleton<IRabbitMQSettings>
-                (sp => sp.GetRequiredService<IOptions<RabbitMQSettings>>().Value);
 
+            builder.Services
+               .AddSingleton<IContainerSettings>
+                   (sp => sp.GetRequiredService<IOptions<ContainerSettings>>().Value);
 
             builder.Services
                 .AddOptions<EmulatorSettings>()
@@ -102,7 +104,7 @@ public class Program
         }
         catch (Exception err)
         {
-            logger.LogError(err.ToString());
+            logger.LogError("Error ocured at {Date}: {ex}", DateTime.Now, err.Message);
             if (System.Diagnostics.Debugger.IsAttached)
                 System.Diagnostics.Debugger.Break();
         }

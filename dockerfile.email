@@ -1,0 +1,37 @@
+#Official .NET9 SDK Image
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS buildenv
+
+#Set Path to /src
+WORKDIR /src
+
+#Copy Nuget Config
+COPY nuget.config .
+
+#Copy local nuget repo
+COPY .nuget ./.nuget 
+
+#Copy Email Service csproj
+COPY Backend/Services/E-BangEmailWorker/*.csproj ./E-BangEmailWorker/
+
+#Build Project with all Dependencies
+RUN dotnet restore E-BangEmailWorker/E-BangEmailWorker.csproj
+
+#Copy Rest of Files From E-BangEmailWorker Folder into docker container
+COPY Backend/Services/E-BangEmailWorker/ ./E-BangEmailWorker
+
+#Publish Application
+RUN dotnet publish E-BangEmailWorker/E-BangEmailWorker.csproj -c Release -o /app 
+# Use the ASP.NET Core runtime image for running the application
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the published output from the build stage
+COPY --from=buildenv /app .
+
+ENTRYPOINT [ "dotnet","E-BangEmailWorker.dll" ]
+
+
+
+

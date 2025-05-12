@@ -2,6 +2,6 @@
 {
     public interface IRabbitQueueService
     {
-        Task HandleRabbitQueue(CancellationToken token);
+        Task HandleRabbitQueueAsync(CancellationToken token);
     }
 }

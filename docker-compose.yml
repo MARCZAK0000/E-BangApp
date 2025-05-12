@@ -1,6 +1,19 @@
 services:
+  app:
+    image: notificationservice
+    container_name: notification_app
+    ports:
+      - "8100:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - postgresnet
+    depends_on:
+      - db
+      - rabbitmq
   adminer:
     image: adminer
+    container_name: adminer
     restart: no
     ports:
       - "8080:8080"
@@ -10,6 +23,7 @@ services:
   db:
     image: postgres
     restart: no
+    container_name: db
     environment:
       POSTGRES_PASSWORD: dockersql
     ports:
@@ -18,7 +32,7 @@ services:
       - postgresnet
 
   rabbitmq:
-    image: rabbitmq:latest
+    image: rabbitmq:4.1.0-management
     container_name: rabbitmq
     restart: no
     ports:

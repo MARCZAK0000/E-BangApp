@@ -35,7 +35,9 @@ internal class Program
 
         #region Options Pattern
         builder.Services.AddOptions<RabbitOptions>()
-            .BindConfiguration("RabbitOptions");
+            .ValidateDataAnnotations()
+            .BindConfiguration("RabbitOptions")
+            .ValidateOnStart();
         builder.Services.AddSingleton(sp=>sp.GetRequiredService<IOptions<RabbitOptions>>().Value);
         #endregion
         var app = builder.Build();

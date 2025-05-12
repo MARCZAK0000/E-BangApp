@@ -6,11 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
+  
+  <PropertyGroup>
+    <PackageId>EmailBuilder</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>MARCZAK0000</Authors>
+    <Description>Email builder</Description>
+    <PackageTags>email, email builder</PackageTags>
+  </PropertyGroup>
+  
   <ItemGroup>
-    <Reference Include="E-BangAppRabbitSharedClass">
-      <HintPath>..\E-BangAppRabbitSharedClass\bin\Debug\net9.0\E-BangAppRabbitSharedClass.dll</HintPath>
-    </Reference>
+    <PackageReference Include="E-BangAppRabbitSharedClass" Version="1.0.0" />
   </ItemGroup>
-
 </Project>

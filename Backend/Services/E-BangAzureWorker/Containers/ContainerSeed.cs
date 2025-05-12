@@ -74,9 +74,6 @@ namespace E_BangAzureWorker.Containers
                 _logger.LogCritical("Error in {container} at {DateTime}: {err}", nameof(ContainerSeed), DateTime.Now, err);
                 throw;
             }
-            
-            
-           
         }
 
     }
