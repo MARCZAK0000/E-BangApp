@@ -74,32 +74,26 @@ public class Program
             builder.Services
                 .AddOptions<RabbitMQSettings>()
                 .BindConfiguration("RabbitMQSetting");
-
-            builder.Services.AddSingleton<IRabbitMQSettings>
-              (sp => sp.GetRequiredService<IOptions<RabbitMQSettings>>().Value);
+            builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitMQSettings>>().Value);
 
             builder.Services
                 .AddOptions<ContainerSettings>()
                 .BindConfiguration("ContainerSettings");
-
-            builder.Services
-               .AddSingleton<IContainerSettings>
-                   (sp => sp.GetRequiredService<IOptions<ContainerSettings>>().Value);
-
+            builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptions<ContainerSettings>>().Value);
             builder.Services
                 .AddOptions<EmulatorSettings>()
-                .BindConfiguration("ContainerSettings");
-            builder.Services.AddSingleton<IEmulatorSettingss>
-                (sp => sp.GetRequiredService<IOptions<EmulatorSettings>>().Value);
+                .BindConfiguration("EmulatorSettings");
+            builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptions<EmulatorSettings>>().Value);
             #endregion
             var host = builder.Build();
             using var scope = host.Services.CreateScope();
             var seeder = scope.ServiceProvider.GetRequiredService<ContainerSeed>();
             var connections = scope.ServiceProvider.GetRequiredService<ContainerConnections>();
             var emulator = scope.ServiceProvider.GetRequiredService<EmulatorInvoke>();
+            await seeder.MirageAsync();
             await seeder.InvokeSeed();
             await connections.ValidateSettingsAsync();
-            emulator.RunEmulator();
+            //emulator.RunEmulator();
             host.Run();
         }
         catch (Exception err)

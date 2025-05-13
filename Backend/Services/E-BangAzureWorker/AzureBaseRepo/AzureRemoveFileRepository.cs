@@ -10,9 +10,9 @@ namespace E_BangAzureWorker.AzureBaseRepo
     {
         private readonly BlobServiceClient _blobServiceClient;
 
-        private readonly IContainerSettings _containerSettings;
+        private readonly ContainerSettings _containerSettings;
 
-        public AzureRemoveFileRepository(BlobServiceClient blobServiceClient, IContainerSettings containerSettings)
+        public AzureRemoveFileRepository(BlobServiceClient blobServiceClient, ContainerSettings containerSettings)
         {
             _blobServiceClient = blobServiceClient;
             _containerSettings = containerSettings;

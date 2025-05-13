@@ -11,9 +11,9 @@ namespace E_BangAzureWorker.AzureBaseRepo
     {
         private readonly BlobServiceClient _blobServiceClient;
 
-        private readonly IContainerSettings _containerSettings;
+        private readonly ContainerSettings _containerSettings;
 
-        public AzureAddFileRepository(BlobServiceClient blobServiceClient, IContainerSettings containerSettings)
+        public AzureAddFileRepository(BlobServiceClient blobServiceClient, ContainerSettings containerSettings)
         {
             _blobServiceClient = blobServiceClient;
             _containerSettings = containerSettings;

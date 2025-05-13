@@ -1,10 +1,5 @@
 using E_BangAzureWorker.EventPublisher;
 using E_BangAzureWorker.Services;
-using Microsoft.Extensions.DependencyInjection;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System.Data.SqlTypes;
-using System.Text;
 
 namespace E_BangAzureWorker;
 
@@ -42,14 +37,17 @@ public class Worker : BackgroundService
         catch (Exception err)
         {
             _logger.LogError("Error ocured at {Date} in Worker: {ex}", DateTime.Now, err.Message);
-            throw;
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                System.Diagnostics.Debugger.Break();
+            }
         }
-        
+
     }
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Worker Initailized at {DateTime}", DateTime.Now);
-        
+
 
         return base.StartAsync(cancellationToken);
     }
@@ -62,6 +60,6 @@ public class Worker : BackgroundService
     {
         _rabbitMQService?.HandleDispose();
         GC.SuppressFinalize(this);
-        base.Dispose(); 
+        base.Dispose();
     }
 }

@@ -22,7 +22,7 @@ namespace E_BangAzureWorker.Services
 
         private readonly IAzureStrategy _azureStrategy;
 
-        private readonly IRabbitMQSettings _rabbitMQSettings;
+        private readonly RabbitMQSettings _rabbitMQSettings;
 
         private readonly IDbStrategy _dbStrategy;
 
@@ -30,7 +30,7 @@ namespace E_BangAzureWorker.Services
             IEventPublisher eventPublisher,
             ILogger<RabbitMQService> logger,
             IAzureStrategy azureStategy,
-            IRabbitMQSettings rabbitMQSettings,
+            RabbitMQSettings rabbitMQSettings,
             IDbStrategy dbFactory)
         {
             _rabbitRepository = rabbitRepository;

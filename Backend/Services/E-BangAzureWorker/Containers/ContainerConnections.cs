@@ -9,11 +9,11 @@ namespace E_BangAzureWorker.Containers
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        private readonly IContainerSettings _containerSettings;
+        private readonly ContainerSettings _containerSettings;
 
         private readonly ILogger<ContainerConnections> _logger;
 
-        public ContainerConnections(IServiceScopeFactory serviceScopeFactory, IContainerSettings containerSettings, ILogger<ContainerConnections> logger)
+        public ContainerConnections(IServiceScopeFactory serviceScopeFactory, ContainerSettings containerSettings, ILogger<ContainerConnections> logger)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _containerSettings = containerSettings;

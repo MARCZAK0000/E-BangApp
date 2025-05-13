@@ -6,9 +6,9 @@ namespace E_BangAzureWorker.Azurite
     public class EmulatorInvoke
     {
         private readonly ILogger<EmulatorInvoke> _logger;
-        private readonly IEmulatorSettingss _emulatorSettingss;
+        private readonly EmulatorSettings _emulatorSettingss;
 
-        public EmulatorInvoke(ILogger<EmulatorInvoke> logger, IEmulatorSettingss emulatorSettingss)
+        public EmulatorInvoke(ILogger<EmulatorInvoke> logger, EmulatorSettings emulatorSettingss)
         {
             _logger = logger;
             _emulatorSettingss = emulatorSettingss;

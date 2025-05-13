@@ -11,13 +11,17 @@ namespace E_BangAzureWorker.Comaperer
                 && y is not null
                 && x.Name == y.Name
                 && x.RootFilePath == y.RootFilePath
-                && x.Enabled == y.Enabled
-                && x.BlobRootPathID == y.BlobRootPathID;
+                && x.Enabled == y.Enabled;
         }
 
         public int GetHashCode([DisallowNull] BlobContainer obj)
         {
-            return obj.GetHashCode();
+            return HashCode.Combine(
+                obj.Name,
+                obj.RootFilePath,
+                obj.Enabled,
+                obj.BlobRootPathID
+            );
         }
     }
 }
