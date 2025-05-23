@@ -37,12 +37,11 @@ namespace E_BangEmailWorker.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("EmailBody")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsSend")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("SendTime")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("EmailID");
 

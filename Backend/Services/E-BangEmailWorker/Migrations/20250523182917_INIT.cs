@@ -25,7 +25,8 @@ namespace E_BangEmailWorker.Migrations
                     EmailID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmailAddress = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    EmailBody = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsSend = table.Column<bool>(type: "bit", nullable: false),
+                    SendTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

@@ -19,8 +19,7 @@ namespace E_BangAzureWorker.Comaperer
             return HashCode.Combine(
                 obj.Name,
                 obj.RootFilePath,
-                obj.Enabled,
-                obj.BlobRootPathID
+                obj.Enabled
             );
         }
     }

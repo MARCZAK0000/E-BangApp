@@ -70,7 +70,9 @@ namespace E_BangEmailWorker.Services
                         _logger.LogError("There is a problem with email message: {messageModel}", messageModel);
                         throw new MesseageNotSendException("Email Message Problem");
                     }
+                    _logger.LogInformation("Sending email: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", mimeMessage.From, mimeMessage.To);
                     await _databaseRepository.SaveEmailInfo(messageModel, token);
+                    _logger.LogInformation("Saving emial info: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", mimeMessage.From, mimeMessage.To);
                     await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false, token);
                 };
 
@@ -81,8 +83,6 @@ namespace E_BangEmailWorker.Services
                 _logger.LogError("Problem with rabbit handler message: {ex}", ex.Message);
                 throw;
             }
-            
-            
         }
     }
 }

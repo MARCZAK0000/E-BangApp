@@ -86,7 +86,7 @@ namespace E_BangAzureWorker.Services
                 await ReciverChannel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false, cancellationToken);
             };
 
-            await ReciverChannel.BasicConsumeAsync("task_queue", autoAck: false, consumer: consumer, cancellationToken);
+            await ReciverChannel.BasicConsumeAsync(_rabbitMQSettings.ReciverQueueName, autoAck: false, consumer: consumer, cancellationToken);
         }
 
         public async Task HandleSendQueueAsync(EventMessageArgs args, CancellationToken cancellationToken)
@@ -99,7 +99,7 @@ namespace E_BangAzureWorker.Services
                 });
             }
             SenderChannel = await _rabbitRepository.CreateChannelAsync(Connection, cancellationToken);
-            await SenderChannel.QueueDeclareAsync(queue: "task_queue", durable: true, exclusive: false,
+            await SenderChannel.QueueDeclareAsync(queue: _rabbitMQSettings.SenderQueueName, durable: true, exclusive: false,
                     autoDelete: false, arguments: null, noWait: false, cancellationToken);
             var message = Notifications.GenerateMessage(args);
             var messageString = JsonHelper.Serialize(message);

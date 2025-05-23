@@ -26,7 +26,6 @@ namespace E_BangEmailWorker.Seeder
         {
             using var scope = _serviceScopeFactory.CreateScope();
             ServiceDbContext serviceDbContext = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
-            await serviceDbContext.Database.EnsureCreatedAsync();
             if (await serviceDbContext.Database.CanConnectAsync())
             {
                 var pendingMigrations = await serviceDbContext.Database.GetPendingMigrationsAsync();
@@ -34,6 +33,7 @@ namespace E_BangEmailWorker.Seeder
                 {
                     await serviceDbContext.Database.MigrateAsync();
                 }
+                await serviceDbContext.Database.EnsureCreatedAsync();
             }
         }
 
@@ -83,7 +83,7 @@ namespace E_BangEmailWorker.Seeder
                 await serviceDbContext.SaveChangesAsync();
                 _logger.LogWarning("DbConfiguration: Password changed");
             }
-            _logger.LogCritical("DbConfiguration: Configuration correct");
+            _logger.LogInformation("DbConfiguration: Configuration correct");
             return true;
         }
     }

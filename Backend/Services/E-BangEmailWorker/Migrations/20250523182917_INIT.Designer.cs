@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_BangEmailWorker.Migrations
 {
     [DbContext(typeof(ServiceDbContext))]
-    [Migration("20250309153855_change_recant_emails")]
-    partial class change_recant_emails
+    [Migration("20250523182917_INIT")]
+    partial class INIT
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,12 +40,11 @@ namespace E_BangEmailWorker.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("EmailBody")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsSend")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("SendTime")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("EmailID");
 
