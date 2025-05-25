@@ -29,5 +29,6 @@ Backend/Services/E-BangNotificationService/Properties
 Backend/Services/E-BangNotificationService/*.json
 .github
 .nuget
+.env
 
 

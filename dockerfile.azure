@@ -1,0 +1,35 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS buildenv
+
+#Set Work Path to /src
+WORKDIR  /src
+#copy nuget config to /src
+COPY nuget.config .
+#Copy nuget files to container 
+COPY .nuget ./.nuget 
+
+#Copy Azure Service csproj to restore 
+COPY Backend/Services/E-BangAzureWorker/*.csproj  ./E-BangAzureWorker/
+
+#Restore all dependencies 
+RUN dotnet restore ./E-BangAzureWorker/E-BangAzureWorker.csproj
+
+#Copy All files to Container 
+COPY Backend/Services/E-BangAzureWorker/ ./E-BangAzureWorker/
+
+#Publish app
+# -c Release - Production Mode 
+# -c Debug - Debug Mode :D
+# -o Send dll to folder /app (example)
+
+RUN dotnet publish ./E-BangAzureWorker/E-BangAzureWorker.csproj -c Release -o /app
+
+#Use aspnet to avoid downloading whole sdk 
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+
+WORKDIR /app
+
+# Copy the published output from the build stage
+COPY --from=buildenv /app .
+
+#Run application
+ENTRYPOINT [ "dotnet", "E-BangAzureWorker.dll" ]

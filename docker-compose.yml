@@ -1,11 +1,24 @@
 services:
-  app:
+  app1:
     image: notificationservice
     container_name: notification_app
     ports:
       - "8100:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - postgresnet
+    depends_on:
+      - db
+      - rabbitmq
+  
+  app2:
+    image: emailservice
+    container_name: emailservice_app
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - EMAIL_CONNECTION_STRING=${EMAIL_CONNECTION_STRING}
+      - IS_DOCKER=${IS_DOCKER}
     networks:
       - postgresnet
     depends_on:

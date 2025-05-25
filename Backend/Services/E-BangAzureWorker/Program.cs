@@ -30,6 +30,12 @@ public class Program
         var logger = loggerFactory.CreateLogger<Program>();
         try
         {
+            bool isDocker = false;
+            string? isDockerEnv = Environment.GetEnvironmentVariable("IS_DOCKER");
+            if (isDockerEnv != null && isDockerEnv.Equals("true", StringComparison.CurrentCultureIgnoreCase))
+            {
+                isDocker = true;
+            }
             logger.LogInformation("Application started at {DateTime}", DateTime.Now);
             var builder = Host.CreateApplicationBuilder(args);
             #region Services
@@ -40,13 +46,20 @@ public class Program
             builder.Services.AddScoped<IEventPublisher, EventPublisher>();
             builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
             builder.Services.AddScoped<IRabbitRepository, RabbitRepository>();
+            string blobStorageConnection = isDocker? 
+                Environment.GetEnvironmentVariable("BLOB_CONNECTION_STRING")!:
+                builder.Configuration.GetConnectionString("BlobStorageConnectionString")!;
             builder.Services.AddSingleton(
                 pr => new BlobServiceClient
-                (builder.Configuration.GetConnectionString("BlobStorageConnectionString"),
+                (blobStorageConnection,
                 new BlobClientOptions(BlobClientOptions.ServiceVersion.V2020_02_10)));
 
             builder.Services.AddDbContext<ServiceDbContext>(x =>
-                x.UseSqlServer(builder.Configuration.GetConnectionString("DbConnectionString")));
+            {
+                string connectionString = isDocker? Environment.GetEnvironmentVariable("AZURE_CONNECTION_STRING")!:
+                    builder.Configuration.GetConnectionString("DbConnectionString")!; ;
+                x.UseSqlServer(builder.Configuration.GetConnectionString(connectionString));
+            });
             builder.Services.AddScoped<IAzureStrategy, AzureStrategy>();
             builder.Services.AddScoped<AzureAddFileRepository>();
             builder.Services.AddScoped<AzureRemoveFileRepository>();

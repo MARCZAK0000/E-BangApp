@@ -33,7 +33,16 @@ public class Program
             builder.Services.AddSingleton<DatabaseSeed>();
             builder.Services.AddDbContext<ServiceDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnectionString"));
+                bool isDocker = false;
+                string? isDockerEnv = Environment.GetEnvironmentVariable("IS_DOCKER");
+                if (isDockerEnv != null && isDockerEnv.Equals("true", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    isDocker = true;
+                }
+                string connectionString = isDocker? 
+                    Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")!:
+                    builder.Configuration.GetConnectionString("DbConnectionString")!;
+                options.UseSqlServer(builder.Configuration.GetConnectionString(connectionString));
             });
 
             #endregion
