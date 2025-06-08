@@ -1,9 +1,9 @@
 ﻿using E_BangAppEmailBuilder.src.Abstraction;
 using E_BangAppRabbitSharedClass.RabbitModel;
+using E_BangEmailWorker.Exceptions;
 using E_BangEmailWorker.Model;
 using E_BangEmailWorker.OptionsPattern;
 using E_BangEmailWorker.Repository;
-using E_BangEmailWorker.Exceptions;
 using MimeKit;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -42,18 +42,27 @@ namespace E_BangEmailWorker.Services
             _builderEmail = builderEmail;
             _messageRepository = messageRepository;
         }
-
         public async Task HandleRabbitQueueAsync(CancellationToken token)
         {
             try
             {
-                IConnection connection = await _rabbitRepository.CreateConnectionAsync(_rabbitOptions.Host, token);
+                _logger.LogInformation("Init connection at {date}", DateTime.Now);
+                IConnection connection = await _rabbitRepository.CreateConnectionAsync(_rabbitOptions, token);
+                _logger.LogInformation("Created connection at {date}, conn: {conn}", DateTime.Now, connection.ToString());
+                _logger.LogInformation("Init channel at {date}", DateTime.Now);
                 IChannel channel = await _rabbitRepository.CreateChannelAsync(connection, token);
-
+                _logger.LogInformation("Created channel at {date}, channel: {channel}", DateTime.Now, channel.ToString());
+                _logger.LogInformation
+                    ("Init Queue at {Date}, on {host}, queue_name: {name}",
+                    DateTime.Now, _rabbitOptions.Host, _rabbitOptions.QueueName);
                 await channel.QueueDeclareAsync(queue: _rabbitOptions.QueueName,
                     durable: true, exclusive: false, autoDelete: false, arguments: null,
                         noWait: false, token);
-                AsyncEventingBasicConsumer consumer = new AsyncEventingBasicConsumer(channel);
+                _logger.LogInformation
+                    ("Created Queue at {Date}, on {host}, queue_name: {name}",
+                    DateTime.Now, _rabbitOptions.Host, _rabbitOptions.QueueName);
+
+                AsyncEventingBasicConsumer consumer = new(channel);
                 consumer.ReceivedAsync += async (sender, ea) =>
                 {
                     var body = ea.Body.ToArray();

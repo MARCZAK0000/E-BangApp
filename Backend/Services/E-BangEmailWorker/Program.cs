@@ -21,6 +21,12 @@ public class Program
         var logger = loggerFactory.CreateLogger<Program>(); 
         try
         {
+            bool isDocker = false;
+            string? isDockerEnv = Environment.GetEnvironmentVariable("IS_DOCKER");
+            if (isDockerEnv != null && isDockerEnv.Equals("true", StringComparison.CurrentCultureIgnoreCase))
+            {
+                isDocker = true;
+            }
             var builder = Host.CreateApplicationBuilder(args);
             #region Service Registration
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
@@ -33,16 +39,10 @@ public class Program
             builder.Services.AddSingleton<DatabaseSeed>();
             builder.Services.AddDbContext<ServiceDbContext>(options =>
             {
-                bool isDocker = false;
-                string? isDockerEnv = Environment.GetEnvironmentVariable("IS_DOCKER");
-                if (isDockerEnv != null && isDockerEnv.Equals("true", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    isDocker = true;
-                }
                 string connectionString = isDocker? 
                     Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")!:
                     builder.Configuration.GetConnectionString("DbConnectionString")!;
-                options.UseSqlServer(builder.Configuration.GetConnectionString(connectionString));
+                options.UseSqlServer(connectionString);
             });
 
             #endregion
@@ -51,11 +51,28 @@ public class Program
                     .ValidateOnStart()
                     .BindConfiguration("EmailConnectionOptions");
             builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptionsMonitor<EmailConnectionOptions>>().CurrentValue);
-
-            builder.Services.AddOptions<RabbitOptions>()
-                .ValidateOnStart()
-                .BindConfiguration("RabbitOptions");
+            if (isDocker)
+            {
+                builder.Services.AddOptions<RabbitOptions>()
+                    .Configure(options =>
+                    {
+                        options.Host = Environment.GetEnvironmentVariable("RABBIT_HOST")!;
+                        options.Port = Convert.ToInt32(Environment.GetEnvironmentVariable("")!);
+                        options.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
+                        options.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
+                        options.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;
+                        options.QueueName = Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
+                    });
+            }
+            else
+            {
+                builder.Services
+                    .AddOptions<RabbitOptions>()
+                    .ValidateOnStart()
+                    .BindConfiguration("RabbitOptions");
+            }
             builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitOptions>>().Value);
+            
 
             #endregion
             builder.Services.AddHostedService<Worker>();
