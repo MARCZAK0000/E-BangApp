@@ -14,8 +14,13 @@ internal class Program
 {
     private static async Task Main(string[] args)
     {
+        bool isDocker = false;
+        string? isDockerEnv = Environment.GetEnvironmentVariable("IS_DOCKER");
+        if (isDockerEnv != null && isDockerEnv.Equals("true", StringComparison.CurrentCultureIgnoreCase))
+        {
+            isDocker = true;
+        }
         var builder = WebApplication.CreateBuilder(args);
-
         // Add services to the container.
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
@@ -24,7 +29,9 @@ internal class Program
         builder.Services.AddSignalR();
         builder.Services.AddDbContext<NotificationDbContext>(options =>
         {
-            var connectionString = builder.Configuration.GetConnectionString("DbConnectionsString")!;
+            string connectionString = isDocker ?
+                Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")! : 
+                builder.Configuration.GetConnectionString("DbConnectionsString")!;
             options.UseNpgsql(connectionString);
         });
         builder.Services.AddSingleton<IInformations, Informations>();
@@ -34,11 +41,27 @@ internal class Program
         builder.Services.AddHostedService<NotificationWorker>();
 
         #region Options Pattern
-        builder.Services.AddOptions<RabbitOptions>()
-            .ValidateDataAnnotations()
-            .BindConfiguration("RabbitOptions")
-            .ValidateOnStart();
-        builder.Services.AddSingleton(sp=>sp.GetRequiredService<IOptions<RabbitOptions>>().Value);
+        if (isDocker)
+        {
+            builder.Services.AddOptions<RabbitOptions>()
+                .Configure(options =>
+                {
+                    options.Host = Environment.GetEnvironmentVariable("RABBIT_HOST")!;
+                    options.Port = Convert.ToInt32(Environment.GetEnvironmentVariable("")!);
+                    options.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
+                    options.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
+                    options.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;
+                    options.QueueName = Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
+                });
+        }
+        else
+        {
+            builder.Services
+                .AddOptions<RabbitOptions>()
+                .ValidateOnStart()
+                .BindConfiguration("RabbitOptions");
+        }
+        builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitOptions>>().Value);
         #endregion
         var app = builder.Build();
         using var scope = app.Services.CreateScope();
@@ -69,8 +92,6 @@ internal class Program
         {
             return Results.Ok();
         });
-
-
         app.Run();
     }
 }

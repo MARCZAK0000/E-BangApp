@@ -1,0 +1,19 @@
+﻿using E_BangAppRabbitBuilder.Options;
+
+namespace E_BangAppRabbitBuilder.Service.Sender
+{
+
+    public interface IRabbitSenderService
+    {
+        /// <summary>
+        /// Send Message to Queue 
+        /// <see cref="RabbitOptions"/> Used to send rabbit parameters
+        /// <typeparamref name="T"/> Message - Custom Message to send
+        /// </summary>
+        /// <param name="rabbitOptions">Options</param>
+        /// <param name="Message"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task InitSenderRabbitQueueAsync<T>(RabbitOptions rabbitOptions, T Message, CancellationToken token) where T : class;
+    }
+}
