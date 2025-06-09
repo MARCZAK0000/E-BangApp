@@ -1,4 +1,6 @@
 using Azure.Storage.Blobs;
+using E_BangAppRabbitBuilder.Options;
+using E_BangAppRabbitBuilder.ServiceExtensions;
 using E_BangAppRabbitSharedClass.AzureRabbitModel;
 using E_BangAzureWorker;
 using E_BangAzureWorker.AzureBaseRepo;
@@ -46,6 +48,7 @@ public class Program
             builder.Services.AddScoped<IEventPublisher, EventPublisher>();
             builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
             builder.Services.AddScoped<IRabbitRepository, RabbitRepository>();
+            builder.Services.AddRabbitService();
             string blobStorageConnection = isDocker? 
                 Environment.GetEnvironmentVariable("BLOB_CONNECTION_STRING")!:
                 builder.Configuration.GetConnectionString("BlobStorageConnectionString")!;
@@ -84,10 +87,28 @@ public class Program
             #endregion
 
             #region Options Pattern
-            builder.Services
-                .AddOptions<RabbitMQSettings>()
-                .BindConfiguration("RabbitMQSetting");
-            builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitMQSettings>>().Value);
+            if (isDocker)
+            {
+                builder.Services.AddOptions<RabbitOptions>()
+                    .Configure(options =>
+                    {
+                        options.Host = Environment.GetEnvironmentVariable("RABBIT_HOST")!;
+                        options.Port = Convert.ToInt32(Environment.GetEnvironmentVariable("")!);
+                        options.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
+                        options.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
+                        options.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;
+                        options.ListenerQueueName = Environment.GetEnvironmentVariable("RABBIT_AZUREQUEUE")!;
+                        options.SenderQueueName = Environment.GetEnvironmentVariable("RABBIT_NOTIFICATIONQUEUE")!; ;
+                    });
+            }
+            else
+            {
+                builder.Services
+                    .AddOptions<RabbitOptions>()
+                    .ValidateOnStart()
+                    .BindConfiguration("RabbitOptions");
+            }
+            builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitOptions>>().Value);
 
             builder.Services
                 .AddOptions<ContainerSettings>()

@@ -1,4 +1,6 @@
 using E_BangAppEmailBuilder.src.Abstraction;
+using E_BangAppRabbitBuilder.Options;
+using E_BangAppRabbitBuilder.ServiceExtensions;
 using E_BangEmailWorker;
 using E_BangEmailWorker.Database;
 using E_BangEmailWorker.OptionsPattern;
@@ -34,8 +36,8 @@ public class Program
             builder.Services.AddScoped<IDatabaseRepository, DatabaseRepository>();
             builder.Services.AddScoped<IMessageRepository, MessageRepository>();
             builder.Services.AddScoped<IRabbitQueueService, RabbitQueueService>();
-            builder.Services.AddScoped<IRabbitRepository, RabbitRepository>();
             builder.Services.AddScoped<IBuilderEmail, BuilderEmail>();
+            builder.Services.AddRabbitService();
             builder.Services.AddSingleton<DatabaseSeed>();
             builder.Services.AddDbContext<ServiceDbContext>(options =>
             {
@@ -61,7 +63,8 @@ public class Program
                         options.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
                         options.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
                         options.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;
-                        options.QueueName = Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
+                        options.ListenerQueueName = Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
+                        options.SenderQueueName = "";
                     });
             }
             else

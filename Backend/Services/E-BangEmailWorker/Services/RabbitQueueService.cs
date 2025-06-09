@@ -1,4 +1,6 @@
 ﻿using E_BangAppEmailBuilder.src.Abstraction;
+using E_BangAppRabbitBuilder.Options;
+using E_BangAppRabbitBuilder.Service.Listener;
 using E_BangAppRabbitSharedClass.RabbitModel;
 using E_BangEmailWorker.Exceptions;
 using E_BangEmailWorker.Model;
@@ -13,8 +15,6 @@ namespace E_BangEmailWorker.Services
 {
     public class RabbitQueueService : IRabbitQueueService
     {
-        private readonly IRabbitRepository _rabbitRepository;
-
         private readonly IEmailRepository _emailRepository;
 
         private readonly IMessageRepository _messageRepository;
@@ -26,72 +26,45 @@ namespace E_BangEmailWorker.Services
         private readonly IBuilderEmail _builderEmail;
 
         private readonly ILogger<RabbitQueueService> _logger;
-        public RabbitQueueService(IRabbitRepository rabbitRepository,
+
+        private readonly IRabbitListenerService _rabbitListenerService;
+        public RabbitQueueService(
             IEmailRepository emailRepository,
             IDatabaseRepository databaseRepository,
             RabbitOptions rabbitOptions,
             ILogger<RabbitQueueService> logger,
             IBuilderEmail builderEmail,
-            IMessageRepository messageRepository)
+            IMessageRepository messageRepository,
+            IRabbitListenerService rabbitListenerService)
         {
-            _rabbitRepository = rabbitRepository;
             _emailRepository = emailRepository;
             _databaseRepository = databaseRepository;
             _rabbitOptions = rabbitOptions;
             _logger = logger;
             _builderEmail = builderEmail;
             _messageRepository = messageRepository;
+            _rabbitListenerService = rabbitListenerService;
+
         }
         public async Task HandleRabbitQueueAsync(CancellationToken token)
         {
-            try
-            {
-                _logger.LogInformation("Init connection at {date}", DateTime.Now);
-                IConnection connection = await _rabbitRepository.CreateConnectionAsync(_rabbitOptions, token);
-                _logger.LogInformation("Created connection at {date}, conn: {conn}", DateTime.Now, connection.ToString());
-                _logger.LogInformation("Init channel at {date}", DateTime.Now);
-                IChannel channel = await _rabbitRepository.CreateChannelAsync(connection, token);
-                _logger.LogInformation("Created channel at {date}, channel: {channel}", DateTime.Now, channel.ToString());
-                _logger.LogInformation
-                    ("Init Queue at {Date}, on {host}, queue_name: {name}",
-                    DateTime.Now, _rabbitOptions.Host, _rabbitOptions.QueueName);
-                await channel.QueueDeclareAsync(queue: _rabbitOptions.QueueName,
-                    durable: true, exclusive: false, autoDelete: false, arguments: null,
-                        noWait: false, token);
-                _logger.LogInformation
-                    ("Created Queue at {Date}, on {host}, queue_name: {name}",
-                    DateTime.Now, _rabbitOptions.Host, _rabbitOptions.QueueName);
 
-                AsyncEventingBasicConsumer consumer = new(channel);
-                consumer.ReceivedAsync += async (sender, ea) =>
+            await _rabbitListenerService.InitListenerRabbitQueueAsync(rabbitOptions: _rabbitOptions, async (EmailServiceRabbitMessageModel messageModel) =>
+            {
+                string emailRawHTML = _builderEmail
+                    .GenerateMessage(messageModel.Body.Header, messageModel.Body.Body, messageModel.Body.Footer)
+                    .Message;
+                MimeMessage mimeMessage = _messageRepository.BuildMessage(new SendMailDto(messageModel.AddressTo, emailRawHTML, messageModel.Subject), token);
+                bool isSend = await _emailRepository.SendEmailAsync(mimeMessage, token);
+                if (!isSend)
                 {
-                    var body = ea.Body.ToArray();
-                    var message = Encoding.UTF8.GetString(body);
-                    var messageModel = JsonSerializer.Deserialize<EmailServiceRabbitMessageModel>(message);
-                    _logger.LogInformation("Message Recived at {DateTime} from AccountID: {Id}", DateTime.Now, messageModel!.AddressTo);
-                    string emailRawHTML = _builderEmail
-                        .GenerateMessage(messageModel.Body.Header, messageModel.Body.Body, messageModel.Body.Footer)
-                        .Message;
-                    MimeMessage mimeMessage = _messageRepository.BuildMessage(new SendMailDto(messageModel.AddressTo, emailRawHTML, messageModel.Subject), token);
-                    bool isSend = await _emailRepository.SendEmailAsync(mimeMessage, token);
-                    if (!isSend)
-                    {
-                        _logger.LogError("There is a problem with email message: {messageModel}", messageModel);
-                        throw new MesseageNotSendException("Email Message Problem");
-                    }
-                    _logger.LogInformation("Sending email: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", mimeMessage.From, mimeMessage.To);
-                    await _databaseRepository.SaveEmailInfo(messageModel, token);
-                    _logger.LogInformation("Saving emial info: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", mimeMessage.From, mimeMessage.To);
-                    await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false, token);
-                };
-
-                await channel.BasicConsumeAsync(_rabbitOptions.QueueName, autoAck: false, consumer: consumer, token);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Problem with rabbit handler message: {ex}", ex.Message);
-                throw;
-            }
+                    _logger.LogError("There is a problem with email message: {messageModel}", messageModel);
+                    throw new MesseageNotSendException("Email Message Problem");
+                }
+                _logger.LogInformation("Sending email: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", mimeMessage.From, mimeMessage.To);
+                await _databaseRepository.SaveEmailInfo(messageModel, token);
+                _logger.LogInformation("Saving emial info: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", mimeMessage.From, mimeMessage.To);
+            }, token);
         }
     }
 }

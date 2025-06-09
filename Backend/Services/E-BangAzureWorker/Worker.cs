@@ -47,19 +47,11 @@ public class Worker : BackgroundService
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Worker Initailized at {DateTime}", DateTime.Now);
-
-
         return base.StartAsync(cancellationToken);
     }
     public override Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Worker Closed at {DateTime}", DateTime.Now);
         return base.StopAsync(cancellationToken);
-    }
-    public override void Dispose()
-    {
-        _rabbitMQService?.HandleDispose();
-        GC.SuppressFinalize(this);
-        base.Dispose();
     }
 }

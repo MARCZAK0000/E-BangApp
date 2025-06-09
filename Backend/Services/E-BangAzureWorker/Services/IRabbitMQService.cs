@@ -8,7 +8,5 @@ namespace E_BangAzureWorker.Services
 
         Task HandleSendQueueAsync(EventMessageArgs args, CancellationToken cancellationToken);
 
-        void HandleDispose();
-
     }
 }
