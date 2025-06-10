@@ -6,12 +6,12 @@ namespace E_BangNotificationService.BackgroundWorker
     public class NotificationWorker : BackgroundService
     {
         private readonly IInformations _informations;
-        
+
         private readonly ILogger<NotificationWorker> _logger;
 
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public NotificationWorker(IInformations informations, 
+        public NotificationWorker(IInformations informations,
             ILogger<NotificationWorker> logger, IServiceScopeFactory serviceScopeFactory)
         {
             _informations = informations;
@@ -50,9 +50,13 @@ namespace E_BangNotificationService.BackgroundWorker
             }
             catch (Exception ex)
             {
-                _logger.LogError("Something unexpected happens at {datetime}: {ex}, {ex.endpoint}", DateTime.Now, ex.Message,ex.Source);
+                _logger.LogError("Something unexpected happens at {datetime}: {ex}, {ex.endpoint}", DateTime.Now, ex.Message, ex.Source);
+                if (System.Diagnostics.Debugger.IsAttached)
+                {
+                    System.Diagnostics.Debugger.Break();
+                }
             }
-            
+
         }
     }
 }

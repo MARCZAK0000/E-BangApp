@@ -1,8 +1,9 @@
+using E_BangAppRabbitBuilder.Options;
+using E_BangAppRabbitBuilder.ServiceExtensions;
 using E_BangNotificationService.AppInfo;
 using E_BangNotificationService.BackgroundWorker;
 using E_BangNotificationService.Middleware;
 using E_BangNotificationService.NotificationEntities;
-using E_BangNotificationService.OptionsPattern;
 using E_BangNotificationService.Repository;
 using E_BangNotificationService.Service;
 using E_BangNotificationService.SignalRHub;
@@ -30,14 +31,14 @@ internal class Program
         builder.Services.AddDbContext<NotificationDbContext>(options =>
         {
             string connectionString = isDocker ?
-                Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")! : 
+                Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")! :
                 builder.Configuration.GetConnectionString("DbConnectionsString")!;
             options.UseNpgsql(connectionString);
         });
         builder.Services.AddSingleton<IInformations, Informations>();
         builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
-        builder.Services.AddScoped<IRabbitRepository, RabbitRepository>();
-        builder.Services.AddScoped<IPostgresDbRepostiory, PostgresDbRepostiory>();   
+        builder.Services.AddRabbitService();
+        builder.Services.AddScoped<IPostgresDbRepostiory, PostgresDbRepostiory>();
         builder.Services.AddHostedService<NotificationWorker>();
 
         #region Options Pattern
@@ -51,7 +52,8 @@ internal class Program
                     options.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
                     options.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
                     options.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;
-                    options.QueueName = Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
+                    options.ListenerQueueName = Environment.GetEnvironmentVariable("RABBIT_NOTIFICATIONQUEUE")!;
+                    options.SenderQueueName = "";
                 });
         }
         else
@@ -88,7 +90,7 @@ internal class Program
             return Results.Ok(informations);
         });
 
-        notification.MapGet("/", async (string AccountID, bool IsRead, CancellationToken token) =>
+        notification.MapGet("/", (string AccountID, bool IsRead, CancellationToken token) =>
         {
             return Results.Ok();
         });
