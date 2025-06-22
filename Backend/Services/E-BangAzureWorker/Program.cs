@@ -132,7 +132,7 @@ public class Program
         }
         catch (Exception err)
         {
-            logger.LogError("Error ocured at {Date}: {ex}", DateTime.Now, err.Message);
+            logger.LogError("Email Program: Error ocured at {Date}: {ex}", DateTime.Now, err.Message);
             if (System.Diagnostics.Debugger.IsAttached)
                 System.Diagnostics.Debugger.Break();
         }

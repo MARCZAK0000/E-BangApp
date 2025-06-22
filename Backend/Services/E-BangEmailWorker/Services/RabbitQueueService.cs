@@ -48,7 +48,7 @@ namespace E_BangEmailWorker.Services
         }
         public async Task HandleRabbitQueueAsync(CancellationToken token)
         {
-
+            _logger.LogInformation("{Date} - Email Rabbit Queue: Rabbit Options: {userName}, {password}, {host}",DateTime.Now, _rabbitOptions.UserName, _rabbitOptions.Password, _rabbitOptions.Host);
             await _rabbitListenerService.InitListenerRabbitQueueAsync(rabbitOptions: _rabbitOptions, async (EmailServiceRabbitMessageModel messageModel) =>
             {
                 string emailRawHTML = _builderEmail
@@ -58,12 +58,12 @@ namespace E_BangEmailWorker.Services
                 bool isSend = await _emailRepository.SendEmailAsync(mimeMessage, token);
                 if (!isSend)
                 {
-                    _logger.LogError("There is a problem with email message: {messageModel}", messageModel);
+                    _logger.LogError("{Date} - Email Rabbit Queue: There is a problem with email message: {messageModel}", DateTime.Now, messageModel);
                     throw new MesseageNotSendException("Email Message Problem");
                 }
-                _logger.LogInformation("Sending email: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", mimeMessage.From, mimeMessage.To);
+                _logger.LogInformation("{Date} - Email Rabbit Queue: Sending email: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", DateTime.Now, mimeMessage.From, mimeMessage.To);
                 await _databaseRepository.SaveEmailInfo(messageModel, token);
-                _logger.LogInformation("Saving emial info: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", mimeMessage.From, mimeMessage.To);
+                _logger.LogInformation("{Date} - Email Rabbit Queue: Saving email info: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", DateTime.Now, mimeMessage.From, mimeMessage.To);
             }, token);
         }
     }

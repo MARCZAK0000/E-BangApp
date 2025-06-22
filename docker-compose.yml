@@ -1,53 +1,12 @@
+networks:
+  postgresnet:
+    driver: bridge
+
 services:
-  app1:
-    image: notificationservice
-    container_name: notification_app
-    ports:
-      - "8100:8080"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    networks:
-      - postgresnet
-    depends_on:
-      - db
-      - rabbitmq
-  
-  app2:
-    image: emailservice
-    container_name: emailservice_app
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - EMAIL_CONNECTION_STRING=${EMAIL_CONNECTION_STRING}
-      - IS_DOCKER=${IS_DOCKER}
-    networks:
-      - postgresnet
-    depends_on:
-      - db
-      - rabbitmq
-  adminer:
-    image: adminer
-    container_name: adminer
-    restart: no
-    ports:
-      - "8080:8080"
-    networks:
-      - postgresnet
-
-  db:
-    image: postgres
-    restart: no
-    container_name: db
-    environment:
-      POSTGRES_PASSWORD: dockersql
-    ports:
-      - "5432:5432"
-    networks:
-      - postgresnet
-
   rabbitmq:
-    image: rabbitmq:4.1.0-management
+    image: rabbitmq:3-management
     container_name: rabbitmq
-    restart: no
+    restart: unless-stopped
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -57,5 +16,62 @@ services:
     networks:
       - postgresnet
 
-networks:
-  postgresnet:
+  app1:
+    image: notificationservice
+    container_name: notification_app
+    ports:
+      - "8100:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - IS_DOCKER=${IS_DOCKER}
+      - RABBIT_HOST=${RABBIT_HOST}
+      - RABBIT_PORT=${RABBIT_PORT}
+      - RABBIT_USERNAME=${RABBIT_USERNAME}
+      - RABBIT_PASSWORD=${RABBIT_PASSWORD}
+      - RABBIT_VIRTUALHOST=${RABBIT_VIRTUALHOST}
+      - RABBIT_NOTIFICATIONQUEUE=${RABBIT_NOTIFICATIONQUEUE}
+    depends_on:
+      - rabbitmq
+    networks:
+      - postgresnet
+
+  app2:
+    image: emailservice
+    container_name: emailservice_app
+    ports:
+      - "8200:8080"
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - EMAIL_CONNECTION_STRING=${EMAIL_CONNECTION_STRING}
+      - IS_DOCKER=${IS_DOCKER}
+      - RABBIT_HOST=${RABBIT_HOST}
+      - RABBIT_PORT=${RABBIT_PORT}
+      - RABBIT_USERNAME=${RABBIT_USERNAME}
+      - RABBIT_PASSWORD=${RABBIT_PASSWORD}
+      - RABBIT_VIRTUALHOST=${RABBIT_VIRTUALHOST}
+      - RABBIT_EMAILQUEUE=${RABBIT_EMAILQUEUE}
+    depends_on:
+      - rabbitmq
+    networks:
+      - postgresnet
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - postgresnet
+
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      POSTGRES_PASSWORD: dockersql
+    ports:
+      - "5432:5432"
+    networks:
+      - postgresnet

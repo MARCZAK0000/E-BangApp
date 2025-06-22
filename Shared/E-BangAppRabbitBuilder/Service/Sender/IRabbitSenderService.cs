@@ -11,9 +11,9 @@ namespace E_BangAppRabbitBuilder.Service.Sender
         /// <typeparamref name="T"/> Message - Custom Message to send
         /// </summary>
         /// <param name="rabbitOptions">Options</param>
-        /// <param name="Message"></param>
+        /// <param name="message"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task InitSenderRabbitQueueAsync<T>(RabbitOptions rabbitOptions, T Message, CancellationToken token) where T : class;
+        Task InitSenderRabbitQueueAsync<T>(RabbitOptions rabbitOptions, T message, CancellationToken token) where T : class;
     }
 }

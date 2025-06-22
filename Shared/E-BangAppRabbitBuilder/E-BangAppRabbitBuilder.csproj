@@ -5,11 +5,12 @@
     <RootNamespace>E_BangAppRabbitBuilder</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageReleaseNotes>Change Logger</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageId>E-BangAppRabbitBuilder</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.9</Version>
     <Authors>MARCZAK0000</Authors>
     <Description>Create rabbit queues</Description>
     <PackageTags>rabbit, queue</PackageTags>

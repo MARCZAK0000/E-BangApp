@@ -3,7 +3,7 @@ using RabbitMQ.Client;
 
 namespace E_BangAppRabbitBuilder.Repository
 {
-    internal interface IRabbitRepository
+    public interface IRabbitRepository
     {
         Task<IConnection> CreateConnectionAsync(RabbitOptions options, CancellationToken token);
         Task<IChannel> CreateChannelAsync(IConnection connection, CancellationToken token);

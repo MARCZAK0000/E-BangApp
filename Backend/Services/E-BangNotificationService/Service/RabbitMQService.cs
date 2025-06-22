@@ -36,7 +36,6 @@ namespace E_BangNotificationService.Service
 
         public async Task CreateListenerQueueAsync(CancellationToken token)
         {
-
             await _rabbitListenerService.InitListenerRabbitQueueAsync(_rabbitOptions, async (NotificationRabbitMessageModel messageModel) =>
             {
                 bool IsSaved = await _postgresDbRepostiory.SaveNotificationAsync(messageModel, token);

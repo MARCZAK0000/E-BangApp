@@ -17,8 +17,9 @@ public class Program
         using var loggerFactory = LoggerFactory.Create(build =>
         {
             build
+                .ClearProviders()
                 .AddConsole()
-                .SetMinimumLevel(LogLevel.Debug);
+                .SetMinimumLevel(LogLevel.Information);
         });
         var logger = loggerFactory.CreateLogger<Program>(); 
         try
@@ -55,11 +56,12 @@ public class Program
             builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptionsMonitor<EmailConnectionOptions>>().CurrentValue);
             if (isDocker)
             {
+                logger.LogInformation("{Date}: Take info from ENV, Rabbit Options: {rabbit}", DateTime.Now, Environment.GetEnvironmentVariable("RABBIT_HOST"));
                 builder.Services.AddOptions<RabbitOptions>()
                     .Configure(options =>
                     {
                         options.Host = Environment.GetEnvironmentVariable("RABBIT_HOST")!;
-                        options.Port = Convert.ToInt32(Environment.GetEnvironmentVariable("")!);
+                        options.Port = Convert.ToInt32(Environment.GetEnvironmentVariable("RABBIT_PORT")!);
                         options.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
                         options.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
                         options.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;

@@ -36,7 +36,7 @@ public class Worker : BackgroundService
         }
         catch (Exception err)
         {
-            _logger.LogError("Error ocured at {Date} in Worker: {ex}", DateTime.Now, err.Message);
+            _logger.LogError("Email Worker: Error ocured at {Date} in Worker: {ex}", DateTime.Now, err.Message);
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 System.Diagnostics.Debugger.Break();
@@ -46,12 +46,12 @@ public class Worker : BackgroundService
     }
     public override Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Worker Initailized at {DateTime}", DateTime.Now);
+        _logger.LogInformation("Email Worker: Worker Initailized at {DateTime}", DateTime.Now);
         return base.StartAsync(cancellationToken);
     }
     public override Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Worker Closed at {DateTime}", DateTime.Now);
+        _logger.LogInformation("Email Worker: Worker Closed at {DateTime}", DateTime.Now);
         return base.StopAsync(cancellationToken);
     }
 }
