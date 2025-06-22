@@ -29,8 +29,10 @@ Backend/Services/E-BangNotificationService/Properties
 Backend/Services/E-BangNotificationService/*.json
 Shared/E-BangAppRabbitBuilder/bin
 Shared/E-BangAppRabbitBuilder/obj
+Shared/E-BangAppRabbitSharedClass/obj
+Shared/E-BangAppRabbitSharedClass/bin
 .github
 .nuget
 .env
-
+Shared/.idea
 
