@@ -11,8 +11,10 @@ API/src/E-BangDomain/obj
 API/src/.vs
 Backend/Services/E-BangAzureWorker/bin
 Backend/Services/E-BangAzureWorker/obj
+Backend/Services/E-BangAzureWorker/*.json
 Backend/Services/E-BangAzureWorker/Properties
 Backend/Services/E-BangEmailWorker/bin
+Backend/Services/E-BangEmailWorker/*.json
 Backend/Services/E-BangEmailWorker/obj
 Backend/Services/E-BangEmailWorker/Properties
 Backend/Services/.vs
