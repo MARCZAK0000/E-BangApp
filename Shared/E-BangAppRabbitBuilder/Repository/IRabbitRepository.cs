@@ -5,7 +5,7 @@ namespace E_BangAppRabbitBuilder.Repository
 {
     public interface IRabbitRepository
     {
-        Task<IConnection> CreateConnectionAsync(RabbitOptions options, CancellationToken token);
-        Task<IChannel> CreateChannelAsync(IConnection connection, CancellationToken token);
+        Task<IConnection> CreateConnectionAsync(RabbitOptions options);
+        Task<IChannel> CreateChannelAsync(IConnection connection);
     }
 }

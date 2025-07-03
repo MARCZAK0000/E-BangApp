@@ -19,25 +19,24 @@ namespace E_BangAppRabbitBuilder.Service.Listener
             _logger = logger;
         }
 
-        public async Task InitListenerRabbitQueueAsync<T>(RabbitOptions rabbitOptions, Func<T, Task> MessageHook, CancellationToken token)
+        public async Task InitListenerRabbitQueueAsync<T>(RabbitOptions rabbitOptions, Func<T, Task> MessageHook)
             where T : class
         {
             try
             {
-                await Task.Delay(10000, token);
                 _logger.LogInformation("{Date} - Rabbit Options: {rabbitOptions}", DateTime.Now, rabbitOptions.ToString());
                 _logger.LogInformation("{Date} - ListenerQueue : Init connection", DateTime.Now);
-                IConnection connection = await _repository.CreateConnectionAsync(rabbitOptions, token);
+                IConnection connection = await _repository.CreateConnectionAsync(rabbitOptions);
                 _logger.LogInformation("{Date} - ListenerQueue : Created connection, conn: {conn}", DateTime.Now, connection.ToString());
                 _logger.LogInformation("{Date} - ListenerQueue : Init channel", DateTime.Now);
-                IChannel channel = await _repository.CreateChannelAsync(connection, token);
+                IChannel channel = await _repository.CreateChannelAsync(connection);
                 _logger.LogInformation("{Date} - ListenerQueue : Created channel, channel: {channel}", DateTime.Now, channel.ToString());
                 _logger.LogInformation
                     ("{Date} - ListenerQueue : Init Queue, on {host}, queue_name: {name}",
                     DateTime.Now, rabbitOptions.Host, rabbitOptions.ListenerQueueName);
                 await channel.QueueDeclareAsync(queue: rabbitOptions.ListenerQueueName,
                     durable: true, exclusive: false, autoDelete: false, arguments: null,
-                        noWait: false, token);
+                        noWait: false);
                 _logger.LogInformation
                     ("{Date} - ListenerQueue : Created Queue, on {host}, queue_name: {name}",
                     DateTime.Now, rabbitOptions.Host, rabbitOptions.ListenerQueueName);
@@ -50,10 +49,10 @@ namespace E_BangAppRabbitBuilder.Service.Listener
                     var messageModel = JsonSerializer.Deserialize<T>(message);
                     ArgumentNullException.ThrowIfNull(messageModel, "Message Null");
                     await MessageHook.Invoke(messageModel!);
-                    await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false, token);
+                    await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
                 };
 
-                await channel.BasicConsumeAsync(rabbitOptions.ListenerQueueName, autoAck: false, consumer: consumer, token);
+                await channel.BasicConsumeAsync(rabbitOptions.ListenerQueueName, autoAck: false, consumer: consumer);
             }
             catch (Exception ex)
             {

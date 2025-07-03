@@ -13,11 +13,11 @@ namespace E_BangAppRabbitBuilder.Repository
             _logger = logger;
         }
 
-        public async Task<IChannel> CreateChannelAsync(IConnection connection, CancellationToken token)
+        public async Task<IChannel> CreateChannelAsync(IConnection connection)
         {
             try
             {
-                return await connection.CreateChannelAsync(null, token);
+                return await connection.CreateChannelAsync();
             }
             catch (Exception e)
             {
@@ -26,27 +26,38 @@ namespace E_BangAppRabbitBuilder.Repository
             }
         }
 
-        public async Task<IConnection> CreateConnectionAsync(RabbitOptions options, CancellationToken token)
+        public async Task<IConnection> CreateConnectionAsync(RabbitOptions options)
         {
-            try
+            int maxAttempts = 5;
+            for (int attempts = 1; attempts <= maxAttempts; attempts++)
             {
-                ConnectionFactory factory = new()
+                try
                 {
-                    HostName = options.Host,
-                    VirtualHost = options.VirtualHost,
-                    Port = options.Port,
-                    UserName = options.UserName,
-                    Password = options.Password,
-                    RequestedConnectionTimeout = TimeSpan.FromSeconds(10),
-                };
-                return await factory.CreateConnectionAsync(token);
+                    ConnectionFactory factory = new()
+                    {
+                        HostName = options.Host,
+                        VirtualHost = options.VirtualHost,
+                        Port = options.Port,
+                        UserName = options.UserName,
+                        Password = options.Password,
+                        RequestedConnectionTimeout = TimeSpan.FromSeconds(10),
+                    };
+                    IConnection connection = await factory.CreateConnectionAsync();
+                    _logger.LogInformation("RabbitMQ connected on attempt {Attempt}", attempts);
+                    return connection;  
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning("{Date} - Attempt {Attempt}: Connection failed - {ex}", DateTime.Now, attempts, e.Message);
+                    if (attempts == maxAttempts)
+                    {
+                        _logger.LogError("All {Max} connection attempts failed.", maxAttempts);
+                        throw;
+                    }
+                    await Task.Delay(TimeSpan.FromSeconds(2)); 
+                }
             }
-            catch (Exception e)
-            {
-                _logger.LogInformation("{Date} - Create Connection: Error - {ex}", DateTime.Now, e);
-                throw;
-            }
-           
+            throw new Exception("Unable to create RabbitMQ connection.");
         }
     }
 }
