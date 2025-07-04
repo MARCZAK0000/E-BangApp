@@ -62,13 +62,13 @@ namespace E_BangAzureWorker.Services
                             await _eventPublisher.OnRecivedMessage(this, new EventMessageArgs(messageModel.AccountID!, messageModel.AzureStrategyEnum));
                         }
                     }
-                }, cancellationToken);
+                });
         }
 
         public async Task HandleSendQueueAsync(EventMessageArgs args, CancellationToken cancellationToken)
         {
             SendModel message = Notifications.GenerateMessage(args);
-            await _rabbitSenderService.InitSenderRabbitQueueAsync(_rabbitMQSettings, message, cancellationToken);
+            await _rabbitSenderService.InitSenderRabbitQueueAsync(_rabbitMQSettings, message);
         }
     }
 }

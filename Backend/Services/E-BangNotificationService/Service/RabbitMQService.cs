@@ -2,9 +2,9 @@
 using E_BangAppRabbitBuilder.Service.Listener;
 using E_BangAppRabbitSharedClass.RabbitModel;
 using E_BangNotificationService.Repository;
-using E_BangNotificationService.SignalRHub;
-using E_BangNotificationService.SignalRTypedHub;
 using Microsoft.AspNetCore.SignalR;
+using SignalRHub;
+using SignalRTypedHub;
 
 namespace E_BangNotificationService.Service
 {
@@ -48,7 +48,7 @@ namespace E_BangNotificationService.Service
                 {
                     _logger.LogError("Notification not send from AccountID: {Id} to AccountId{Id2}", messageModel.SenderId, messageModel!.ReciverId);
                 }
-            }, token);
+            });
 
         }
     }

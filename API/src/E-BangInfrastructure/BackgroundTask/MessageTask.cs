@@ -1,18 +1,27 @@
-﻿using E_BangApplication.Exceptions;
+﻿using System.Runtime.CompilerServices;
+using E_BangApplication.Exceptions;
 using E_BangDomain.BackgroundTask;
 using E_BangDomain.ModelDtos.MessageSender;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using System.Text;
+using E_BangAppRabbitBuilder.Service.Sender;
+using E_BangAppRabbitBuilder.Options;
 
 namespace E_BangInfrastructure.BackgroundTask
 {
     public class MessageTask : IMessageTask
     {
-        private readonly ILogger<MessageTask> _logger; 
-        public MessageTask(ILogger<MessageTask> logger)
+        private readonly ILogger<MessageTask> _logger;
+
+        private readonly IRabbitSenderService _rabbitSenderService;
+
+        private readonly RabbitOptions _rabbitOptions;
+        public MessageTask(ILogger<MessageTask> logger, IRabbitSenderService rabbitSenderService, RabbitOptions rabbitOptions)
         {
             _logger = logger;
+            _rabbitSenderService = rabbitSenderService;
+            _rabbitOptions = rabbitOptions;
         }
 
         /// <summary>
@@ -25,44 +34,15 @@ namespace E_BangInfrastructure.BackgroundTask
         {
             try
             {
-                var factory = new ConnectionFactory
-                {
-                    HostName = "localhost",
-                };
-                using var connection = await factory.CreateConnectionAsync(token);
-                using var channel = await connection.CreateChannelAsync(null, token);
-
-                string queueName = Enum.GetName(parameters.RabbitChannel) ?? string.Empty;
-                if (string.IsNullOrWhiteSpace(queueName))
-                {
-                    throw new InvalidQueueNameException(queueName);
-                }
-                await channel.QueueDeclareAsync(queue: queueName
-                    , durable: true, exclusive: true, autoDelete: true, arguments: null, noWait: false, token);
-
-                var message = parameters.Message.ToString() ?? string.Empty;
-                if (string.IsNullOrWhiteSpace(message))
-                {
-                    throw new EmptyRabbitMessageException(message);
-                }
-                byte[] messageBody = Encoding.UTF8.GetBytes(message);
-                await channel.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, messageBody, token);
+                _rabbitOptions.SenderQueueName = Enum.GetName(parameters.RabbitChannel)!;
+                _logger.LogInformation("Message Task: Add to Queue at {Date}, Message Type {type}", DateTime.Now, typeof(T).Name);
+                await _rabbitSenderService.InitSenderRabbitQueueAsync(_rabbitOptions, parameters.Message);
             }
-            catch (InvalidQueueNameException)
+            catch (Exception e)
             {
-                _logger.LogError("Send To Rabbit Channel: Invalid Queue");
+                _logger.LogError("Message Task: Error at {date}: {e}", DateTime.Now, e);
                 throw;
-            }
-            catch (EmptyRabbitMessageException)
-            {
-                _logger.LogError("Send To Rabbit Channel: Message Is Nul lOr WhiteSpace");
-                throw;
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError("Send To Rabbit Channel: Something went wrong : {mess}", ex.Message);
-            }
-            
+            }   
         }
 
 

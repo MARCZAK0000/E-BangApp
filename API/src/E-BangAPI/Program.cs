@@ -3,6 +3,7 @@ using E_BangAPI.Middleware;
 using E_BangAPI.MinimalApi;
 using E_BangApplication.Exetensions;
 using E_BangDomain.Entities;
+using E_BangInfrastructure.Database;
 using E_BangInfrastructure.Extensions;
 using NLog.Web;
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +19,9 @@ builder.Services.AddScoped<ErrorHandlerMiddleware>();
 builder.Services.AddHostedService<BackgroundMessagerWorker>();
 builder.Services.AddScoped<TransactionHandlerMiddleware>();
 var app = builder.Build();
-
+using IServiceScope scope = app.Services.CreateScope();
+PendingMigrations pendingMigrations = scope.ServiceProvider.GetRequiredService<PendingMigrations>();
+pendingMigrations.GetPendingMigrations();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -28,6 +31,7 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/openapi/v1.json", "Version one");
     });
 }
+
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();

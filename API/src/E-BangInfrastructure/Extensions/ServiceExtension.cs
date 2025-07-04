@@ -17,13 +17,14 @@ namespace E_BangInfrastructure.Extensions
     {
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, bool IsDevelopment)
         {
+            services.AddScoped<PendingMigrations>();
             services.AddDbContext<ProjectDbContext>(options =>
             {
                 options.UseSqlServer(
                     IsDevelopment ?
                     configuration.GetConnectionString("DbConnectionString")
                     :
-                    configuration.GetConnectionString("production")
+                    configuration.GetConnectionString(Environment.GetEnvironmentVariable("")!)
                     );
             });
 

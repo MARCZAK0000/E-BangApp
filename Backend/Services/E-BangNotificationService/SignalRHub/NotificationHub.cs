@@ -1,9 +1,9 @@
-﻿using E_BangNotificationService.SignalRTypedHub;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
+using SignalRTypedHub;
 
-namespace E_BangNotificationService.SignalRHub
+namespace SignalRHub
 {
-    public class NotificationHub:Hub<INotificationClient>
+    public class NotificationHub : Hub<INotificationClient>
     {
     }
 }

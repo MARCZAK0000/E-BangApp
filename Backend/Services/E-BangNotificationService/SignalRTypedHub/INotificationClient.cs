@@ -1,6 +1,6 @@
 ﻿using E_BangAppRabbitSharedClass.RabbitModel;
 
-namespace E_BangNotificationService.SignalRTypedHub
+namespace SignalRTypedHub
 {
     public interface INotificationClient
     {

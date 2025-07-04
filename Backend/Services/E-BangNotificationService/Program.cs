@@ -6,9 +6,9 @@ using E_BangNotificationService.Middleware;
 using E_BangNotificationService.NotificationEntities;
 using E_BangNotificationService.Repository;
 using E_BangNotificationService.Service;
-using E_BangNotificationService.SignalRHub;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using SignalRHub;
 
 
 internal class Program
