@@ -35,7 +35,8 @@ namespace E_BangInfrastructure.BackgroundTask
             try
             {
                 _rabbitOptions.SenderQueueName = Enum.GetName(parameters.RabbitChannel)!;
-                _logger.LogInformation("Message Task: Add to Queue at {Date}, Message Type {type}", DateTime.Now, typeof(T).Name);
+                _logger.LogInformation("Message Task: Add to Queue at {Date}, Message Type {type}, Message Queue: {queue}", 
+                    DateTime.Now, typeof(T).Name, _rabbitOptions.SenderQueueName);
                 await _rabbitSenderService.InitSenderRabbitQueueAsync(_rabbitOptions, parameters.Message);
             }
             catch (Exception e)

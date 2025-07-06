@@ -1,4 +1,4 @@
-﻿using E_BangDomain.Repository;
+﻿using E_BangDomain.HelperRepository;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Http.HttpResults;

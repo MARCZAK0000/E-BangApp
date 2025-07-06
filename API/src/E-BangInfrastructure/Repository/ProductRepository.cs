@@ -2,11 +2,13 @@
 using E_BangDomain.EntetiesDto.Commands.Product;
 using E_BangDomain.Entities;
 using E_BangDomain.Extensions;
+using E_BangDomain.HelperRepository;
 using E_BangDomain.ModelDtos.MessageSender;
 using E_BangDomain.ModelDtos.Pagination;
 using E_BangDomain.Pagination;
 using E_BangDomain.Repository;
 using E_BangInfrastructure.Database;
+using E_BangInfrastructure.HelperRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_BangInfrastructure.Repository
@@ -89,7 +91,7 @@ namespace E_BangInfrastructure.Repository
         #endregion
 
         #region Handle
-        public async Task<Product?> GetProductByIdAsync(string productId, CancellationToken cancellationToken) 
+        public async Task<Product?> GetProductByIdAsync(string productId, CancellationToken cancellationToken)
             => await _projectDbContext.Products.Where(pr => pr.ProductId == productId).FirstOrDefaultAsync(cancellationToken);
 
         public async Task<PaginationBase<Product>> GetAllProductsByShopId(PaginationModelDto paginationModelDto, string shopId, CancellationToken token)
@@ -99,8 +101,8 @@ namespace E_BangInfrastructure.Repository
             int TotalCount = await _projectDbContext.Products.CountAsync(token);
             List<Product> products = await _projectDbContext
                 .Products
-                .Where(pr=>pr.ShopID == shopId)
-                .Skip((paginationModelDto.PageIndex - 1)*paginationModelDto.PageSize)
+                .Where(pr => pr.ShopID == shopId)
+                .Skip((paginationModelDto.PageIndex - 1) * paginationModelDto.PageSize)
                 .Take(paginationModelDto.PageSize)
                 .ToListAsync(token);
 
@@ -115,9 +117,9 @@ namespace E_BangInfrastructure.Repository
 
         public async Task<Product?> GetProductAndInformationsByIdAsync(string productId, CancellationToken cancellationToken)
             => await _projectDbContext.Products
-                .Where(pr=>pr.ProductId == productId)
-                .Include(pr=>pr.ProductInformations)
-                .Include(pr=>pr.ProductCountPrice)
+                .Where(pr => pr.ProductId == productId)
+                .Include(pr => pr.ProductInformations)
+                .Include(pr => pr.ProductCountPrice)
                 .FirstOrDefaultAsync(cancellationToken);
 
         public async Task<PaginationBase<Product>> GetAllProductAndInfromationsByShopIDAsync(PaginationModelDto paginationModelDto, string shopId, CancellationToken cancellationToken)
@@ -127,9 +129,9 @@ namespace E_BangInfrastructure.Repository
             int TotalCount = await _projectDbContext.Products.CountAsync(cancellationToken);
             List<Product> products = await _projectDbContext
                 .Products
-                .Where(pr=>pr.ShopID == shopId)
-                .Include(pr=>pr.ProductInformations)
-                .Include(pr=>pr.ProductCountPrice)
+                .Where(pr => pr.ShopID == shopId)
+                .Include(pr => pr.ProductInformations)
+                .Include(pr => pr.ProductCountPrice)
                 .Skip((paginationModelDto.PageIndex - 1) * paginationModelDto.PageSize)
                 .Take(paginationModelDto.PageSize)
                 .ToListAsync(cancellationToken);
@@ -148,7 +150,7 @@ namespace E_BangInfrastructure.Repository
 
         public async Task<ProductPriceCount?> GetProductPriceAndCountByIdAsync(string productId, CancellationToken cancellationToken)
             => await _projectDbContext.ProductPrice.Where(pr => pr.ProductID == productId).FirstOrDefaultAsync(cancellationToken);
-        
+
         #endregion
     }
 }

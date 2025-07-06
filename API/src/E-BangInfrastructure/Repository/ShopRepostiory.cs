@@ -37,10 +37,10 @@ namespace E_BangInfrastructure.Repository
                 {
                     ShopID = shopID,
                     ShopCity = createShopBranchDto.ShopCity,
-                    ShopCountry =  createShopBranchDto.ShopCountry,
+                    ShopCountry = createShopBranchDto.ShopCountry,
                     ShopPostalCode = createShopBranchDto.ShopPostalCode,
                     ShopStreetName = createShopBranchDto.ShopStreetName,
-                    IsMainShop =createShopBranchDto.IsMainShop, 
+                    IsMainShop = createShopBranchDto.IsMainShop,
                 }, cancellationToken: token);
             return true;
         }
@@ -60,7 +60,7 @@ namespace E_BangInfrastructure.Repository
         public async Task<bool> UpdateShopBranchAsync(ShopBranchesInformations branch, CreateShopBranchDto create, CancellationToken cancellationToken)
         {
             branch.ShopCity = create.ShopCity;
-            branch.ShopCountry = create.ShopCountry;  
+            branch.ShopCountry = create.ShopCountry;
             branch.ShopPostalCode = create.ShopPostalCode;
             branch.ShopStreetName = create.ShopStreetName;
             branch.IsMainShop = create.IsMainShop;
@@ -98,7 +98,7 @@ namespace E_BangInfrastructure.Repository
             int totalCount = await _dbContext.Shop.CountAsync(cancellationToken);
             List<Shop> shops = await _dbContext
                 .Shop
-                .Skip((paginationModelDto.PageIndex - 1)*paginationModelDto.PageSize)
+                .Skip((paginationModelDto.PageIndex - 1) * paginationModelDto.PageSize)
                 .Take(paginationModelDto.PageSize)
                 .ToListAsync(cancellationToken: cancellationToken);
 
@@ -109,7 +109,7 @@ namespace E_BangInfrastructure.Repository
                 .SetTotalItmesCount(totalCount)
                 .SetPageCount(paginationModelDto.PageSize, paginationModelDto.PageIndex)
                 .Build();
-                
+
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace E_BangDomain.Repository
+﻿namespace E_BangDomain.HelperRepository
 {
     public interface IEmailRepository
     {

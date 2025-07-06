@@ -1,10 +1,10 @@
 ﻿using E_BangAppRabbitSharedClass.BuildersDto.Header;
 using E_BangAppRabbitSharedClass.BuildersDto.Body;
 using E_BangAppRabbitSharedClass.RabbitModel;
-using E_BangDomain.Repository;
 using E_BangDomain.ModelDtos.MessageSender;
+using E_BangDomain.HelperRepository;
 
-namespace E_BangInfrastructure.Repository
+namespace E_BangInfrastructure.HelperRepository
 {
     public class EmailRepository : IEmailRepository
     {
@@ -17,7 +17,7 @@ namespace E_BangInfrastructure.Repository
 
         public Task SendEmailConfirmAccountAsync(string token, string email, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();    
+            throw new NotImplementedException();
         }
 
         public async Task SendRegistrationConfirmAccountEmailAsync(string token, string email, CancellationToken cancellationToken)
