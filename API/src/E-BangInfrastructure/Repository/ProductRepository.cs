@@ -1,6 +1,6 @@
 ﻿using E_BangAppRabbitSharedClass.AzureRabbitModel;
-using E_BangDomain.EntetiesDto.Commands.Product;
 using E_BangDomain.Entities;
+using E_BangDomain.EntitiesDto.Commands.Product;
 using E_BangDomain.Extensions;
 using E_BangDomain.HelperRepository;
 using E_BangDomain.ModelDtos.MessageSender;

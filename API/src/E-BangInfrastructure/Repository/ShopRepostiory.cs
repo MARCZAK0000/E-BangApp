@@ -1,5 +1,5 @@
-﻿using E_BangDomain.EntetiesDto.Commands.Shop;
-using E_BangDomain.Entities;
+﻿using E_BangDomain.Entities;
+using E_BangDomain.EntitiesDto.Commands.Shop;
 using E_BangDomain.ModelDtos.Pagination;
 using E_BangDomain.Pagination;
 using E_BangDomain.Repository;

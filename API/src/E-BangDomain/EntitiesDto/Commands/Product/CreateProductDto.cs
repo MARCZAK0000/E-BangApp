@@ -1,4 +1,4 @@
-﻿namespace E_BangDomain.EntetiesDto.Commands.Product
+﻿namespace E_BangDomain.EntitiesDto.Commands.Product
 {
     public class CreateProductDto
     {

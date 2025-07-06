@@ -6,7 +6,9 @@ namespace E_BangDomain.Entities
     [Table("Account", Schema = "Account")]
     public partial class Account : IdentityUser
     {
+        public string TwoFactoryCode { get; set; }
 
+        public DateTime LastUpdateTime { get; set; }
     }
     public partial class Account
     {

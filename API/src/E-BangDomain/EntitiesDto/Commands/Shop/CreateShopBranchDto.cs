@@ -1,4 +1,4 @@
-﻿namespace E_BangDomain.EntetiesDto.Commands.Shop
+﻿namespace E_BangDomain.EntitiesDto.Commands.Shop
 {
     public class CreateShopBranchDto
     {
