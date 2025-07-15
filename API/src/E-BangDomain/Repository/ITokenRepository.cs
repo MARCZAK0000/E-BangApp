@@ -4,7 +4,9 @@ namespace E_BangDomain.Repository
 {
     public interface ITokenRepository
     {
-        string GenerateJWTTokenAsync(Account account);
-        string GenerateTwoWayFactoryToken();
+        public string GenerateJWTTokenAsync();
+        public string GenerateTwoWayFactoryToken();
+        public bool SaveCookiesAsync(string jwtToken);
+        
     }
 }

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace E_BangDomain.Settings
+﻿namespace E_BangDomain.Settings
 {
-    internal class HttpOnlyTokenOptions
+    public class HttpOnlyTokenOptions
     {
+        public bool IsHttpOnly { get; set; }
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTimeOffset AccessTokenExpireDate { get; set; }
+        public DateTimeOffset RefreshTokenExpireDate { get; set; }
     }
 }

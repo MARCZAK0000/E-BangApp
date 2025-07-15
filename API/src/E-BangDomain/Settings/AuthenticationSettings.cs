@@ -1,10 +1,10 @@
 ﻿namespace E_BangDomain.Settings
 {
-    public class JWTTokenOptions
+    public class AuthenticationSettings
     {
+        public string Issuer { get; set; }
         public string Key { get; set; }
-        public string Issure { get; set; }
-        public int ExpireMinutes { get; set; }
         public string Audience { get; set; }
+        public int ValidMinutes { get; set; }
     }
 }

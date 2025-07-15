@@ -60,5 +60,14 @@ namespace E_BangInfrastructure.Repository
             return true;
         }
 
+        public Task<string> GenerateTwoWayFactoryToken(Account account, CancellationToken token)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> LogoutAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
