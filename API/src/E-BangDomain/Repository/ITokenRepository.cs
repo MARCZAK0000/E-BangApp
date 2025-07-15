@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using E_BangDomain.Entities;
 
 namespace E_BangDomain.Repository
 {
-    internal interface ITokenRepository
+    public interface ITokenRepository
     {
+        string GenerateJWTTokenAsync();
+
+        string GenerateTwoWayFactoryToken();
+
+        bool SaveCookiesAsync(string jwtToken);
     }
 }

@@ -57,17 +57,7 @@ namespace E_BangInfrastructure.Repository
             }
             return result;
         }
-
         public Task<bool> LogoutAsync()
-        {
-            throw new NotImplementedException();
-        }
-        public Task<string> GenerateJWTTokenAsync(Account account, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> GenerateTwoWayFactoryToken(Account account, CancellationToken token)
         {
             throw new NotImplementedException();
         }

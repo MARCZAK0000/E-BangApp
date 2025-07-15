@@ -1,12 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using E_BangDomain.Entities;
+using E_BangDomain.Repository;
 
 namespace E_BangInfrastructure.Repository
 {
-    internal class TokenRepository
+    public class TokenRepository : ITokenRepository
     {
+        public string GenerateJWTTokenAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GenerateTwoWayFactoryToken()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool SaveCookiesAsync(string jwtToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
