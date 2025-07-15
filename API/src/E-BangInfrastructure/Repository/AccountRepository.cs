@@ -12,8 +12,7 @@ namespace E_BangInfrastructure.Repository
         IUserStore<Account> userStore, 
         ProjectDbContext projectDbContext,
         SignInManager<Account> signInManager,
-        IUserEmailStore<Account> userEmailStore,
-        ILogger<AccountRepository> logger) : IAccountRepository
+        IUserEmailStore<Account> userEmailStore) : IAccountRepository
     {
         private readonly UserManager<Account> _userManager = userManager;
 
@@ -25,7 +24,6 @@ namespace E_BangInfrastructure.Repository
 
         private readonly ProjectDbContext projectDbContext = projectDbContext;
         
-        private readonly ILogger<AccountRepository> _logger = logger;
 
         public async Task<Account> RegisterAccountAsync(RegisterAccountDto registerAccountDto, CancellationToken token)
         {
@@ -36,11 +34,11 @@ namespace E_BangInfrastructure.Repository
             await _userManager.CreateAsync(user, registerAccountDto.Password);
             return user;
         }
-        public Task<Maybe<Account>> FindAccountByEmailAsync(string email, CancellationToken token)
+        public async Task<Maybe<Account>> FindAccountByEmailAsync(string email, CancellationToken token)
         {
-            throw new NotImplementedException();
+            Account? user = await _userManager.FindByEmailAsync(email);
+            return new Maybe<Account>(user);
         }
-
         public async Task<bool> ValidateLoginCredentialsAsync(Account user, LoginAccountDto login)
         {
             SignInResult result = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
@@ -49,27 +47,18 @@ namespace E_BangInfrastructure.Repository
 
         public async Task<bool> ValidateLoginWithTwoWayFactoryCodeAsync(Account user, LoginAccountDto login)
         {
-            bool result = false;
             SignInResult signInResult = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
-            if(signInResult.Succeeded)
+            if(!signInResult.Succeeded)
             {
-                
+                return false;
             }
-            return result;
+            if (login.TwoFactorCode is null ||
+                !user.TwoFactoryCode.Equals(login.TwoFactorCode, StringComparison.CurrentCultureIgnoreCase))
+            {
+                return false;
+            }
+            return true;
         }
 
-        public Task<bool> LogoutAsync()
-        {
-            throw new NotImplementedException();
-        }
-        public Task<string> GenerateJWTTokenAsync(Account account, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> GenerateTwoWayFactoryToken(Account account, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
