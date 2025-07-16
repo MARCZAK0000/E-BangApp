@@ -37,4 +37,5 @@ Shared/E-BangAppRabbitSharedClass/bin
 .nuget
 .env
 Shared/.idea
+API/src/E-BangApi/.idea
 
