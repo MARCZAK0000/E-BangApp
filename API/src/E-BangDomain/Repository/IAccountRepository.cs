@@ -30,6 +30,5 @@ namespace E_BangDomain.Repository
         /// <returns>/><see cref="Account>"/> Account Info</returns>
         Task<Maybe<Account>> FindAccountByEmailAsync(string email, CancellationToken token);
         Task<bool> ValidateLoginWithTwoWayFactoryCodeAsync(Account user, LoginAccountDto login);
-        Task<bool> LogoutAsync();
     }
 }

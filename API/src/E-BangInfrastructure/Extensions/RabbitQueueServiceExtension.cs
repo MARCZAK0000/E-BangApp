@@ -1,9 +1,9 @@
-﻿using E_BangAppRabbitBuilder.Options;
+﻿using E_BangApplication.QueueService;
+using E_BangAppRabbitBuilder.Options;
 using E_BangAppRabbitBuilder.ServiceExtensions;
 using E_BangDomain.BackgroundTask;
 using E_BangDomain.IQueueService;
 using E_BangInfrastructure.BackgroundTask;
-using E_BangInfrastructure.QueueService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

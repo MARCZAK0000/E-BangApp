@@ -16,5 +16,7 @@ namespace E_BangDomain.Entities
     {
         public List<Users> Users { get; set; }
         public List<ActionInRole> ActionsInRole { get; set; }
+
+        public List<UsersInRole> UsersInRoles { get; set; }
     }
 }

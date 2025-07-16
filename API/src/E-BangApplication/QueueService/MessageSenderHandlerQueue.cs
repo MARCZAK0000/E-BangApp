@@ -1,7 +1,7 @@
 ﻿using E_BangDomain.IQueueService;
 using System.Collections.Concurrent;
 
-namespace E_BangInfrastructure.QueueService
+namespace E_BangApplication.QueueService
 {
     public class MessageSenderHandlerQueue : IMessageSenderHandlerQueue
     {

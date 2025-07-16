@@ -4,56 +4,103 @@ using E_BangDomain.RequestDtos.TokenRepostitoryDtos;
 using E_BangDomain.Settings;
 using E_BangDomain.StaticHelper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace E_BangInfrastructure.Repository
 {
     public class TokenRepository : ITokenRepository
     {
-        private readonly HttpOnlyTokenOptions _httpOnlyTokenOptions;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public TokenRepository(HttpOnlyTokenOptions httpOnlyTokenOptions, IHttpContextAccessor httpContextAccessor)
+
+        private readonly AuthenticationSettings _authenticationSettings;
+        public TokenRepository(IHttpContextAccessor httpContextAccessor, AuthenticationSettings authenticationSettings)
         {
-            _httpOnlyTokenOptions = httpOnlyTokenOptions;
             _httpContextAccessor = httpContextAccessor;
+            _authenticationSettings = authenticationSettings;
         }
 
-        public string GenerateJWTTokenAsync()
+        public List<Claim> GenerateClaimsList(Account account, List<string> roles)
         {
-            throw new NotImplementedException();
+            List<Claim> claims =
+            [
+                new (ClaimTypes.NameIdentifier, account.Id),
+                new (ClaimTypes.Name, account.Email!),
+                new (ClaimTypes.Email, account.Email!),
+                new (ClaimTypes.MobilePhone, account.PhoneNumber!),
+            ];
+
+            foreach (var role in roles)
+            {
+                claims.Add(new(ClaimTypes.Role, role));
+            }
+
+            return claims;
         }
 
-        public string GenerateTwoWayFactoryToken() 
+        public string GenerateToken(List<Claim> claims)
+        {
+            SymmetricSecurityKey key = new
+                (System.Text.Encoding.UTF8
+                .GetBytes(_authenticationSettings.Key));    
+
+            SigningCredentials cred = 
+                new(key, SecurityAlgorithms.HmacSha512Signature);
+
+            JwtSecurityToken token = new(
+                                   claims: claims,
+                                   expires: DateTime.Now.AddMinutes(_authenticationSettings.ValidMinutes),
+                                   issuer: _authenticationSettings.Issuer,
+                                   audience: _authenticationSettings.Audience,
+                                   signingCredentials: cred
+            );
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public string GenerateTwoWayFactoryToken()
             => CodeGenerator.GenerateRandomNumberCode();
 
-        public string GenerateRefreshTokenAsync()
+        public string GenerateRefreshToken()
             => CodeGenerator.GenerateRandomStringCode();
 
-        public bool SaveCookiesAsync(SaveCookiesDtos cookiesDtos)
+        public bool SaveCookies(List<SaveCookiesDtos> cookiesDtos)
         {
             HttpContext? context = _httpContextAccessor.HttpContext;
-            if(context == null)
+            if (context == null || cookiesDtos == null || cookiesDtos.Count == 0)
             {
                 return false;
             }
-            context.Response.Cookies.Append(_httpOnlyTokenOptions.AccessToken, cookiesDtos.AccessToken, new CookieOptions
-            {
-                Expires = _httpOnlyTokenOptions.AccessTokenExpireDate,
-                HttpOnly = _httpOnlyTokenOptions.IsHttpOnly,
-                IsEssential = true,
-                Secure = false,
-                SameSite = SameSiteMode.Lax,
-            });
 
-            context.Response.Cookies.Append(_httpOnlyTokenOptions.RefreshToken, cookiesDtos.RefreshToken, new CookieOptions
+            foreach (var cookie in cookiesDtos)
             {
-                Expires = _httpOnlyTokenOptions.RefreshTokenExpireDate,
-                HttpOnly = _httpOnlyTokenOptions.IsHttpOnly,
-                IsEssential = true,
-                Secure = false,
-                SameSite = SameSiteMode.Lax,
-            });
+                if (string.IsNullOrEmpty(cookie.Key)
+                    || string.IsNullOrEmpty(cookie.Token)
+                        || cookie.CookiesOptions == null)
+                {
+                    continue;
+                }
 
+                AppendCookie(context,
+                    cookie.Token,
+                    cookie.Key,
+                    cookie.CookiesOptions);
+
+            }
             return true;
         }
+
+        private void AppendCookie
+            (HttpContext httpContext, 
+            string token, 
+            string tokenName, 
+            Action<CookieOptions> options)
+        {
+            CookieOptions cookieOptions = new();
+            options(cookieOptions);
+            httpContext.Response.Cookies.Append(tokenName, token, cookieOptions);
+        }
+
+
     }
 }

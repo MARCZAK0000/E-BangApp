@@ -15,7 +15,7 @@ namespace E_BangInfrastructure.Extensions
                 && Environment.GetEnvironmentVariable("IS_DOCKER")!.Equals("true", StringComparison.CurrentCulture);
 
             services.AddDataProtection();
-            services.AddCustomAuthentication();
+            services.AddCustomAuthentication(configuration);
             services.AddCustomAuthorization();
             services.AddCorsPolicy(configuration);
 
@@ -28,6 +28,8 @@ namespace E_BangInfrastructure.Extensions
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<ITokenRepository, TokenRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
         }
 
     }

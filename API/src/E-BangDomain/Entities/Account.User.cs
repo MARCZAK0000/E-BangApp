@@ -11,7 +11,6 @@ namespace E_BangDomain.Entities
         public string Surname { get; set; }
         public string? SecondName { get; set; }   
         public string PhoneNumber { get; set; }
-        public string RoleID { get; set; }  
         public DateTime LastUpdateTime { get; set; } = DateTime.UtcNow;
     }
 
@@ -19,6 +18,6 @@ namespace E_BangDomain.Entities
     {
         public Account Account { get; set; }
         public UserAddress Address { get; set; }
-        public Roles Role { get; set; }
+        public List<UsersInRole> UsersInRoles { get; set; }
     }
 }

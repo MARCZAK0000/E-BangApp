@@ -14,7 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Host.UseNLog();
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration, builder.Environment.IsDevelopment());
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<ErrorHandlerMiddleware>();
 builder.Services.AddHostedService<BackgroundMessagerWorker>();
 builder.Services.AddScoped<TransactionHandlerMiddleware>();

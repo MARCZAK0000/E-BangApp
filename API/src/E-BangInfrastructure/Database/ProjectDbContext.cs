@@ -8,15 +8,11 @@ namespace E_BangInfrastructure.Database
     public class ProjectDbContext(DbContextOptions options) : IdentityDbContext<Account>(options)
     {
         public DbSet<Account> Account { get; set; }
-
         public new DbSet<Users> Users { get; set; }
-
         public DbSet<UserAddress> UserAddresses { get; set; }
-
         public new DbSet<Roles> Roles { get; set; }
-
         public DbSet<Actions> Actions { get; set; }
-
+        public DbSet<UsersInRole> UsersInRoles { get; set; }
         public DbSet<ActionInRole> ActionInRoles { get; set; }
         public DbSet<Shop> Shop { get; set; }
         public DbSet<ShopType> ShopTypes { get; set; }
@@ -53,12 +49,6 @@ namespace E_BangInfrastructure.Database
                     .IsRequired(true)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                pr.HasOne(pr=>pr.Role)
-                    .WithMany(pr=>pr.Users)
-                    .HasForeignKey(pr=>pr.UserID)
-                    .IsRequired(true)
-                    .OnDelete(DeleteBehavior.Restrict);
-
                 pr.Property(pr=>pr.FirstName).HasMaxLength(50);
                 pr.Property(pr=>pr.Surname).HasMaxLength(50);
                 pr.Property(pr=>pr.SecondName).HasMaxLength(50);
@@ -92,13 +82,13 @@ namespace E_BangInfrastructure.Database
                 .WithMany(pr => pr.ActionsInRole)
                 .HasForeignKey(pr => pr.RoleID)
                 .IsRequired(true)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
                 pr.HasOne(pr => pr.Action)
                .WithMany(pr => pr.ActionInRoles)
                .HasForeignKey(pr => pr.ActionID)
                .IsRequired(true)
-               .OnDelete(DeleteBehavior.Restrict);
+               .OnDelete(DeleteBehavior.Cascade);
             });
             builder.Entity<Roles>(pr =>
             {
@@ -106,6 +96,22 @@ namespace E_BangInfrastructure.Database
                 pr.HasIndex(pr => pr.RoleName).IsUnique();
                 pr.Property(pr => pr.RoleName).HasMaxLength(50);
                 pr.Property(pr => pr.RoleDescription).HasMaxLength(150);
+            });
+
+            builder.Entity<UsersInRole>(pr=>
+            {
+                pr.HasKey(pr => pr.UserInRoleID);
+                pr.HasIndex(pr => new { pr.UserID, pr.RoleID }).IsUnique();
+                pr.HasOne(pr => pr.Users)
+                    .WithMany(pr => pr.UsersInRoles)
+                    .HasForeignKey(pr => pr.UserID)
+                    .IsRequired(true)
+                    .OnDelete(DeleteBehavior.Cascade);
+                pr.HasOne(pr => pr.Roles)
+                    .WithMany(pr => pr.UsersInRoles)
+                    .HasForeignKey(pr => pr.RoleID)
+                    .IsRequired(true)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
             base.OnModelCreating(builder);
         }

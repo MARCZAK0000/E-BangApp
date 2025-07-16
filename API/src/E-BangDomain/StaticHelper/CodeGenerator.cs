@@ -10,7 +10,7 @@ namespace E_BangDomain.StaticHelper
             var digits = Enumerable.Repeat(RandomNumberGenerator.GetInt32(0, 10), 6).Select(x => x.ToString());
 
             return string.Concat(digits);
-        
+        }  
         public static string GenerateRandomStringCode()
         {
             char[] buffer = new char[10];

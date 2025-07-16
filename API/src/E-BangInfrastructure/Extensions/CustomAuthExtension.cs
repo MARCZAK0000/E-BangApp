@@ -39,6 +39,7 @@ namespace E_BangInfrastructure.Extensions
             configuration.GetSection("HttpOnlySettings").Bind(httpOnlyTokenOptions);
 
             services.AddSingleton(authenticationSettings);
+            services.AddSingleton(httpOnlyTokenOptions);    
             services.AddAuthentication(options=>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
