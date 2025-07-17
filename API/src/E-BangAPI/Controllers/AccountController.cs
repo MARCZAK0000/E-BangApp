@@ -1,6 +1,10 @@
 ﻿using E_BangApplication.Attributes;
+using E_BangApplication.CQRS.Command;
+using E_BangDomain.ResponseDtos.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyCustomMediator.Classes;
+using MyCustomMediator.Interfaces;
 
 namespace E_BangAPI.Controllers
 {
@@ -8,7 +12,12 @@ namespace E_BangAPI.Controllers
     [Route("api/account")]
     public class AccountController : ControllerBase
     {
-        #region Post Request
+        private readonly ISender _sender;
+        public AccountController(ISender sender)
+        {
+            _sender = sender;
+        }
+
         [HttpPost("register")]
         [Transaction]
         public Task<IActionResult> RegisterAsync()
@@ -16,9 +25,14 @@ namespace E_BangAPI.Controllers
             throw new NotImplementedException();
         }
         [HttpPost("login")]
-        public Task<IActionResult> LoginAsync()
+        public async Task<IActionResult> LoginAsync(SignInCommand signInCommand, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var response = await _sender.SendToMediatoR<SignInCommand, SignInResponseDto> (signInCommand, token);
+            if(!response.IsSuccess)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
         }
         [HttpPost("logout")]
         public Task<IActionResult> LogoutAsync()
@@ -44,9 +58,9 @@ namespace E_BangAPI.Controllers
         {
             throw new NotImplementedException();
         }
-        #endregion
+        
 
-        #region Get Request
+       
         [HttpGet("confirmEmail")]
         public Task<IActionResult> ConfirmEmailAsyncAsync()
         {
@@ -69,6 +83,6 @@ namespace E_BangAPI.Controllers
         {
             throw new NotImplementedException();
         }
-        #endregion
+        
     }
 }
