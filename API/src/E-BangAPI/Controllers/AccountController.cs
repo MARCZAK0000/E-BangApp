@@ -27,7 +27,7 @@ namespace E_BangAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync(SignInCommand signInCommand, CancellationToken token)
         {
-            var response = await _sender.SendToMediatoR<SignInCommand, SignInResponseDto> (signInCommand, token);
+            var response = await _sender.SendToMediatoR(signInCommand, token);
             if(!response.IsSuccess)
             {
                 return NotFound(response);
