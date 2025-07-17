@@ -23,7 +23,7 @@ namespace E_BangInfrastructure.Extensions
             services.AddRabbitQueueService(configuration, IsDocker);
 
             services.AddScoped<IEmailRepository, EmailRepository>();
-            services.AddScoped<IRabbitSenderRepository, IRabbitSenderRepository>();
+            services.AddScoped<IRabbitSenderRepository, RabbitSenderRepository>();
             services.AddScoped<IShopRepository, ShopRepostiory>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();

@@ -1,5 +1,4 @@
 ﻿using E_BangDomain.HelperRepository;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Http.Metadata;
@@ -38,12 +37,12 @@ namespace E_BangAPI.MinimalApi
             var bearerTokenOptions = endpoints.ServiceProvider.GetRequiredService<IOptionsMonitor<BearerTokenOptions>>();
             var emailSender = endpoints.ServiceProvider.GetRequiredService<IEmailRepository>();
             var linkGenerator = endpoints.ServiceProvider.GetRequiredService<LinkGenerator>();
-            var mediatr = endpoints.ServiceProvider.GetRequiredService<IMediator>();
-            
+            //var mediatr = endpoints.ServiceProvider.GetRequiredService<IMediator>();
+
 
             // We'll figure out a unique endpoint name based on the final route pattern during endpoint generation.
             string? confirmEmailEndpointName = null;
-            
+
             var routeGroup = endpoints.MapGroup("/api/account");
 
             if (configureOptions.ExcludeRegisterPost)
@@ -440,7 +439,7 @@ namespace E_BangAPI.MinimalApi
 
                 var confirmEmailUrl = linkGenerator.GetUriByName(context, confirmEmailEndpointName, routeValues)
                     ?? throw new NotSupportedException($"Could not find endpoint named '{confirmEmailEndpointName}'.");
-                if(!isChange)
+                if (!isChange)
                 {
                     await emailSender.SendEmailConfirmAccountAsync(email, HtmlEncoder.Default.Encode(confirmEmailUrl), CancellationToken.None);
 

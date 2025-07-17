@@ -1,11 +1,8 @@
 ﻿using E_BangApplication.Attributes;
 using E_BangApplication.CQRS.Command;
-using E_BangDomain.ResponseDtos.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MyCustomMediator.Classes;
 using MyCustomMediator.Interfaces;
-
 namespace E_BangAPI.Controllers
 {
     [ApiController]
@@ -28,7 +25,7 @@ namespace E_BangAPI.Controllers
         public async Task<IActionResult> LoginAsync(SignInCommand signInCommand, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(signInCommand, token);
-            if(!response.IsSuccess)
+            if (!response.IsSuccess)
             {
                 return NotFound(response);
             }
@@ -58,9 +55,9 @@ namespace E_BangAPI.Controllers
         {
             throw new NotImplementedException();
         }
-        
 
-       
+
+
         [HttpGet("confirmEmail")]
         public Task<IActionResult> ConfirmEmailAsyncAsync()
         {
@@ -83,6 +80,6 @@ namespace E_BangAPI.Controllers
         {
             throw new NotImplementedException();
         }
-        
+
     }
 }

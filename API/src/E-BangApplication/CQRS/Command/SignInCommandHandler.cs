@@ -6,15 +6,14 @@ using E_BangDomain.RequestDtos.TokenRepostitoryDtos;
 using E_BangDomain.ResponseDtos.Account;
 using E_BangDomain.Settings;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using MyCustomMediator.Interfaces;
 using System.Security.Claims;
 
 namespace E_BangApplication.CQRS.Command
 {
-    public class SignInCommand : LoginAccountDto, IRequest<SignInResponseDto> 
+    public class SignInCommand : LoginAccountDto, IRequest<SignInResponseDto>
     {
-        
+
     }
     public class SignInCommandHandler : IRequestHandler<SignInCommand, SignInResponseDto>
     {
@@ -26,8 +25,8 @@ namespace E_BangApplication.CQRS.Command
 
         private readonly HttpOnlyTokenOptions _httpOnlyTokenOptions;
 
-        public SignInCommandHandler(IAccountRepository accountRepository, 
-            IRoleRepository roleRepository, 
+        public SignInCommandHandler(IAccountRepository accountRepository,
+            IRoleRepository roleRepository,
             ITokenRepository tokenRepository,
             HttpOnlyTokenOptions httpOnlyTokenOptions)
         {
