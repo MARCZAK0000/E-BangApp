@@ -11,11 +11,11 @@ using System.Security.Claims;
 
 namespace E_BangApplication.CQRS.Command
 {
-    public class SignInCommand : LoginAccountDto, IRequest<SignInResponseDto>
+    public class ValidatCredentialsTwoWayToken : LoginAccountDto, IRequest<SignInResponseDto>
     {
 
     }
-    public class SignInCommandHandler : IRequestHandler<SignInCommand, SignInResponseDto>
+    public class SignInCommandHandler : IRequestHandler<ValidatCredentialsTwoWayToken, SignInResponseDto>
     {
         private readonly IAccountRepository _accountRepository;
 
@@ -36,7 +36,7 @@ namespace E_BangApplication.CQRS.Command
             _httpOnlyTokenOptions = httpOnlyTokenOptions;
         }
 
-        public async Task<SignInResponseDto> Handle(SignInCommand request, CancellationToken token)
+        public async Task<SignInResponseDto> Handle(ValidatCredentialsTwoWayToken request, CancellationToken token)
         {
             SignInResponseDto response = new()
             {

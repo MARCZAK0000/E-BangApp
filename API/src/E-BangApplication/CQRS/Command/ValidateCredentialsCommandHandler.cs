@@ -13,11 +13,11 @@ using System.Security.Claims;
 
 namespace E_BangApplication.CQRS.Command
 {
-    public class ValidateCredentialsCommand : LoginAccountDto, IRequest<TwoWayTokenResponseDto>
+    public class VerifyCredentialsCommand : LoginAccountDto, IRequest<TwoWayTokenResponseDto>
     {
 
     }
-    public class ValidateCredentialsCommandHandler : IRequestHandler<ValidateCredentialsCommand, TwoWayTokenResponseDto>
+    public class ValidateCredentialsCommandHandler : IRequestHandler<VerifyCredentialsCommand, TwoWayTokenResponseDto>
     {
         private readonly IAccountRepository _accountRepository;
 
@@ -44,7 +44,7 @@ namespace E_BangApplication.CQRS.Command
             _emailRepository = emailRepository;
         }
 
-        public async Task<TwoWayTokenResponseDto> Handle(ValidateCredentialsCommand request, CancellationToken token)
+        public async Task<TwoWayTokenResponseDto> Handle(VerifyCredentialsCommand request, CancellationToken token)
         {
             TwoWayTokenResponseDto response = new()
             {

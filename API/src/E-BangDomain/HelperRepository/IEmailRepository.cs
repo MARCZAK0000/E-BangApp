@@ -4,5 +4,6 @@
     {
         Task SendRegistrationConfirmAccountEmailAsync(string token, string email, CancellationToken cancellationToken);
         Task SendEmailConfirmAccountAsync(string token, string email, CancellationToken cancellationToken);
+        Task SendTwoWayTokenEmailAsync(string token, string email, CancellationToken cancellationToken);
     }
 }

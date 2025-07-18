@@ -22,7 +22,7 @@ namespace E_BangAPI.Controllers
             throw new NotImplementedException();
         }
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(SignInCommand signInCommand, CancellationToken token)
+        public async Task<IActionResult> LoginAsync(ValidatCredentialsTwoWayToken signInCommand, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(signInCommand, token);
             if (!response.IsSuccess)
@@ -33,7 +33,7 @@ namespace E_BangAPI.Controllers
         }
 
         [HttpPost("loginWithTwoWay)")]
-        public async Task<IActionResult> LoginWithTwoWayAsync(SignInCommand signInCommand, CancellationToken token)
+        public async Task<IActionResult> LoginWithTwoWayAsync(ValidatCredentialsTwoWayToken signInCommand, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(signInCommand, token);
             if (!response.IsSuccess)
