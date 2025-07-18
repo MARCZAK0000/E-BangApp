@@ -1,5 +1,4 @@
-﻿using E_BangDomain.BackgroundTask;
-using E_BangDomain.Entities;
+﻿using E_BangDomain.Entities;
 using E_BangDomain.HelperRepository;
 using E_BangDomain.IQueueService;
 using E_BangDomain.MaybePattern;
@@ -10,18 +9,13 @@ using E_BangDomain.ResponseDtos.Account;
 using E_BangDomain.Settings;
 using Microsoft.AspNetCore.Http;
 using MyCustomMediator.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E_BangApplication.CQRS.Command
 {
     public class ValidateCredentialsCommand : LoginAccountDto, IRequest<TwoWayTokenResponseDto>
     {
-        
+
     }
     public class ValidateCredentialsCommandHandler : IRequestHandler<ValidateCredentialsCommand, TwoWayTokenResponseDto>
     {
@@ -37,9 +31,9 @@ namespace E_BangApplication.CQRS.Command
 
         private readonly IEmailRepository _emailRepository;
 
-        public ValidateCredentialsCommandHandler(IAccountRepository accountRepository, 
-            IRoleRepository roleRepository, 
-            ITokenRepository tokenRepository, 
+        public ValidateCredentialsCommandHandler(IAccountRepository accountRepository,
+            IRoleRepository roleRepository,
+            ITokenRepository tokenRepository,
             HttpOnlyTokenOptions httpOnlyTokenOptions, IMessageSenderHandlerQueue messageSenderHandlerQueue, IEmailRepository emailRepository)
         {
             _accountRepository = accountRepository;
@@ -63,11 +57,11 @@ namespace E_BangApplication.CQRS.Command
                 return response;
             }
             bool isCredentialsValid = await _accountRepository.ValidateLoginCredentialsAsync(maybe.Value, request);
-            if(!isCredentialsValid)
+            if (!isCredentialsValid)
             {
                 return response;
             }
-            if(maybe.Value.TwoFactorEnabled)
+            if (maybe.Value.TwoFactorEnabled)
             {
                 string twoWayToken = _tokenRepository.GenerateTwoWayFactoryToken();
                 bool isSaved = await _tokenRepository.SaveTwoWayFactoryTokenAsync(maybe.Value.Id, twoWayToken, token);
@@ -80,9 +74,8 @@ namespace E_BangApplication.CQRS.Command
                 ///EMAIL SENDING LOGIC HERE !!!!!!!!!!!!
                 _messageSenderHandlerQueue.QueueBackgroundWorkItem(async (cancellationToken) =>
                 {
-                    await _emailRepository.SendRegistrationConfirmAccountEmailAsync(
+                    await _emailRepository.SendTwoWayTokenEmailAsync(
                         twoWayToken, maybe.Value.Email!, cancellationToken);
-                    await Task.Delay(1000, cancellationToken);
                 });
 
             }

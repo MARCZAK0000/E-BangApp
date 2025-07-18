@@ -20,6 +20,6 @@ namespace E_BangAppEmailBuilder.src.EmailBodyStrategy.StrategyBase
                 throw new InvalidOperationException("Empty Body Template");
             }
             return template.Replace("[email]", registration.Email).Replace("[token]", registration.Token);
-        }
+       }
     }
 }
