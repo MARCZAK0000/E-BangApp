@@ -11,13 +11,14 @@ using Microsoft.AspNetCore.Http;
 using MyCustomMediator.Interfaces;
 using System.Security.Claims;
 
-namespace E_BangApplication.CQRS.Command
+namespace E_BangApplication.CQRS.Command.AccountCommand
 {
     public class VerifyCredentialsCommand : LoginAccountDto, IRequest<TwoWayTokenResponseDto>
     {
 
     }
-    public class ValidateCredentialsCommandHandler : IRequestHandler<VerifyCredentialsCommand, TwoWayTokenResponseDto>
+    public class VerifyCredentialsCommandHandler
+        : IRequestHandler<VerifyCredentialsCommand, TwoWayTokenResponseDto>
     {
         private readonly IAccountRepository _accountRepository;
 
@@ -31,7 +32,7 @@ namespace E_BangApplication.CQRS.Command
 
         private readonly IEmailRepository _emailRepository;
 
-        public ValidateCredentialsCommandHandler(IAccountRepository accountRepository,
+        public VerifyCredentialsCommandHandler(IAccountRepository accountRepository,
             IRoleRepository roleRepository,
             ITokenRepository tokenRepository,
             HttpOnlyTokenOptions httpOnlyTokenOptions, IMessageSenderHandlerQueue messageSenderHandlerQueue, IEmailRepository emailRepository)
@@ -46,11 +47,7 @@ namespace E_BangApplication.CQRS.Command
 
         public async Task<TwoWayTokenResponseDto> Handle(VerifyCredentialsCommand request, CancellationToken token)
         {
-            TwoWayTokenResponseDto response = new()
-            {
-                IsSuccess = false,
-                TwoWayToken = string.Empty
-            };
+            TwoWayTokenResponseDto response = new();
             Maybe<Account> maybe = await _accountRepository.FindAccountByEmailAsync(request.Email, token);
             if (!maybe.HasValue || maybe.Value == null)
             {
@@ -69,8 +66,10 @@ namespace E_BangApplication.CQRS.Command
                 {
                     return response;
                 }
-                response.TwoWayToken = twoWayToken;
 
+                response.TwoWayToken = twoWayToken;
+                response.IsSuccess = response.IsTokenGenerated = true;
+                
                 ///EMAIL SENDING LOGIC HERE !!!!!!!!!!!!
                 _messageSenderHandlerQueue.QueueBackgroundWorkItem(async (cancellationToken) =>
                 {

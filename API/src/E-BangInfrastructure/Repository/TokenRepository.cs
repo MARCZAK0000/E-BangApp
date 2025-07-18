@@ -12,7 +12,7 @@ using System.Security.Claims;
 
 namespace E_BangInfrastructure.Repository
 {
-    public class TokenRepository : ITokenRepository
+    public sealed class TokenRepository : ITokenRepository
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -94,18 +94,51 @@ namespace E_BangInfrastructure.Repository
             }
             return true;
         }
-
         private void AppendCookie
-            (HttpContext httpContext, 
-            string token, 
-            string tokenName, 
+            (HttpContext httpContext,
+            string token,
+            string tokenName,
             Action<CookieOptions> options)
         {
             CookieOptions cookieOptions = new();
             options(cookieOptions);
             httpContext.Response.Cookies.Append(tokenName, token, cookieOptions);
         }
+        public bool RemoveCookies(List<string> cookies)
+        {
+            HttpContext? context = _httpContextAccessor.HttpContext;
+            if (context == null || cookies == null || cookies.Count == 0)
+            {
+                return false;
+            }
+            foreach (var cookie in cookies)
+            {
+                if (string.IsNullOrEmpty(cookie))
+                {
+                    continue;
+                }
+                DeleteCookie(context, cookie);
+            }
+            return true;
+        }
 
+        private void DeleteCookie(HttpContext httpContext, string tokenName)
+        {
+            httpContext.Response.Cookies.Delete(tokenName);
+        }
+
+        public async Task<bool> SaveRefreshTokenAsync(string accountId, string refreshToken, CancellationToken cancellationToken)
+        {
+            Account? account = await _dbContext
+                .Account.Where(pr => pr.Id == accountId)
+                .FirstOrDefaultAsync(cancellationToken);
+            if (account == null)
+            {
+                return false;
+            }
+            account.RefreshToken = refreshToken;
+            return true;
+        }
         public async Task<bool> SaveTwoWayFactoryTokenAsync(string accountId, string twoWayToken, CancellationToken token)
         {
             Account? account = await _dbContext

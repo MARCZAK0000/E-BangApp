@@ -8,6 +8,7 @@ namespace E_BangDomain.Entities
     {
         public string TwoFactoryCode { get; set; }
 
+        public string RefreshToken { get; set; }
         public DateTime LastUpdateTime { get; set; }
     }
     public partial class Account

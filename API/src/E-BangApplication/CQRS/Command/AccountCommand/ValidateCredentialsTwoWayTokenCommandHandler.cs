@@ -9,13 +9,14 @@ using Microsoft.AspNetCore.Http;
 using MyCustomMediator.Interfaces;
 using System.Security.Claims;
 
-namespace E_BangApplication.CQRS.Command
+namespace E_BangApplication.CQRS.Command.AccountCommand
 {
-    public class ValidatCredentialsTwoWayToken : LoginAccountDto, IRequest<SignInResponseDto>
+    public class ValidateCredentialsTwoWayTokenCommand : LoginAccountDto, IRequest<SignInResponseDto>
     {
 
     }
-    public class SignInCommandHandler : IRequestHandler<ValidatCredentialsTwoWayToken, SignInResponseDto>
+    public class ValidateCredentialsTwoWayTokenCommandHandler
+        : IRequestHandler<ValidateCredentialsTwoWayTokenCommand, SignInResponseDto>
     {
         private readonly IAccountRepository _accountRepository;
 
@@ -25,7 +26,7 @@ namespace E_BangApplication.CQRS.Command
 
         private readonly HttpOnlyTokenOptions _httpOnlyTokenOptions;
 
-        public SignInCommandHandler(IAccountRepository accountRepository,
+        public ValidateCredentialsTwoWayTokenCommandHandler(IAccountRepository accountRepository,
             IRoleRepository roleRepository,
             ITokenRepository tokenRepository,
             HttpOnlyTokenOptions httpOnlyTokenOptions)
@@ -36,7 +37,7 @@ namespace E_BangApplication.CQRS.Command
             _httpOnlyTokenOptions = httpOnlyTokenOptions;
         }
 
-        public async Task<SignInResponseDto> Handle(ValidatCredentialsTwoWayToken request, CancellationToken token)
+        public async Task<SignInResponseDto> Handle(ValidateCredentialsTwoWayTokenCommand request, CancellationToken token)
         {
             SignInResponseDto response = new()
             {
@@ -90,6 +91,7 @@ namespace E_BangApplication.CQRS.Command
             {
                 return response;
             }
+            bool isRefreshTokenSaved = await _tokenRepository.SaveRefreshTokenAsync(maybe.Value.Id, refreshToken, token);
             response.IsSuccess = true;
             return response;
 

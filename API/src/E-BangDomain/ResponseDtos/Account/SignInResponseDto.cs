@@ -1,7 +1,14 @@
-﻿namespace E_BangDomain.ResponseDtos.Account
+﻿using E_BangDomain.ResponseDtos.SharedResponseDtos;
+
+namespace E_BangDomain.ResponseDtos.Account
 {
-    public class SignInResponseDto
+    public class SignInResponseDto : SuccessResponseDto
     {
-        public bool IsSuccess { get; set; }
+        protected override void UpdateMessage()
+        {
+            Message = IsSuccess
+                ? "Sign-in successful."
+                : "Sign-in failed. Please check your credentials and try again.";
+        }
     }
 }

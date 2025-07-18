@@ -51,5 +51,7 @@ namespace E_BangDomain.Repository
         /// <returns><see langword="true"/> if the token was successfully saved; otherwise, <see langword="false"/>.</returns>
         Task<bool> SaveTwoWayFactoryTokenAsync(string accountId, string twoWayToken, CancellationToken token);
 
+        Task<bool> SaveRefreshTokenAsync(string accountId, string refreshToken, CancellationToken cancellationToken);
+
     }
 }

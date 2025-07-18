@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="E-BangAppRabbitBuilder" Version="1.1.0" />
-    <PackageReference Include="EmailBuilder" Version="1.0.2" />
+    <PackageReference Include="E-BangAppRabbitSharedClass" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
@@ -26,11 +26,4 @@
     <ProjectReference Include="..\E-BangApplication\E-BangApplication.csproj" />
     <ProjectReference Include="..\E-BangDomain\E-BangDomain.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="E-BangAppRabbitSharedClass">
-      <HintPath>..\..\..\Shared\E-BangAppRabbitSharedClass\bin\Debug\net9.0\E-BangAppRabbitSharedClass.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

@@ -1,5 +1,5 @@
 ﻿using E_BangApplication.Attributes;
-using E_BangApplication.CQRS.Command;
+using E_BangApplication.CQRS.Command.AccountCommand;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyCustomMediator.Interfaces;
@@ -21,21 +21,24 @@ namespace E_BangAPI.Controllers
         {
             throw new NotImplementedException();
         }
+
+        [Transaction]
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(ValidatCredentialsTwoWayToken signInCommand, CancellationToken token)
+        public async Task<IActionResult> LoginAsync(VerifyCredentialsCommand verifyCredentials, CancellationToken token)
         {
-            var response = await _sender.SendToMediatoR(signInCommand, token);
-            if (!response.IsSuccess)
+            var response = await _sender.SendToMediatoR(verifyCredentials, token);
+            if (!response.IsSuccess && string.IsNullOrEmpty(response.TwoWayToken))
             {
                 return NotFound(response);
             }
             return Ok(response);
         }
 
+        [Transaction]
         [HttpPost("loginWithTwoWay)")]
-        public async Task<IActionResult> LoginWithTwoWayAsync(ValidatCredentialsTwoWayToken signInCommand, CancellationToken token)
+        public async Task<IActionResult> LoginWithTwoWayAsync(ValidateCredentialsTwoWayTokenCommand validateCredentials, CancellationToken token)
         {
-            var response = await _sender.SendToMediatoR(signInCommand, token);
+            var response = await _sender.SendToMediatoR(validateCredentials, token);
             if (!response.IsSuccess)
             {
                 return NotFound(response);

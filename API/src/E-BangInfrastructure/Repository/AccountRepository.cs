@@ -4,12 +4,11 @@ using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using E_BangInfrastructure.Database;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 
 namespace E_BangInfrastructure.Repository
 {
-    public class AccountRepository(UserManager<Account> userManager, 
-        IUserStore<Account> userStore, 
+    public sealed class AccountRepository(UserManager<Account> userManager,
+        IUserStore<Account> userStore,
         ProjectDbContext projectDbContext,
         SignInManager<Account> signInManager,
         IUserEmailStore<Account> userEmailStore) : IAccountRepository
@@ -23,7 +22,7 @@ namespace E_BangInfrastructure.Repository
         private readonly IUserEmailStore<Account> _userEmailStore = userEmailStore;
 
         private readonly ProjectDbContext projectDbContext = projectDbContext;
-        
+
 
         public async Task<Account> RegisterAccountAsync(RegisterAccountDto registerAccountDto, CancellationToken token)
         {
@@ -48,7 +47,7 @@ namespace E_BangInfrastructure.Repository
         public async Task<bool> ValidateLoginWithTwoWayFactoryCodeAsync(Account user, LoginAccountDto login)
         {
             SignInResult signInResult = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
-            if(!signInResult.Succeeded)
+            if (!signInResult.Succeeded)
             {
                 return false;
             }
