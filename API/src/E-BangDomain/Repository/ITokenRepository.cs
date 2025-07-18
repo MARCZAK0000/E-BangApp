@@ -37,5 +37,19 @@ namespace E_BangDomain.Repository
         /// <param name="cookiesDtos">List of cookies to save</param>
         /// <returns><see cref="bool"/> Return true if saved, false if error</returns>
         bool SaveCookies(List<SaveCookiesDtos> cookiesDtos);
+
+        /// <summary>
+        /// Saves a two-way factory token for the specified account asynchronously.
+        /// </summary>
+        /// <remarks>This method performs the save operation asynchronously and may involve external
+        /// storage or services. Ensure that the provided <paramref name="accountId"/> and <paramref
+        /// name="twoWayToken"/> are valid.</remarks>
+        /// <param name="accountId">The unique identifier of the account for which the token is being saved. Must not be <see langword="null"/>
+        /// or empty.</param>
+        /// <param name="twoWayToken">The two-way factory token to save. Must not be <see langword="null"/> or empty.</param>
+        /// <param name="token">A <see cref="CancellationToken"/> that can be used to cancel the operation.</param>
+        /// <returns><see langword="true"/> if the token was successfully saved; otherwise, <see langword="false"/>.</returns>
+        Task<bool> SaveTwoWayFactoryTokenAsync(string accountId, string twoWayToken, CancellationToken token);
+
     }
 }

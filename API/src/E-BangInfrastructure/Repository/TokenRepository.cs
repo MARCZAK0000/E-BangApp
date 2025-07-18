@@ -3,7 +3,9 @@ using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.TokenRepostitoryDtos;
 using E_BangDomain.Settings;
 using E_BangDomain.StaticHelper;
+using E_BangInfrastructure.Database;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,10 +17,13 @@ namespace E_BangInfrastructure.Repository
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly AuthenticationSettings _authenticationSettings;
-        public TokenRepository(IHttpContextAccessor httpContextAccessor, AuthenticationSettings authenticationSettings)
+
+        private readonly ProjectDbContext _dbContext;
+        public TokenRepository(IHttpContextAccessor httpContextAccessor, AuthenticationSettings authenticationSettings, ProjectDbContext dbContext)
         {
             _httpContextAccessor = httpContextAccessor;
             _authenticationSettings = authenticationSettings;
+            _dbContext = dbContext;
         }
 
         public List<Claim> GenerateClaimsList(Account account, List<string> roles)
@@ -101,6 +106,17 @@ namespace E_BangInfrastructure.Repository
             httpContext.Response.Cookies.Append(tokenName, token, cookieOptions);
         }
 
-
+        public async Task<bool> SaveTwoWayFactoryTokenAsync(string accountId, string twoWayToken, CancellationToken token)
+        {
+            Account? account = await _dbContext
+                .Account.Where(pr=>pr.Id == accountId)
+                .FirstOrDefaultAsync(token);
+            if(account == null)
+            {
+                return false;
+            }
+            account.TwoFactoryCode = twoWayToken;
+            return true;
+        }
     }
 }

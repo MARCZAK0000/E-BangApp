@@ -31,6 +31,17 @@ namespace E_BangAPI.Controllers
             }
             return Ok(response);
         }
+
+        [HttpPost("loginWithTwoWay)")]
+        public async Task<IActionResult> LoginWithTwoWayAsync(SignInCommand signInCommand, CancellationToken token)
+        {
+            var response = await _sender.SendToMediatoR(signInCommand, token);
+            if (!response.IsSuccess)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
         [HttpPost("logout")]
         public Task<IActionResult> LogoutAsync()
         {

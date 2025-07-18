@@ -1,0 +1,5 @@
+<p>This is your Two Way Token</p>
+<p>
+    <mark style="background-color: #FFFF00; padding: 5px;">[token]</mark>
+</p>
+<p>Copy and paste this token sign in page.</p>

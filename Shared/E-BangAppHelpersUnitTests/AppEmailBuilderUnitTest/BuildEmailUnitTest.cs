@@ -34,7 +34,30 @@ namespace E_BangAppHelpersUnitTests.AppEmailBuilderUnitTest
             message.Message.ShouldContain(DateTime.Now.Year.ToString());
 
         }
+        [Fact]
 
+        public void TwoWayTokenShouldBeOK()
+        {
+            IBuilderEmail builderEmail = new BuilderEmail();
+            HeaderDefaultTemplateBuilder header = new HeaderDefaultTemplateBuilder()
+            {
+                Email = "test@test.com"
+            };
+            TwoWayTokenBodyBuilder body = new TwoWayTokenBodyBuilder()
+            {
+                Token = "000000",
+            };
+            FooterDefualtTemplateBuilder footer = new FooterDefualtTemplateBuilder()
+            {
+                Year = DateTime.Now.Year.ToString(),
+            };
+            var message = builderEmail.GenerateMessage(header, body, footer);
+            message.ShouldNotBeNull();
+            message.Message.ShouldNotBeNull();
+            message.Message.ShouldContain("test@test.com");
+            message.Message.ShouldContain("000000");
+            message.Message.ShouldContain(DateTime.Now.Year.ToString());
+        }
         [Fact]
         public void ConfirmEmailShouldBeOK()
         {

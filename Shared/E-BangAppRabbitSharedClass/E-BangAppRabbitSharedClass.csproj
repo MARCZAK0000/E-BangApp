@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <PackageId>E-BangAppRabbitSharedClass</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>MARCZAK0000</Authors>
     <Description>SharedClass</Description>
     <PackageTags>shared, rabbitmq, notifications</PackageTags>
