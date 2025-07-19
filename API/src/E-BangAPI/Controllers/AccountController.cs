@@ -1,5 +1,6 @@
 ﻿using E_BangApplication.Attributes;
 using E_BangApplication.CQRS.Command.AccountCommand;
+using E_BangApplication.CQRS.Query.AccountHandler;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyCustomMediator.Interfaces;
@@ -15,8 +16,8 @@ namespace E_BangAPI.Controllers
             _sender = sender;
         }
 
-        [HttpPost("register")]
         [Transaction]
+        [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(RegisterAccountCommand register, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(register, token);
@@ -45,10 +46,14 @@ namespace E_BangAPI.Controllers
                 Ok(response) : 
                 NotFound(response);
         }
-        [HttpPost("logout")]
-        public Task<IActionResult> LogoutAsync()
+
+        [HttpGet("logout")]
+        public async Task<IActionResult> LogoutAsync(SignOutQuery signOut, CancellationToken token)
         {
-            throw new NotImplementedException();
+           var response = await _sender.SendToMediatoR(signOut, token);
+            return response.IsSuccess ?
+                Ok(response) :
+                BadRequest(response);
         }
 
         [HttpPost("refreshToken")]

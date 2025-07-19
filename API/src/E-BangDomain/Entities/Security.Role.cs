@@ -10,6 +10,7 @@ namespace E_BangDomain.Entities
         public string RoleID { get; set; } = Guid.NewGuid().ToString();
         public string RoleName { get; set; }
         public string RoleDescription { get; set; }
+        public int RoleLevel { get; set; } 
         public DateTime LastUpdate { get; set; } = DateTime.Now;   
     }
     public partial class Roles

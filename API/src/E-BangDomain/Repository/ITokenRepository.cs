@@ -64,5 +64,16 @@ namespace E_BangDomain.Repository
         /// <returns><see langword="true"/> if the refresh token was successfully saved; otherwise, <see langword="false"/>.</returns>
         Task<bool> SaveRefreshTokenAsync(string accountId, string refreshToken, CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Removes cookies with the specified names from the current session.
+        /// </summary>
+        /// <remarks>This method attempts to remove cookies by their names. If a cookie name does not
+        /// exist in the current session,  it will be ignored, and the method will return <see
+        /// langword="false"/>.</remarks>
+        /// <param name="cookiesNames">A list of cookie names to be removed. Each name must correspond to an existing cookie.</param>
+        /// <returns><see langword="true"/> if all specified cookies were successfully removed;  otherwise, <see
+        /// langword="false"/> if one or more cookies could not be removed. </returns>
+        bool RemoveCookies(List<string> cookiesNames);
+
     }
 }
