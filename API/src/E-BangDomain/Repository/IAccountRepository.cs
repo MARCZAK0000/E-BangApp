@@ -22,6 +22,25 @@ namespace E_BangDomain.Repository
         /// <returns><see cref="bool"/> True of False</returns>s
         Task<bool> ValidateLoginCredentialsAsync(Account user, LoginAccountDto login);
 
+       
+        /// <summary>
+        /// Validates a user's login credentials using a two-way factory code.
+        /// </summary>
+        /// <remarks>This method performs validation using a two-way factory code mechanism. Ensure that
+        /// the  <paramref name="login"/> object contains all required fields for validation.</remarks>
+        /// <param name="user">The account object representing the user attempting to log in.</param>
+        /// <param name="login">The login details provided by the user, including the factory code.</param>
+        /// <returns><see langword="true"/> if the login is successfully validated; otherwise, <see langword="false"/>.</returns>
+        Task<bool> ValidateLoginWithTwoWayFactoryCodeAsync(Account user, LoginAccountDto login);
+
+        /// <summary>
+        /// Generates a confirmation email token for the specified user.
+        /// </summary>
+        /// <param name="user">The account for which the confirmation email token is generated. Cannot be null.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the confirmation email token as
+        /// a string.</returns>
+        Task<string> GenerateConfirmEmailToken(Account user);
+
         /// <summary>
         /// Find User Account with email
         /// </summary>
@@ -29,6 +48,5 @@ namespace E_BangDomain.Repository
         /// <param name="token"></param>
         /// <returns>/><see cref="Account>"/> Account Info</returns>
         Task<Maybe<Account>> FindAccountByEmailAsync(string email, CancellationToken token);
-        Task<bool> ValidateLoginWithTwoWayFactoryCodeAsync(Account user, LoginAccountDto login);
     }
 }

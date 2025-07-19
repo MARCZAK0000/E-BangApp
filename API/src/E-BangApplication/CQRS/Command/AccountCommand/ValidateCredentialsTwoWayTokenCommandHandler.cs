@@ -45,15 +45,13 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
             };
 
             Maybe<Account> maybe = await _accountRepository.FindAccountByEmailAsync(request.Email, token);
-            if (!maybe.HasValue || maybe.Value == null)
-            {
+            if (!maybe.HasValue || maybe.Value == null) 
                 return response;
-            }
+            
             bool isCredentialsValid = await _accountRepository.ValidateLoginWithTwoWayFactoryCodeAsync(maybe.Value, request);
-            if (!isCredentialsValid)
-            {
+            if (!isCredentialsValid) 
                 return response;
-            }
+            
 
             List<string> roles = await _roleRepository.GetRoleByAccountIdAsync(maybe.Value.Id, token);
             List<Claim> claims = _tokenRepository.GenerateClaimsList(maybe.Value, roles);
@@ -86,12 +84,15 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
                         }
                     }
                 ];
-            bool isSaved = _tokenRepository.SaveCookies(saveCookies);
-            if (!isSaved)
-            {
-                return response;
-            }
+
             bool isRefreshTokenSaved = await _tokenRepository.SaveRefreshTokenAsync(maybe.Value.Id, refreshToken, token);
+            if (!isRefreshTokenSaved) 
+                return response;
+
+            bool isSaved = _tokenRepository.SaveCookies(saveCookies);
+            if (!isSaved) 
+                return response;
+            
             response.IsSuccess = true;
             return response;
 

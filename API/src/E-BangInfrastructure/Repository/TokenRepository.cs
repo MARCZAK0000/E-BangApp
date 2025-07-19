@@ -72,10 +72,7 @@ namespace E_BangInfrastructure.Repository
         public bool SaveCookies(List<SaveCookiesDtos> cookiesDtos)
         {
             HttpContext? context = _httpContextAccessor.HttpContext;
-            if (context == null || cookiesDtos == null || cookiesDtos.Count == 0)
-            {
-                return false;
-            }
+            if (context == null || cookiesDtos == null || cookiesDtos.Count == 0) return false;
 
             foreach (var cookie in cookiesDtos)
             {
@@ -107,10 +104,8 @@ namespace E_BangInfrastructure.Repository
         public bool RemoveCookies(List<string> cookies)
         {
             HttpContext? context = _httpContextAccessor.HttpContext;
-            if (context == null || cookies == null || cookies.Count == 0)
-            {
+            if (context == null || cookies == null || cookies.Count == 0) 
                 return false;
-            }
             foreach (var cookie in cookies)
             {
                 if (string.IsNullOrEmpty(cookie))
@@ -132,10 +127,8 @@ namespace E_BangInfrastructure.Repository
             Account? account = await _dbContext
                 .Account.Where(pr => pr.Id == accountId)
                 .FirstOrDefaultAsync(cancellationToken);
-            if (account == null)
-            {
+            if (account is null) 
                 return false;
-            }
             account.RefreshToken = refreshToken;
             return true;
         }
@@ -144,10 +137,8 @@ namespace E_BangInfrastructure.Repository
             Account? account = await _dbContext
                 .Account.Where(pr=>pr.Id == accountId)
                 .FirstOrDefaultAsync(token);
-            if(account == null)
-            {
+            if (account is null) 
                 return false;
-            }
             account.TwoFactoryCode = twoWayToken;
             return true;
         }

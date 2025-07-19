@@ -4,6 +4,8 @@ using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using E_BangInfrastructure.Database;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
 
 namespace E_BangInfrastructure.Repository
 {
@@ -47,16 +49,14 @@ namespace E_BangInfrastructure.Repository
         public async Task<bool> ValidateLoginWithTwoWayFactoryCodeAsync(Account user, LoginAccountDto login)
         {
             SignInResult signInResult = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
-            if (!signInResult.Succeeded)
-            {
-                return false;
-            }
-            if (login.TwoFactorCode is null ||
-                !user.TwoFactoryCode.Equals(login.TwoFactorCode, StringComparison.CurrentCultureIgnoreCase))
-            {
-                return false;
-            }
-            return true;
+            return signInResult.Succeeded && user.TwoFactoryCode.Equals(login.TwoFactorCode, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        public async Task<string> GenerateConfirmEmailToken(Account user)
+        {
+            string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            return WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
         }
     }
 }

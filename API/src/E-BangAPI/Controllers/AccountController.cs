@@ -17,9 +17,13 @@ namespace E_BangAPI.Controllers
 
         [HttpPost("register")]
         [Transaction]
-        public Task<IActionResult> RegisterAsync()
+        public async Task<IActionResult> RegisterAsync(RegisterAccountCommand register, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var response = await _sender.SendToMediatoR(register, token);
+            return response.IsSuccess ?
+                Created(string.Empty, response) :
+                BadRequest(response);
+
         }
 
         [Transaction]
@@ -27,11 +31,9 @@ namespace E_BangAPI.Controllers
         public async Task<IActionResult> LoginAsync(VerifyCredentialsCommand verifyCredentials, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(verifyCredentials, token);
-            if (!response.IsSuccess && string.IsNullOrEmpty(response.TwoWayToken))
-            {
-                return NotFound(response);
-            }
-            return Ok(response);
+            return response.IsSuccess && !string.IsNullOrEmpty(response.TwoWayToken)?
+                Ok(response):
+                NotFound(response);
         }
 
         [Transaction]
@@ -39,11 +41,9 @@ namespace E_BangAPI.Controllers
         public async Task<IActionResult> LoginWithTwoWayAsync(ValidateCredentialsTwoWayTokenCommand validateCredentials, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(validateCredentials, token);
-            if (!response.IsSuccess)
-            {
-                return NotFound(response);
-            }
-            return Ok(response);
+            return response.IsSuccess?
+                Ok(response) : 
+                NotFound(response);
         }
         [HttpPost("logout")]
         public Task<IActionResult> LogoutAsync()

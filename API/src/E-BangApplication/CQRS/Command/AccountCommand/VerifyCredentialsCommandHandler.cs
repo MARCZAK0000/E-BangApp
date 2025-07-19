@@ -49,23 +49,20 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
         {
             TwoWayTokenResponseDto response = new();
             Maybe<Account> maybe = await _accountRepository.FindAccountByEmailAsync(request.Email, token);
-            if (!maybe.HasValue || maybe.Value == null)
-            {
+            if (!maybe.HasValue || maybe.Value == null) 
                 return response;
-            }
+            
             bool isCredentialsValid = await _accountRepository.ValidateLoginCredentialsAsync(maybe.Value, request);
-            if (!isCredentialsValid)
-            {
+            if (!isCredentialsValid) 
                 return response;
-            }
+            
             if (maybe.Value.TwoFactorEnabled)
             {
                 string twoWayToken = _tokenRepository.GenerateTwoWayFactoryToken();
                 bool isSaved = await _tokenRepository.SaveTwoWayFactoryTokenAsync(maybe.Value.Id, twoWayToken, token);
-                if (!isSaved)
-                {
+                if (!isSaved) 
                     return response;
-                }
+                
 
                 response.TwoWayToken = twoWayToken;
                 response.IsSuccess = response.IsTokenGenerated = true;
@@ -111,11 +108,17 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
                         }
                     }
                     ];
-                bool isSaved = _tokenRepository.SaveCookies(saveCookies);
-                if (!isSaved)
+                bool isRefreshTokenSaved = await _tokenRepository.SaveRefreshTokenAsync(maybe.Value.Id, refreshToken, token);
+
+                if (!isRefreshTokenSaved)
                 {
                     return response;
                 }
+
+                bool isSaved = _tokenRepository.SaveCookies(saveCookies);
+                if (!isSaved) 
+                    return response;
+                
                 response.IsSuccess = true;
             }
 

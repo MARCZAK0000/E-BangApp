@@ -51,6 +51,17 @@ namespace E_BangDomain.Repository
         /// <returns><see langword="true"/> if the token was successfully saved; otherwise, <see langword="false"/>.</returns>
         Task<bool> SaveTwoWayFactoryTokenAsync(string accountId, string twoWayToken, CancellationToken token);
 
+        /// <summary>
+        /// Saves the specified refresh token for the given account asynchronously.
+        /// </summary>
+        /// <remarks>This method performs the save operation asynchronously and may involve I/O
+        /// operations. Ensure that the provided <paramref name="cancellationToken"/> is used to handle cancellation
+        /// scenarios.</remarks>
+        /// <param name="accountId">The unique identifier of the account for which the refresh token is being saved. Must not be <see
+        /// langword="null"/> or empty.</param>
+        /// <param name="refreshToken">The refresh token to save. Must not be <see langword="null"/> or empty.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns><see langword="true"/> if the refresh token was successfully saved; otherwise, <see langword="false"/>.</returns>
         Task<bool> SaveRefreshTokenAsync(string accountId, string refreshToken, CancellationToken cancellationToken);
 
     }
