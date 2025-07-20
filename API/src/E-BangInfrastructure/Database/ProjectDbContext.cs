@@ -20,8 +20,8 @@ namespace E_BangInfrastructure.Database
         public DbSet<ShopStaff> Staff { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductInformations> ProductInformations { get; set; }
-        public DbSet<ProductPriceCount> ProductPrice { get; set; }
-        public DbSet<ProductHistoryPrice> ProductHistoryPrice { get; set; }
+        public DbSet<ProductPrice> ProductPrice { get; set; }
+       // public DbSet<ProductHistoryPrice> ProductHistoryPrice { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -113,6 +113,89 @@ namespace E_BangInfrastructure.Database
                     .IsRequired(true)
                     .OnDelete(DeleteBehavior.Cascade);
             });
+
+            builder.Entity<Shop>(pr => 
+            {
+                pr.HasIndex(pr => pr.ShopName).IsUnique();
+                pr.Property(pr => pr.ShopName).HasMaxLength(100);
+                pr.Property(pr => pr.ShopDescription).HasMaxLength(250);
+
+                pr.HasOne(pr => pr.ShopType)
+                    .WithMany(pr => pr.Shops)
+                    .HasForeignKey(pr => pr.ShopTypeId)
+                    .IsRequired(true)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<ShopType>(pr =>
+            {
+                pr.HasKey(pr => pr.ShopTypeId);
+                pr.HasIndex(pr => pr.ShopTypeName).IsUnique();
+                pr.Property(pr => pr.ShopTypeName).HasMaxLength(50);
+            });
+
+            builder.Entity<ShopBranchesInformations>(pr =>
+            {
+                pr.HasKey(pr => pr.ShopBranchId);
+                pr.HasOne(pr => pr.Shop)
+                    .WithMany(pr => pr.ShopAddressInfromations)
+                    .HasForeignKey(pr => pr.ShopID)
+                    .IsRequired(true)
+                    .OnDelete(DeleteBehavior.Restrict);
+                pr.Property(pr => pr.ShopCountry).HasMaxLength(50);
+                pr.Property(pr => pr.ShopCity).HasMaxLength(50);
+                pr.Property(pr => pr.ShopStreetName).HasMaxLength(50);
+                pr.Property(pr => pr.ShopPostalCode).HasMaxLength(7);
+            });
+
+            builder.Entity<ShopStaff>(pr =>
+            {
+                pr.HasKey(pr => pr.ShopStaffId);
+                pr.HasOne(pr => pr.Shop)
+                    .WithMany(pr => pr.ShopStaff)
+                    .HasForeignKey(pr => pr.ShopId)
+                    .IsRequired(true)
+                    .OnDelete(DeleteBehavior.Cascade);
+                pr.HasOne(pr => pr.Users)
+                    .WithMany(pr => pr.ShopStaff)
+                    .HasForeignKey(pr => pr.AccountId)
+                    .IsRequired(true)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            builder.Entity<Product>(pr =>
+            {
+                pr.HasKey(pr => pr.ProductId);
+                pr.HasIndex(pr => pr.ProductName).IsUnique();
+                pr.Property(pr => pr.ProductName).HasMaxLength(100);
+                pr.Property(pr => pr.ProductDescription).HasMaxLength(250);
+                pr.HasOne(pr => pr.Shop)
+                    .WithMany(pr => pr.Products)
+                    .HasForeignKey(pr => pr.ShopID)
+                    .IsRequired(true)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            builder.Entity<ProductInformations>(pr =>
+            {
+                pr.HasKey(pr => pr.ProductID);
+                pr.HasOne(pr => pr.Product)
+                    .WithMany(pr => pr.ProductInformations)
+                    .HasForeignKey(pr => pr.ProductID)
+                    .IsRequired(true)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<ProductPrice>(pr =>
+            {
+                pr.HasKey(pr => pr.ProductID);
+                pr.HasOne(pr => pr.Product)
+                    .WithOne(pr => pr.ProductCountPrice)
+                    .HasForeignKey<ProductPrice>(pr => pr.ProductID)
+                    .IsRequired(true)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                pr.Property(pr => pr.Price).HasPrecision(2);
+            });
+            
             base.OnModelCreating(builder);
         }
 

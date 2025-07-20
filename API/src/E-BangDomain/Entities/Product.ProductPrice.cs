@@ -3,7 +3,7 @@
 namespace E_BangDomain.Entities
 {
     [Table("ProductPrice", Schema = "Product")]
-    public partial class ProductPriceCount
+    public partial class ProductPrice
     {
         public string ProductPriceId { get; set; } = Guid.NewGuid().ToString();
         public decimal Price { get; set; }
@@ -11,7 +11,7 @@ namespace E_BangDomain.Entities
         public int ProductCount { get; set; }
         public DateTime LastModifiedTime { get; set; } = DateTime.UtcNow;
     }
-    public partial class ProductPriceCount
+    public partial class ProductPrice
     {
         public Product Product { get; set; }
     }

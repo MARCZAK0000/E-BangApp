@@ -19,7 +19,7 @@ namespace E_BangInfrastructure.Repository
 
         private readonly IRabbitSenderRepository _rabbitSenderRepository;
 
-        public ProductRepository(ProjectDbContext projectDbContext, RabbitSenderRepository rabbitSenderRepository)
+        public ProductRepository(ProjectDbContext projectDbContext, IRabbitSenderRepository rabbitSenderRepository)
         {
             _projectDbContext = projectDbContext;
             _rabbitSenderRepository = rabbitSenderRepository;
@@ -41,7 +41,7 @@ namespace E_BangInfrastructure.Repository
         {
             await _projectDbContext
                 .ProductPrice
-                .AddAsync(new ProductPriceCount
+                .AddAsync(new ProductPrice
                 {
                     Price = price,
                     ProductID = productId,
@@ -49,7 +49,7 @@ namespace E_BangInfrastructure.Repository
                 }, cancellationToken);
             return true;
         }
-        public Task<bool> UpdateCount(ProductPriceCount productPrice, int productCount)
+        public Task<bool> UpdateCount(ProductPrice productPrice, int productCount)
         {
             productPrice.ProductCount = productCount;
             return Task.FromResult(true);
@@ -148,7 +148,7 @@ namespace E_BangInfrastructure.Repository
         public async Task<ProductInformations?> GetProductInformationsAsyncByID(string productId, CancellationToken cancellationToken)
             => await _projectDbContext.ProductInformations.Where(pr => pr.ProductID == productId).FirstOrDefaultAsync(cancellationToken);
 
-        public async Task<ProductPriceCount?> GetProductPriceAndCountByIdAsync(string productId, CancellationToken cancellationToken)
+        public async Task<ProductPrice?> GetProductPriceAndCountByIdAsync(string productId, CancellationToken cancellationToken)
             => await _projectDbContext.ProductPrice.Where(pr => pr.ProductID == productId).FirstOrDefaultAsync(cancellationToken);
 
         #endregion

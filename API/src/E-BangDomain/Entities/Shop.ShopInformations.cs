@@ -17,5 +17,6 @@ namespace E_BangDomain.Entities
     public partial class ShopBranchesInformations
     {
         public Product Product { get; set; }
+        public Shop Shop { get; set; }
     }
 }

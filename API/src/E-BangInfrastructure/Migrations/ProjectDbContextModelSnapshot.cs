@@ -41,6 +41,9 @@ namespace E_BangInfrastructure.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("LastUpdateTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -64,11 +67,19 @@ namespace E_BangInfrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
+
+                    b.Property<string>("TwoFactoryCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -130,6 +141,80 @@ namespace E_BangInfrastructure.Migrations
                     b.ToTable("Action", "Security");
                 });
 
+            modelBuilder.Entity("E_BangDomain.Entities.Product", b =>
+                {
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("LastModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProductDescription")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ShopID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ProductId");
+
+                    b.HasIndex("ProductName")
+                        .IsUnique();
+
+                    b.HasIndex("ShopID");
+
+                    b.ToTable("Product", "Product");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.ProductInformations", b =>
+                {
+                    b.Property<string>("ProductID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("InformationsType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProductPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProductID");
+
+                    b.ToTable("ProductInformations", "Product");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.ProductPrice", b =>
+                {
+                    b.Property<string>("ProductID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("LastModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(2)
+                        .HasColumnType("decimal(2,2)");
+
+                    b.Property<int>("ProductCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductPriceId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProductID");
+
+                    b.ToTable("ProductPrice", "Product");
+                });
+
             modelBuilder.Entity("E_BangDomain.Entities.Roles", b =>
                 {
                     b.Property<string>("RoleID")
@@ -143,6 +228,9 @@ namespace E_BangInfrastructure.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<int>("RoleLevel")
+                        .HasColumnType("int");
+
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -154,6 +242,131 @@ namespace E_BangInfrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Role", "Security");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.Shop", b =>
+                {
+                    b.Property<string>("ShopId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("LastModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ShopDescription")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("ShopName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ShopTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ShopId");
+
+                    b.HasIndex("ShopName")
+                        .IsUnique();
+
+                    b.HasIndex("ShopTypeId");
+
+                    b.ToTable("Shop", "Shop");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.ShopBranchesInformations", b =>
+                {
+                    b.Property<string>("ShopBranchId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsMainShop")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ShopCity")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ShopCountry")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ShopID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ShopPostalCode")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
+
+                    b.Property<string>("ShopStreetName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("ShopBranchId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ShopID");
+
+                    b.ToTable("ShopBranchesInformations", "Shop");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.ShopStaff", b =>
+                {
+                    b.Property<string>("ShopStaffId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AccountId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ShopId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ShopStaffId");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("ShopId");
+
+                    b.ToTable("ShopStaff", "Shop");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.ShopType", b =>
+                {
+                    b.Property<int>("ShopTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShopTypeId"));
+
+                    b.Property<DateTime>("LastModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ShopTypeName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("ShopTypeId");
+
+                    b.HasIndex("ShopTypeName")
+                        .IsUnique();
+
+                    b.ToTable("ShopType", "Shop");
                 });
 
             modelBuilder.Entity("E_BangDomain.Entities.UserAddress", b =>
@@ -218,9 +431,8 @@ namespace E_BangInfrastructure.Migrations
                         .HasMaxLength(13)
                         .HasColumnType("nvarchar(13)");
 
-                    b.Property<string>("RoleID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("RolesRoleID")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SecondName")
                         .HasMaxLength(50)
@@ -235,9 +447,34 @@ namespace E_BangInfrastructure.Migrations
 
                     b.HasIndex("Email");
 
+                    b.HasIndex("RolesRoleID");
+
                     b.HasIndex("Surname");
 
                     b.ToTable("User", "Account");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.UsersInRole", b =>
+                {
+                    b.Property<string>("UserInRoleID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserInRoleID");
+
+                    b.HasIndex("RoleID");
+
+                    b.HasIndex("UserID", "RoleID")
+                        .IsUnique();
+
+                    b.ToTable("UsersInRole", "Security");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -378,18 +615,100 @@ namespace E_BangInfrastructure.Migrations
                     b.HasOne("E_BangDomain.Entities.Actions", "Action")
                         .WithMany("ActionInRoles")
                         .HasForeignKey("ActionID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("E_BangDomain.Entities.Roles", "Role")
                         .WithMany("ActionsInRole")
                         .HasForeignKey("RoleID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Action");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.Product", b =>
+                {
+                    b.HasOne("E_BangDomain.Entities.Shop", "Shop")
+                        .WithMany("Products")
+                        .HasForeignKey("ShopID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Shop");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.ProductInformations", b =>
+                {
+                    b.HasOne("E_BangDomain.Entities.Product", "Product")
+                        .WithMany("ProductInformations")
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.ProductPrice", b =>
+                {
+                    b.HasOne("E_BangDomain.Entities.Product", "Product")
+                        .WithOne("ProductCountPrice")
+                        .HasForeignKey("E_BangDomain.Entities.ProductPrice", "ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.Shop", b =>
+                {
+                    b.HasOne("E_BangDomain.Entities.ShopType", "ShopType")
+                        .WithMany("Shops")
+                        .HasForeignKey("ShopTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShopType");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.ShopBranchesInformations", b =>
+                {
+                    b.HasOne("E_BangDomain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_BangDomain.Entities.Shop", "Shop")
+                        .WithMany("ShopAddressInfromations")
+                        .HasForeignKey("ShopID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Shop");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.ShopStaff", b =>
+                {
+                    b.HasOne("E_BangDomain.Entities.Users", "Users")
+                        .WithMany("ShopStaff")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_BangDomain.Entities.Shop", "Shop")
+                        .WithMany("ShopStaff")
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Shop");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("E_BangDomain.Entities.UserAddress", b =>
@@ -405,21 +724,36 @@ namespace E_BangInfrastructure.Migrations
 
             modelBuilder.Entity("E_BangDomain.Entities.Users", b =>
                 {
+                    b.HasOne("E_BangDomain.Entities.Roles", null)
+                        .WithMany("Users")
+                        .HasForeignKey("RolesRoleID");
+
                     b.HasOne("E_BangDomain.Entities.Account", "Account")
                         .WithOne("User")
                         .HasForeignKey("E_BangDomain.Entities.Users", "UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("E_BangDomain.Entities.Roles", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.UsersInRole", b =>
+                {
+                    b.HasOne("E_BangDomain.Entities.Roles", "Roles")
+                        .WithMany("UsersInRoles")
+                        .HasForeignKey("RoleID")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Account");
+                    b.HasOne("E_BangDomain.Entities.Users", "Users")
+                        .WithMany("UsersInRoles")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Role");
+                    b.Navigation("Roles");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -484,17 +818,45 @@ namespace E_BangInfrastructure.Migrations
                     b.Navigation("ActionInRoles");
                 });
 
+            modelBuilder.Entity("E_BangDomain.Entities.Product", b =>
+                {
+                    b.Navigation("ProductCountPrice")
+                        .IsRequired();
+
+                    b.Navigation("ProductInformations");
+                });
+
             modelBuilder.Entity("E_BangDomain.Entities.Roles", b =>
                 {
                     b.Navigation("ActionsInRole");
 
                     b.Navigation("Users");
+
+                    b.Navigation("UsersInRoles");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.Shop", b =>
+                {
+                    b.Navigation("Products");
+
+                    b.Navigation("ShopAddressInfromations");
+
+                    b.Navigation("ShopStaff");
+                });
+
+            modelBuilder.Entity("E_BangDomain.Entities.ShopType", b =>
+                {
+                    b.Navigation("Shops");
                 });
 
             modelBuilder.Entity("E_BangDomain.Entities.Users", b =>
                 {
                     b.Navigation("Address")
                         .IsRequired();
+
+                    b.Navigation("ShopStaff");
+
+                    b.Navigation("UsersInRoles");
                 });
 #pragma warning restore 612, 618
         }

@@ -19,5 +19,6 @@ namespace E_BangDomain.Entities
         public Account Account { get; set; }
         public UserAddress Address { get; set; }
         public List<UsersInRole> UsersInRoles { get; set; }
+        public List<ShopStaff> ShopStaff { get; set; }
     }
 }

@@ -4,12 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace E_BangDomain.Entities
 {
     [Table("ShopType", Schema = "Shop")]
-    public class ShopType
+    public partial class ShopType
     {
         [Key]
-        public int Id { get; set; }
+        public int ShopTypeId { get; set; }
         [Required]
         public string ShopTypeName { get; set; }
         public DateTime LastModifiedTime { get; set; }
+    }
+    public partial class ShopType
+    {
+        public List<Shop> Shops { get; set; }
     }
 }

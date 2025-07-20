@@ -30,13 +30,13 @@ namespace E_BangDomain.Repository
         /// <param name="productCount"></param>
         /// <param name="cancellation"></param>
         /// <returns></returns>
-        Task<bool> UpdateCount(ProductPriceCount count, int productCount);
+        Task<bool> UpdateCount(ProductPrice count, int productCount);
         Task<bool> InsertProductFileAsync(Product product, InsertProductFileDto updateProductImageDto, CancellationToken cancellationToken);
         Task<Product?> GetProductByIdAsync(string productId, CancellationToken cancellationToken);
         Task<PaginationBase<Product>> GetAllProductsByShopId(PaginationModelDto paginationModelDto, string shopId, CancellationToken token);
         Task<Product?> GetProductAndInformationsByIdAsync(string productId, CancellationToken cancellationToken);
         Task<PaginationBase<Product>> GetAllProductAndInfromationsByShopIDAsync(PaginationModelDto paginationModelDto, string shopId, CancellationToken cancellationToken);
         Task<ProductInformations?> GetProductInformationsAsyncByID(string productId, CancellationToken cancellationToken);
-        Task<ProductPriceCount?> GetProductPriceAndCountByIdAsync(string productId, CancellationToken cancellationToken);
+        Task<ProductPrice?> GetProductPriceAndCountByIdAsync(string productId, CancellationToken cancellationToken);
     }
 }

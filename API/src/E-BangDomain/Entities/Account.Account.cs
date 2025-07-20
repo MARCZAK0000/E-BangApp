@@ -14,5 +14,6 @@ namespace E_BangDomain.Entities
     public partial class Account
     {
         public Users User { get; set; }
+
     }
 }

@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="E-BangAppRabbitSharedClass" Version="1.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="Shouldly" Version="4.3.0" />
     <PackageReference Include="xunit" Version="2.9.2" />
@@ -18,12 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\E-BangAppEmailBuilder\E-BangAppEmailBuilder.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="E-BangAppRabbitSharedClass">
-      <HintPath>..\E-BangAppRabbitSharedClass\bin\Debug\net9.0\E-BangAppRabbitSharedClass.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

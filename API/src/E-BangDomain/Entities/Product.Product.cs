@@ -16,7 +16,8 @@ namespace E_BangDomain.Entities
     public partial class Product
     {
         public List<ProductInformations> ProductInformations { get; set; }
-        public ProductPriceCount ProductCountPrice { get; set; }
+        public ProductPrice ProductCountPrice { get; set; }
+        public Shop Shop { get; set; }
     }
 
 }

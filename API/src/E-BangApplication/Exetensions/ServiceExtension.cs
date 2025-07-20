@@ -11,7 +11,7 @@ namespace E_BangApplication.Exetensions
         public static void AddApplication(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(ProjectMapper));
-            services.AddMyCustomMediator(Assembly.GetExecutingAssembly());
+            services.AddMyCustomMediator();
             services.AddFluentValidationAutoValidation();
         }
     }
