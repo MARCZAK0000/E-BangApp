@@ -57,7 +57,12 @@ namespace E_BangInfrastructure.Repository
         {
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             return WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-
+        }
+        public async Task<bool> ConfirmEmailAsync(Account account, string confirmToken)
+        {
+            string decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(confirmToken));
+            IdentityResult result = await _userManager.ConfirmEmailAsync(account, decodedToken);
+            return result.Succeeded;
         }
     }
 }

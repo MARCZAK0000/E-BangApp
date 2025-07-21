@@ -1,6 +1,7 @@
 ﻿using E_BangApplication.Attributes;
 using E_BangApplication.CQRS.Command.AccountCommand;
 using E_BangApplication.CQRS.Query.AccountHandler;
+using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyCustomMediator.Interfaces;
@@ -69,9 +70,12 @@ namespace E_BangAPI.Controllers
         }
 
         [HttpGet("confirmEmail")]
-        public Task<IActionResult> ConfirmEmailAsyncAsync()
+        public async Task<IActionResult> ConfirmEmailAsync([FromQuery] ConfirmEmailCommand confirmEmailCommand, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var response = await _sender.SendToMediatoR(confirmEmailCommand, token);
+            return response.IsSuccess ?
+                Ok(response) :
+                BadRequest(response);
         }
 
         [HttpGet("resendConfimEmail")]
@@ -79,6 +83,7 @@ namespace E_BangAPI.Controllers
         {
             throw new NotImplementedException();
         }
+
         [HttpGet("forgotPassword")]
         public Task<IActionResult> ForgotPasswordAsync()
         {
