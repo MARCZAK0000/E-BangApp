@@ -38,5 +38,28 @@ namespace E_BangInfrastructure.Repository
             => await _projectDbContext
                 .Roles
                 .ToListAsync(token);
+
+        public async Task<bool> AddToRoleLevelZeroAsync(string accountId, CancellationToken token)
+        {
+            string? roleID = await _projectDbContext
+                .Roles
+                .Where(x => x.RoleLevel == 0)
+                .Select(s => s.RoleID)
+                .FirstOrDefaultAsync(token);
+
+            if(string.IsNullOrEmpty(roleID))
+            {
+                return false; // Role Level Zero not found
+            }
+            var result = await _projectDbContext
+                .UsersInRoles
+                .AddAsync(new UsersInRole
+                {
+                    UserID = accountId,
+                    RoleID = roleID  // Assuming "0" is the ID for Role Level Zero
+                }, token);
+
+            return result is not null && result.Entity is not null;
+        }
     }
 }

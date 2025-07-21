@@ -18,7 +18,7 @@ namespace E_BangAPI.Controllers
 
         [Transaction]
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(RegisterAccountCommand register, CancellationToken token)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterAccountCommand register, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(register, token);
             return response.IsSuccess ?
@@ -29,7 +29,7 @@ namespace E_BangAPI.Controllers
 
         [Transaction]
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(VerifyCredentialsCommand verifyCredentials, CancellationToken token)
+        public async Task<IActionResult> LoginAsync([FromBody] VerifyCredentialsCommand verifyCredentials, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(verifyCredentials, token);
             return response.IsSuccess && !string.IsNullOrEmpty(response.TwoWayToken)?
@@ -39,7 +39,7 @@ namespace E_BangAPI.Controllers
 
         [Transaction]
         [HttpPost("loginWithTwoWay)")]
-        public async Task<IActionResult> LoginWithTwoWayAsync(ValidateCredentialsTwoWayTokenCommand validateCredentials, CancellationToken token)
+        public async Task<IActionResult> LoginWithTwoWayAsync([FromBody] ValidateCredentialsTwoWayTokenCommand validateCredentials, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(validateCredentials, token);
             return response.IsSuccess?
@@ -67,15 +67,6 @@ namespace E_BangAPI.Controllers
         {
             throw new NotImplementedException();
         }
-        [Authorize]
-        [Transaction]
-        [HttpPost("updateInformations")]
-        public Task<IActionResult> UpdateInformationsAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-
 
         [HttpGet("confirmEmail")]
         public Task<IActionResult> ConfirmEmailAsyncAsync()
@@ -90,12 +81,6 @@ namespace E_BangAPI.Controllers
         }
         [HttpGet("forgotPassword")]
         public Task<IActionResult> ForgotPasswordAsync()
-        {
-            throw new NotImplementedException();
-        }
-        [Authorize]
-        [HttpGet("me")]
-        public Task<IActionResult> AccountInfo()
         {
             throw new NotImplementedException();
         }

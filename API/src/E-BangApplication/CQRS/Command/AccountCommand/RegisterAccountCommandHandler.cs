@@ -44,7 +44,7 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
             {
                 throw new InternalServerErrorException("No roles available to assign to the account.");
             }
-            bool isRoleAssigned = await _roleRepository.AddToRoleAsync(account.Id, role.RoleID, cancellationToken);
+            bool isRoleAssigned = await _roleRepository.AddToRoleLevelZeroAsync(account.Id, cancellationToken);
             if (!isRoleAssigned)
             {
                 throw new InternalServerErrorException("Failed to assign role to the account.");
