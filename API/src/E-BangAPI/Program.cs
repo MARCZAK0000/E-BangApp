@@ -22,6 +22,8 @@ var app = builder.Build();
 using IServiceScope scope = app.Services.CreateScope();
 PendingMigrations pendingMigrations = scope.ServiceProvider.GetRequiredService<PendingMigrations>();
 pendingMigrations.GetPendingMigrations();
+Seeder seeder = scope.ServiceProvider.GetRequiredService<Seeder>();
+seeder.SeedDb();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -20,6 +20,8 @@ namespace E_BangInfrastructure.Extensions
                 configuration.GetConnectionString("DbConnectionString"));
             });
 
+            services.AddScoped<Seeder>();   
+
             services.AddIdentityCore<Account>()
                 .AddEntityFrameworkStores<ProjectDbContext>()
                 .AddDefaultTokenProviders();
