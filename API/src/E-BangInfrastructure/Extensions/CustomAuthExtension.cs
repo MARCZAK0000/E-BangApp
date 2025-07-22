@@ -50,7 +50,7 @@ namespace E_BangInfrastructure.Extensions
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
-                        ValidIssuer = authenticationSettings.Issuer,
+                        ValidIssuer = authenticationSettings.Issure,
                         ValidAudience = authenticationSettings.Audience,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.Key))
                     };

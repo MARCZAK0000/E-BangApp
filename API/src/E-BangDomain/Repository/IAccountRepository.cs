@@ -62,9 +62,19 @@ namespace E_BangDomain.Repository
         /// <param name="accountId">Account ID</param>
         /// <returns><see cref="Account>"/> Account Info</returns>
         Task<Maybe<Account>> FindAccountByIdAsync(string accountId);
-
+        /// <summary>
+        /// Generates a token for resetting the password of the specified account.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns>string</returns>
         Task<string> GenerateForgetPasswordTokenAsync(Account account);
-
+        /// <summary>
+        /// Resets the password for the specified account using the provided new password and token.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="newPassword"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         Task<bool> SetNewPasswordAsync(Account account, string newPassword, string token);
     }
 }

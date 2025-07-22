@@ -1,6 +1,5 @@
 using E_BangAPI.BackgroundWorker;
 using E_BangAPI.Middleware;
-using E_BangAPI.MinimalApi;
 using E_BangApplication.Exetensions;
 using E_BangDomain.Entities;
 using E_BangInfrastructure.Database;
@@ -41,18 +40,4 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseMiddleware<TransactionHandlerMiddleware>();
-app.MapIdentityApiFilterable<Account>(new IdentityApiEndpointRouteBuilderOptions
-{
-    ExcludeRegisterPost = false,
-    ExcludeLoginPost = false,
-    ExcludeRefreshPost = false,
-    ExcludeConfirmEmailGet = false,
-    ExcludeResendConfirmationEmailPost = false,
-    ExcludeForgotPasswordPost = true,
-    ExcludeResetPasswordPost = true,
-    ExcludeManageGroup = true,
-    Exclude2faPost = false,
-    ExcludegInfoGet = true,
-    ExcludeInfoPost = true,
-});
 app.Run();

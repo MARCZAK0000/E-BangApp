@@ -25,9 +25,6 @@ namespace E_BangInfrastructure.Extensions
 
             services.AddIdentityCore<Account>()
                 .AddEntityFrameworkStores<ProjectDbContext>()
-                .AddSignInManager<Account>()
-                .AddUserManager<Account>()
-                .AddUserStore<Account>()
                 .AddDefaultTokenProviders();
 
             services.AddScoped<PendingMigrations>();

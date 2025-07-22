@@ -7,7 +7,7 @@ namespace E_BangDomain.Entities
     public partial class ActionInRole
     {
         [Key]
-        public string ActionInRoleID { get; set; }
+        public string ActionInRoleID { get; set; } = Guid.NewGuid().ToString();
         public string ActionID { get; set; }
         public string RoleID { get; set; }  
         public DateTime LastUpdateTime { get; set; }  = DateTime.Now;   

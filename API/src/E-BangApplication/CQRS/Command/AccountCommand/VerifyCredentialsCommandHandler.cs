@@ -82,7 +82,7 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
                         Token = accessToken,
                         Key = _httpOnlyTokenOptions.AccessToken,
                         CookiesOptions = cfg =>{
-                            cfg.Expires = _httpOnlyTokenOptions.AccessTokenExpireDate;
+                            cfg.Expires = new DateTimeOffset(DateTime.Now.AddMinutes(_httpOnlyTokenOptions.AccessTokenExpireDate));
                             cfg.IsEssential = true;
                             cfg.HttpOnly = _httpOnlyTokenOptions.IsHttpOnly;
                             cfg.Secure = false;
@@ -94,7 +94,7 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
                         Token = refreshToken,
                         Key = _httpOnlyTokenOptions.RefreshToken,
                         CookiesOptions = cfg =>{
-                            cfg.Expires = _httpOnlyTokenOptions.RefreshTokenExpireDate;
+                            cfg.Expires = new DateTimeOffset(DateTime.Now.AddMinutes(_httpOnlyTokenOptions.RefreshTokenExpireDate));
                             cfg.IsEssential = true;
                             cfg.HttpOnly = _httpOnlyTokenOptions.IsHttpOnly;
                             cfg.Secure = false;

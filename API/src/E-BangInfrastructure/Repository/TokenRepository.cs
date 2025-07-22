@@ -56,7 +56,7 @@ namespace E_BangInfrastructure.Repository
             JwtSecurityToken token = new(
                                    claims: claims,
                                    expires: DateTime.Now.AddMinutes(_authenticationSettings.ValidMinutes),
-                                   issuer: _authenticationSettings.Issuer,
+                                   issuer: _authenticationSettings.Issure,
                                    audience: _authenticationSettings.Audience,
                                    signingCredentials: cred
             );
