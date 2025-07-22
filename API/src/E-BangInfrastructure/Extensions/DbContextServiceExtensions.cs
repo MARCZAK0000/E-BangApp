@@ -1,6 +1,7 @@
 ﻿using E_BangDomain.Entities;
 using E_BangInfrastructure.Database;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,9 @@ namespace E_BangInfrastructure.Extensions
 
             services.AddIdentityCore<Account>()
                 .AddEntityFrameworkStores<ProjectDbContext>()
+                .AddSignInManager<Account>()
+                .AddUserManager<Account>()
+                .AddUserStore<Account>()
                 .AddDefaultTokenProviders();
 
             services.AddScoped<PendingMigrations>();

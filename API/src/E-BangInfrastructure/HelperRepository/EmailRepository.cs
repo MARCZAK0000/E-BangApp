@@ -47,6 +47,33 @@ namespace E_BangInfrastructure.HelperRepository
             await _rabbitSenderRepository.AddMessageToQueue(rabbitMessageDto, cancellationToken);
         }
 
+        public async Task SendForgetPasswordTokenEmailAsync(string token, string email, CancellationToken cancellationToken)
+        {
+            var buildEmail = new EmailServiceRabbitMessageModel()
+            {
+                AddressTo = email,
+                Subject = "Forget Password Token",
+                Body = new()
+                {
+                    Header = new HeaderDefaultTemplateBuilder
+                    {
+                        Email = email,  
+                    },
+                    //Body
+                    Footer = new FooterDefualtTemplateBuilder()
+                    {
+                        Year = DateTime.Now.Year.ToString(),
+                    }
+                }
+            };
+            var rabbitMessageDto = new RabbitMessageBaseDto<EmailServiceRabbitMessageModel>()
+            {
+                Message = buildEmail,
+                RabbitChannel = E_BangDomain.Enums.ERabbitChannel.EmailChannel
+            };
+            await _rabbitSenderRepository.AddMessageToQueue(rabbitMessageDto, cancellationToken);
+        }
+
         public async Task SendRegistrationConfirmAccountEmailAsync(string token, string email, CancellationToken cancellationToken)
         {
             var buildEmail = new EmailServiceRabbitMessageModel()

@@ -2,6 +2,7 @@
 using E_BangDomain.Repository;
 using E_BangInfrastructure.Database;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace E_BangInfrastructure.Repository
 {
@@ -31,6 +32,7 @@ namespace E_BangInfrastructure.Repository
                 .UsersInRoles
                 .Where(x => x.UserID == accountId)
                 .Include(x => x.Roles)
+                .OrderBy(o=>o.Roles.RoleLevel)
                 .Select(x => x.Roles.RoleName)
                 .ToListAsync(token);
 

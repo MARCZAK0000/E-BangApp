@@ -88,9 +88,12 @@ namespace E_BangAPI.Controllers
         }
 
         [HttpGet("forgotPassword")]
-        public Task<IActionResult> ForgotPasswordAsync()
+        public async Task<IActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordTokenQuery forgotPassword, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var response = await _sender.SendToMediatoR(forgotPassword, token);
+            return response.IsSuccess ?
+                Ok(response) :
+                BadRequest(response);
         }
 
     }

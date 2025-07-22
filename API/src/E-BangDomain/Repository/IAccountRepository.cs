@@ -63,6 +63,8 @@ namespace E_BangDomain.Repository
         /// <returns><see cref="Account>"/> Account Info</returns>
         Task<Maybe<Account>> FindAccountByIdAsync(string accountId);
 
+        Task<string> GenerateForgetPasswordTokenAsync(Account account);
 
+        Task<bool> SetNewPasswordAsync(Account account, string newPassword, string token);
     }
 }

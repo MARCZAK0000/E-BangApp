@@ -25,7 +25,7 @@ namespace E_BangInfrastructure.Repository
             _rabbitSenderRepository = rabbitSenderRepository;
         }
 
-        #region Commands
+       
         public async Task<bool> CreateProductAsync(CreateProductDto createProductDto, CancellationToken cancellationToken)
         {
             await _projectDbContext.Products.AddAsync(entity: new Product
@@ -88,9 +88,9 @@ namespace E_BangInfrastructure.Repository
 
             return true;
         }
-        #endregion
+        
 
-        #region Handle
+      
         public async Task<Product?> GetProductByIdAsync(string productId, CancellationToken cancellationToken)
             => await _projectDbContext.Products.Where(pr => pr.ProductId == productId).FirstOrDefaultAsync(cancellationToken);
 
@@ -151,6 +151,6 @@ namespace E_BangInfrastructure.Repository
         public async Task<ProductPrice?> GetProductPriceAndCountByIdAsync(string productId, CancellationToken cancellationToken)
             => await _projectDbContext.ProductPrice.Where(pr => pr.ProductID == productId).FirstOrDefaultAsync(cancellationToken);
 
-        #endregion
+       
     }
 }

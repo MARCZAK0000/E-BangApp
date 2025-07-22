@@ -10,19 +10,19 @@ using System.Text;
 namespace E_BangInfrastructure.Repository
 {
     public sealed class AccountRepository(UserManager<Account> userManager,
-        //IUserStore<Account> userStore,
+        IUserStore<Account> userStore,
         ProjectDbContext projectDbContext,
-        SignInManager<Account> signInManager
-        //IUserEmailStore<Account> userEmailStore
+        SignInManager<Account> signInManager,
+        IUserEmailStore<Account> userEmailStore
         ) : IAccountRepository
     {
         private readonly UserManager<Account> _userManager = userManager;
 
         private readonly SignInManager<Account> _signInManager = signInManager;
 
-        //private readonly IUserStore<Account> _userStore = userStore;
+        private readonly IUserStore<Account> _userStore = userStore;
 
-        //private readonly IUserEmailStore<Account> _userEmailStore = userEmailStore;
+        private readonly IUserEmailStore<Account> _userEmailStore = userEmailStore;
 
         private readonly ProjectDbContext projectDbContext = projectDbContext;
 
@@ -30,9 +30,9 @@ namespace E_BangInfrastructure.Repository
         public async Task<Account> RegisterAccountAsync(RegisterAccountDto registerAccountDto, CancellationToken token)
         {
             Account user = new();
-            //await _userStore.SetUserNameAsync(user, registerAccountDto.Email, token);
-            //await _userStore.SetNormalizedUserNameAsync(user, registerAccountDto.Email, token);
-            //await _userEmailStore.SetEmailAsync(user, registerAccountDto.Email, token);
+            await _userStore.SetUserNameAsync(user, registerAccountDto.Email, token);
+            await _userStore.SetNormalizedUserNameAsync(user, registerAccountDto.Email, token);
+            await _userEmailStore.SetEmailAsync(user, registerAccountDto.Email, token);
             await _userManager.CreateAsync(user, registerAccountDto.Password);
             return user;
         }
@@ -62,6 +62,24 @@ namespace E_BangInfrastructure.Repository
         {
             string decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(confirmToken));
             IdentityResult result = await _userManager.ConfirmEmailAsync(account, decodedToken);
+            return result.Succeeded;
+        }
+
+        public async Task<Maybe<Account>> FindAccountByIdAsync(string accountId)
+        {
+            Account? user = await _userManager.FindByIdAsync(accountId);
+            return new Maybe<Account>(user);
+        }
+
+        public async Task<string> GenerateForgetPasswordTokenAsync(Account account)
+        {
+            string token = await _userManager.GeneratePasswordResetTokenAsync(account);
+            return WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes((string)token));
+        }
+
+        public async Task<bool> SetNewPasswordAsync(Account account, string newPassword, string token)
+        {
+            IdentityResult result = await _userManager.ResetPasswordAsync(account, newPassword, token);
             return result.Succeeded;
         }
     }

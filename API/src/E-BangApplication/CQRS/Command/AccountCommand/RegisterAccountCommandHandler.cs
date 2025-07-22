@@ -34,13 +34,6 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
             {
                 return response;
             }
-            Roles? role = await _roleRepository.GetRolesAsync(cancellationToken)
-                .ContinueWith(x => x.Result.OrderBy(y => y.RoleLevel).FirstOrDefault());
-
-            if (role is null)
-            {
-                throw new InternalServerErrorException("No roles available to assign to the account.");
-            }
             bool isRoleAssigned = await _roleRepository.AddToRoleLevelZeroAsync(account.Id, cancellationToken);
             if (!isRoleAssigned)
             {
