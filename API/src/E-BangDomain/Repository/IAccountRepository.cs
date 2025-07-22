@@ -39,7 +39,7 @@ namespace E_BangDomain.Repository
         /// <param name="user">The account for which the confirmation email token is generated. Cannot be null.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the confirmation email token as
         /// a string.</returns>
-        Task<string> GenerateConfirmEmailToken(Account user);
+        Task<string> GenerateConfirmEmailTokenAsync(Account user);
 
         /// <summary>
         /// Confirm Email for the specifed user
@@ -55,6 +55,13 @@ namespace E_BangDomain.Repository
         /// <param name="token"></param>
         /// <returns>/><see cref="Account>"/> Account Info</returns>
         Task<Maybe<Account>> FindAccountByEmailAsync(string email, CancellationToken token);
+
+        /// <summary>
+        /// Find User Account with Id
+        /// </summary>
+        /// <param name="accountId">Account ID</param>
+        /// <returns><see cref="Account>"/> Account Info</returns>
+        Task<Maybe<Account>> FindAccountByIdAsync(string accountId);
 
 
     }

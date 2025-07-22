@@ -28,20 +28,17 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
 
         private readonly HttpOnlyTokenOptions _httpOnlyTokenOptions;
 
-        private readonly IMessageSenderHandlerQueue _messageSenderHandlerQueue;
-
         private readonly IEmailRepository _emailRepository;
 
         public VerifyCredentialsCommandHandler(IAccountRepository accountRepository,
             IRoleRepository roleRepository,
             ITokenRepository tokenRepository,
-            HttpOnlyTokenOptions httpOnlyTokenOptions, IMessageSenderHandlerQueue messageSenderHandlerQueue, IEmailRepository emailRepository)
+            HttpOnlyTokenOptions httpOnlyTokenOptions, IEmailRepository emailRepository)
         {
             _accountRepository = accountRepository;
             _roleRepository = roleRepository;
             _tokenRepository = tokenRepository;
             _httpOnlyTokenOptions = httpOnlyTokenOptions;
-            _messageSenderHandlerQueue = messageSenderHandlerQueue;
             _emailRepository = emailRepository;
         }
 
@@ -68,11 +65,8 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
                 response.IsSuccess = response.IsTokenGenerated = true;
                 
                 ///EMAIL SENDING LOGIC HERE !!!!!!!!!!!!
-                _messageSenderHandlerQueue.QueueBackgroundWorkItem(async (cancellationToken) =>
-                {
-                    await _emailRepository.SendTwoWayTokenEmailAsync(
-                        twoWayToken, maybe.Value.Email!, cancellationToken);
-                });
+                await _emailRepository.SendTwoWayTokenEmailAsync(
+                    twoWayToken, maybe.Value.Email!, token);
 
             }
             else

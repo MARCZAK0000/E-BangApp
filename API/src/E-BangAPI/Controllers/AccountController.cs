@@ -63,7 +63,7 @@ namespace E_BangAPI.Controllers
             throw new NotImplementedException();
         }
         [Transaction]
-        [HttpPost("resetPasswor")]
+        [HttpPost("resetPassword")]
         public Task<IActionResult> ResetPasswordAsync()
         {
             throw new NotImplementedException();
@@ -79,9 +79,12 @@ namespace E_BangAPI.Controllers
         }
 
         [HttpGet("resendConfimEmail")]
-        public Task<IActionResult> ResendConfirmEmailAsync()
+        public async Task<IActionResult> ResendConfirmEmailAsync(CancellationToken token)
         {
-            throw new NotImplementedException();
+            var response = await _sender.SendToMediatoR(new ReSendConfirmEmailQuery(), token);
+            return response.IsSuccess?
+                Ok(response) :
+                BadRequest(response);
         }
 
         [HttpGet("forgotPassword")]

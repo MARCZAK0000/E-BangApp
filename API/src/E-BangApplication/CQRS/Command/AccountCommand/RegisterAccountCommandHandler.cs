@@ -18,15 +18,12 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
         private readonly IAccountRepository _accountRepository;
         private readonly IEmailRepository _emailRepository;
         private readonly IRoleRepository _roleRepository;
-        private readonly IMessageSenderHandlerQueue _messageSenderHandlerQueue;
         public RegisterAccountCommandHandler(IAccountRepository accountRepository, 
-            IEmailRepository emailRepository, IRoleRepository roleRepository,
-            IMessageSenderHandlerQueue messageSenderHandlerQueue)
+            IEmailRepository emailRepository, IRoleRepository roleRepository)
         {
             _accountRepository = accountRepository;
             _emailRepository = emailRepository;
             _roleRepository = roleRepository;
-            _messageSenderHandlerQueue = messageSenderHandlerQueue;
         }
 
         public async Task<RegisterAccountResponseDto> Handle(RegisterAccountCommand request, CancellationToken cancellationToken)
@@ -49,11 +46,8 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
             {
                 throw new InternalServerErrorException("Failed to assign role to the account.");
             }
-            string confirmEmailToken = await _accountRepository.GenerateConfirmEmailToken(account);
-            _messageSenderHandlerQueue.QueueBackgroundWorkItem(async token =>
-            {
-                await _emailRepository.SendRegistrationConfirmAccountEmailAsync(confirmEmailToken, account.Email!, token);
-            });
+            string confirmEmailToken = await _accountRepository.GenerateConfirmEmailTokenAsync(account);
+            await _emailRepository.SendRegistrationConfirmAccountEmailAsync(confirmEmailToken, account.Email!, cancellationToken);
             response.IsSuccess = true;
             return response;
         }

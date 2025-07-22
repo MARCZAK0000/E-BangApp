@@ -53,7 +53,7 @@ namespace E_BangInfrastructure.Repository
             return signInResult.Succeeded && user.TwoFactoryCode.Equals(login.TwoFactorCode, StringComparison.CurrentCultureIgnoreCase);
         }
 
-        public async Task<string> GenerateConfirmEmailToken(Account user)
+        public async Task<string> GenerateConfirmEmailTokenAsync(Account user)
         {
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             return WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));

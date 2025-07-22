@@ -3,6 +3,7 @@ using E_BangAppRabbitSharedClass.BuildersDto.Body;
 using E_BangAppRabbitSharedClass.RabbitModel;
 using E_BangDomain.ModelDtos.MessageSender;
 using E_BangDomain.HelperRepository;
+using E_BangAppRabbitSharedClass.BuildersDto.Footer;
 
 namespace E_BangInfrastructure.HelperRepository
 {
@@ -15,9 +16,35 @@ namespace E_BangInfrastructure.HelperRepository
             _rabbitSenderRepository = rabbitSenderRepository;
         }
 
-        public Task SendEmailConfirmAccountAsync(string token, string email, CancellationToken cancellationToken)
+        public async Task SendEmailConfirmAccountAsync(string token, string email, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var buildEmail = new EmailServiceRabbitMessageModel()
+            {
+                AddressTo = email,
+                Subject = "Confirm Email",
+                Body = new()
+                {
+                    Header = new HeaderDefaultTemplateBuilder()
+                    {
+                        Email = email,
+                    },
+                    Body = new ConfirmEmailTokenBodyBuilder()
+                    {
+                        Email = email,
+                        Token = token,
+                    },
+                    Footer = new FooterDefualtTemplateBuilder()
+                    {
+                        Year = DateTime.Now.Year.ToString()
+                    }
+                }
+            };
+            var rabbitMessageDto = new RabbitMessageBaseDto<EmailServiceRabbitMessageModel>()
+            {
+                Message = buildEmail,
+                RabbitChannel = E_BangDomain.Enums.ERabbitChannel.EmailChannel
+            };
+            await _rabbitSenderRepository.AddMessageToQueue(rabbitMessageDto, cancellationToken);
         }
 
         public async Task SendRegistrationConfirmAccountEmailAsync(string token, string email, CancellationToken cancellationToken)

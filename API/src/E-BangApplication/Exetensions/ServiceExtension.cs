@@ -1,8 +1,8 @@
-﻿using E_BangApplication.Mapper;
+﻿using E_BangApplication.Authentication;
+using E_BangApplication.Mapper;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using MyCustomMediator.Classes;
-using System.Reflection;
 
 namespace E_BangApplication.Exetensions
 {
@@ -13,6 +13,7 @@ namespace E_BangApplication.Exetensions
             services.AddAutoMapper(typeof(ProjectMapper));
             services.AddMyCustomMediator();
             services.AddFluentValidationAutoValidation();
+            services.AddScoped<IUserContext, UserContext>();
         }
     }
 }
