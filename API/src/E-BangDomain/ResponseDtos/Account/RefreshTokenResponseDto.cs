@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace E_BangDomain.ResponseDtos.Account
 {
-    public class ResetPasswordResponseDto : SuccessResponseDto
+    public class RefreshTokenResponseDto : SuccessResponseDto
     {
         protected override void UpdateMessage()
         {
-            Message = IsSuccess ? "Password has been updated successfully" : "Password has not been updated sucessfully";
+            Message = IsSuccess ? "Token has been refreshed":"Token has not been refreshed successfully";
         }
     }
 }

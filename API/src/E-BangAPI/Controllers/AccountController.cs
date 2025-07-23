@@ -64,9 +64,12 @@ namespace E_BangAPI.Controllers
         }
         [Transaction]
         [HttpPost("resetPassword")]
-        public Task<IActionResult> ResetPasswordAsync()
+        public async Task<IActionResult> ResetPasswordAsync([FromBody]ResetPasswordCommand reset, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var response = await _sender.SendToMediatoR(reset, token);
+            return response.IsSuccess ?
+                Ok(response) :
+                BadRequest(response);
         }
 
         [HttpGet("confirmEmail")]

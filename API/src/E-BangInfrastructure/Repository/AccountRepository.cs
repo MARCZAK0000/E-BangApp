@@ -5,6 +5,7 @@ using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using E_BangInfrastructure.Database;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 namespace E_BangInfrastructure.Repository
@@ -24,7 +25,7 @@ namespace E_BangInfrastructure.Repository
 
         //private readonly IUserEmailStore<Account> _userEmailStore = userEmailStore;
 
-        private readonly ProjectDbContext projectDbContext = projectDbContext;
+        private readonly ProjectDbContext _projectDbContext = projectDbContext;
 
 
         public async Task<Account> RegisterAccountAsync(RegisterAccountDto registerAccountDto, CancellationToken token)
@@ -86,5 +87,9 @@ namespace E_BangInfrastructure.Repository
             IdentityResult result = await _userManager.ResetPasswordAsync(account, newPassword, token);
             return result.Succeeded;
         }
+
+        public async Task<string> GetRefreshTokenAsync(string accountId, CancellationToken token)
+            => await _projectDbContext.Account.Where(pr => pr.Id == accountId)
+                .Select(pr => pr.RefreshToken).FirstOrDefaultAsync(token) ?? string.Empty;
     }
 }
