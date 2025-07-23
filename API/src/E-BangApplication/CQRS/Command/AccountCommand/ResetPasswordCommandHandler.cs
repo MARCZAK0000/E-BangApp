@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace E_BangApplication.CQRS.Command.AccountCommand
+﻿namespace E_BangApplication.CQRS.Command.AccountCommand
 {
-    internal class ResetPasswordCommandHandler
+    public class ResetPasswordCommandHandler
     {
+
     }
 }
