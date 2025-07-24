@@ -1,14 +1,13 @@
 ﻿using E_BangAppRabbitSharedClass.AzureRabbitModel;
 using E_BangDomain.Entities;
-using E_BangDomain.EntitiesDto.Commands.Product;
 using E_BangDomain.Extensions;
 using E_BangDomain.HelperRepository;
 using E_BangDomain.ModelDtos.MessageSender;
 using E_BangDomain.ModelDtos.Pagination;
 using E_BangDomain.Pagination;
 using E_BangDomain.Repository;
+using E_BangDomain.RequestDtos.Product;
 using E_BangInfrastructure.Database;
-using E_BangInfrastructure.HelperRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_BangInfrastructure.Repository
@@ -25,7 +24,7 @@ namespace E_BangInfrastructure.Repository
             _rabbitSenderRepository = rabbitSenderRepository;
         }
 
-       
+
         public async Task<bool> CreateProductAsync(CreateProductDto createProductDto, CancellationToken cancellationToken)
         {
             await _projectDbContext.Products.AddAsync(entity: new Product
@@ -88,9 +87,9 @@ namespace E_BangInfrastructure.Repository
 
             return true;
         }
-        
 
-      
+
+
         public async Task<Product?> GetProductByIdAsync(string productId, CancellationToken cancellationToken)
             => await _projectDbContext.Products.Where(pr => pr.ProductId == productId).FirstOrDefaultAsync(cancellationToken);
 
@@ -151,6 +150,6 @@ namespace E_BangInfrastructure.Repository
         public async Task<ProductPrice?> GetProductPriceAndCountByIdAsync(string productId, CancellationToken cancellationToken)
             => await _projectDbContext.ProductPrice.Where(pr => pr.ProductID == productId).FirstOrDefaultAsync(cancellationToken);
 
-       
+
     }
 }

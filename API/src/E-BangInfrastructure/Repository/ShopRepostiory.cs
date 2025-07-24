@@ -1,8 +1,8 @@
 ﻿using E_BangDomain.Entities;
-using E_BangDomain.EntitiesDto.Commands.Shop;
 using E_BangDomain.ModelDtos.Pagination;
 using E_BangDomain.Pagination;
 using E_BangDomain.Repository;
+using E_BangDomain.RequestDtos.Shop;
 using E_BangInfrastructure.Database;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;

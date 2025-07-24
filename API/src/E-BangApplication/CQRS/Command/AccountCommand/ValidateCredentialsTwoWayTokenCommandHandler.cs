@@ -53,7 +53,7 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
                 return response;
             
 
-            List<string> roles = await _roleRepository.GetRoleByAccountIdAsync(maybe.Value.Id, token);
+            List<string> roles = await _roleRepository.GetRoleNamesByAccountIdAsync(maybe.Value.Id, token);
             List<Claim> claims = _tokenRepository.GenerateClaimsList(maybe.Value, roles);
             string accessToken = _tokenRepository.GenerateToken(claims);
             string refreshToken = _tokenRepository.GenerateRefreshToken();

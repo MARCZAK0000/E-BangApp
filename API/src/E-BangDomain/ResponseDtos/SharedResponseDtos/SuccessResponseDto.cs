@@ -30,4 +30,9 @@
 
         public DateTime DateTime { get; set; } = DateTime.Now;
     }
+
+	public class SuccessResponseDto<T> : SuccessResponseDto where T : class  
+	{
+        public T Data { get; set; }
+    }
 }

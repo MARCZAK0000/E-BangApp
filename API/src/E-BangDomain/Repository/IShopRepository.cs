@@ -1,7 +1,7 @@
 ﻿using E_BangDomain.Entities;
-using E_BangDomain.EntitiesDto.Commands.Shop;
 using E_BangDomain.ModelDtos.Pagination;
 using E_BangDomain.Pagination;
+using E_BangDomain.RequestDtos.Shop;
 
 namespace E_BangDomain.Repository
 {

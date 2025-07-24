@@ -12,8 +12,11 @@ namespace E_BangInfrastructure.Repository
         {
             _projectDbContext = projectDbContext;
         }
-        public async Task<Users?> GetUserByAccountId(string accountId, CancellationToken token) => 
-            await _projectDbContext.Users.Where(u => u.UserID == accountId)
+        public async Task<Users?> GetUserByAccountId(string accountId, CancellationToken token) =>
+            await _projectDbContext
+                .Users
+                .Where(u => u.UserID == accountId)
                 .FirstOrDefaultAsync(token);
+
     }
 }
