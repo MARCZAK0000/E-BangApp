@@ -75,5 +75,7 @@ namespace E_BangDomain.Repository
         /// langword="false"/> if one or more cookies could not be removed. </returns>
         bool RemoveCookies(List<string> cookiesNames);
 
+        Task<string> GetRefreshTokenAsync(string accountId, CancellationToken cancellationToken);
+
     }
 }

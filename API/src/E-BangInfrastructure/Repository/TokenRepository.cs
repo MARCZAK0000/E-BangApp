@@ -48,9 +48,9 @@ namespace E_BangInfrastructure.Repository
         {
             SymmetricSecurityKey key = new
                 (System.Text.Encoding.UTF8
-                .GetBytes(_authenticationSettings.Key));    
+                .GetBytes(_authenticationSettings.Key));
 
-            SigningCredentials cred = 
+            SigningCredentials cred =
                 new(key, SecurityAlgorithms.HmacSha512Signature);
 
             JwtSecurityToken token = new(
@@ -104,7 +104,7 @@ namespace E_BangInfrastructure.Repository
         public bool RemoveCookies(List<string> cookies)
         {
             HttpContext? context = _httpContextAccessor.HttpContext;
-            if (context == null || cookies == null || cookies.Count == 0) 
+            if (context == null || cookies == null || cookies.Count == 0)
                 return false;
             foreach (var cookie in cookies)
             {
@@ -127,7 +127,7 @@ namespace E_BangInfrastructure.Repository
             Account? account = await _dbContext
                 .Account.Where(pr => pr.Id == accountId)
                 .FirstOrDefaultAsync(cancellationToken);
-            if (account is null) 
+            if (account is null)
                 return false;
             account.RefreshToken = refreshToken;
             return true;
@@ -135,12 +135,20 @@ namespace E_BangInfrastructure.Repository
         public async Task<bool> SaveTwoWayFactoryTokenAsync(string accountId, string twoWayToken, CancellationToken token)
         {
             Account? account = await _dbContext
-                .Account.Where(pr=>pr.Id == accountId)
+                .Account.Where(pr => pr.Id == accountId)
                 .FirstOrDefaultAsync(token);
-            if (account is null) 
+            if (account is null)
                 return false;
             account.TwoFactoryCode = twoWayToken;
             return true;
         }
+
+        public async Task<string> GetRefreshTokenAsync(string accountId, CancellationToken token)
+           => await _dbContext
+                .Account
+                .Where(pr => pr.Id == accountId)
+                .Select(pr => pr.RefreshToken)
+                .FirstOrDefaultAsync(token) ?? string.Empty;
+
     }
 }

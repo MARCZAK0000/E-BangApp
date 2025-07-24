@@ -77,6 +77,6 @@ namespace E_BangDomain.Repository
         /// <returns></returns>
         Task<bool> SetNewPasswordAsync(Account account, string newPassword, string token);
         
-        Task<string> GetRefreshTokenAsync(string accountId, CancellationToken token);
+        
     }
 }

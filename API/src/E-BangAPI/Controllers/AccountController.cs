@@ -1,8 +1,6 @@
 ﻿using E_BangApplication.Attributes;
 using E_BangApplication.CQRS.Command.AccountCommand;
 using E_BangApplication.CQRS.Query.AccountHandler;
-using E_BangDomain.RequestDtos.AccountRepositoryDtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyCustomMediator.Interfaces;
 namespace E_BangAPI.Controllers
@@ -33,8 +31,8 @@ namespace E_BangAPI.Controllers
         public async Task<IActionResult> LoginAsync([FromBody] VerifyCredentialsCommand verifyCredentials, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(verifyCredentials, token);
-            return response.IsSuccess && !string.IsNullOrEmpty(response.TwoWayToken)?
-                Ok(response):
+            return response.IsSuccess && !string.IsNullOrEmpty(response.TwoWayToken) ?
+                Ok(response) :
                 NotFound(response);
         }
 
@@ -43,28 +41,31 @@ namespace E_BangAPI.Controllers
         public async Task<IActionResult> LoginWithTwoWayAsync([FromBody] ValidateCredentialsTwoWayTokenCommand validateCredentials, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(validateCredentials, token);
-            return response.IsSuccess?
-                Ok(response) : 
+            return response.IsSuccess ?
+                Ok(response) :
                 NotFound(response);
         }
 
         [HttpGet("logout")]
         public async Task<IActionResult> LogoutAsync(SignOutQuery signOut, CancellationToken token)
         {
-           var response = await _sender.SendToMediatoR(signOut, token);
+            var response = await _sender.SendToMediatoR(signOut, token);
             return response.IsSuccess ?
                 Ok(response) :
                 BadRequest(response);
         }
 
         [HttpPost("refreshToken")]
-        public Task<IActionResult> RefreshTokenAsync()
+        public async Task<IActionResult> RefreshTokenAsync(CancellationToken token)
         {
-            throw new NotImplementedException();
+            var response = await _sender.SendToMediatoR(new RefreshTokenCommand(), token);
+            return response.IsSuccess ?
+                Ok(response) :
+                BadRequest(response);
         }
         [Transaction]
         [HttpPost("resetPassword")]
-        public async Task<IActionResult> ResetPasswordAsync([FromBody]ResetPasswordCommand reset, CancellationToken token)
+        public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordCommand reset, CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(reset, token);
             return response.IsSuccess ?
@@ -85,7 +86,7 @@ namespace E_BangAPI.Controllers
         public async Task<IActionResult> ResendConfirmEmailAsync(CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(new ReSendConfirmEmailQuery(), token);
-            return response.IsSuccess?
+            return response.IsSuccess ?
                 Ok(response) :
                 BadRequest(response);
         }
