@@ -35,7 +35,7 @@ namespace E_BangDomain.Repository
         /// <param name="token">A cancellation token that can be used to cancel the operation.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains a list of role names associated
         /// with the specified account ID. If no roles are found, the list will be empty.</returns>
-        Task<List<Roles>?> GetRolesByAccountIdAsync(string accountId, CancellationToken token);  
+        Task<List<Roles>> GetRolesByAccountIdAsync(string accountId, CancellationToken token);  
         /// <summary>
         /// Assigns the specified role to the account identified by the given account ID.
         /// </summary>

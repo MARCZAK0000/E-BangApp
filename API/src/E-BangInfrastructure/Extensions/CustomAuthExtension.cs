@@ -12,12 +12,13 @@ namespace E_BangInfrastructure.Extensions
 {
     public static class CustomAuthExtension
     {
-        public static void AddCustomAuthorization(this IServiceCollection services)
+        public static IServiceCollection AddCustomAuthorization(this IServiceCollection services)
         {
             services.AddAuthorizationBuilder();
+            return services;
         } 
 
-        public static void AddCorsPolicy(this IServiceCollection services, IConfiguration configuration) 
+        public static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration) 
         {
             var corsOptions = new CorsSettings();
             configuration.GetSection("Cors").Bind(corsOptions);
@@ -28,9 +29,10 @@ namespace E_BangInfrastructure.Extensions
                      .AllowAnyMethod()
                      .AllowAnyHeader();
             }));
+            return services;
         }
 
-        public static void AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             AuthenticationSettings authenticationSettings = new();
             configuration.GetSection("AuthenticationSettings").Bind(authenticationSettings);
@@ -72,6 +74,7 @@ namespace E_BangInfrastructure.Extensions
                         };
                     }
                 });
+            return services;
         }
     }
 }

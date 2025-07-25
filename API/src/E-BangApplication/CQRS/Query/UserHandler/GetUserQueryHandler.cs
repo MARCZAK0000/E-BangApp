@@ -40,14 +40,14 @@ namespace E_BangApplication.CQRS.Query.UserHandler
             {
                 return responseDto;
             }
-            responseDto.Data = _mapper.Map<UserInfoDto>(user);
-            List<Roles>? roles = await _roleRepository.GetRolesByAccountIdAsync(currentUser.AccountID, token);
-            if (roles == null)
+            responseDto.Data = [_mapper.Map<UserInfoDto>(user)];
+            List<Roles> roles = await _roleRepository.GetRolesByAccountIdAsync(currentUser.AccountID, token);
+            if (roles.Count == 0)
             {
                 return responseDto;
             }
-            responseDto.Data.Roles = _mapper.Map<List<RolesDto>>(roles);
-            if (responseDto.Data.Roles.Count == 0 || responseDto.Data is null)
+            responseDto.Data[0].Roles = _mapper.Map<List<RolesDto>>(roles);
+            if (responseDto.Data[0].Roles.Count == 0 || responseDto.Data is null)
             {
                 return responseDto;
             }

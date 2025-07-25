@@ -9,7 +9,14 @@ namespace E_BangApplication.Mapper
     {
         public ProjectMapper()
         {
-            CreateMap<Users, UserInfoDto>();//From Users to UserInfoDtoS
+            CreateMap<Users, UserInfoDto>() //From Users to UserInfoDtoS
+                .ForMember(dest => dest.City, src => src.MapFrom(pr => pr.Address.City))
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Address.Country))
+                .ForMember(dest => dest.StreetName, opt => opt.MapFrom(src => src.Address.StreetName))
+                .ForMember(dest => dest.StreetNumber, opt => opt.MapFrom(src => src.Address.StreetNumber))
+                .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(src => src.Address.PostalCode));
+
+            
             CreateMap<Roles, RolesDto>(); //From Roles to RolesDto 
         }
     }

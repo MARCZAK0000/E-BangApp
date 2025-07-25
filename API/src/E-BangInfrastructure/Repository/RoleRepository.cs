@@ -64,9 +64,13 @@ namespace E_BangInfrastructure.Repository
             return result is not null && result.Entity is not null;
         }
 
-        public Task<List<Roles>?> GetRolesByAccountIdAsync(string accountId, CancellationToken token)
+        public async Task<List<Roles>> GetRolesByAccountIdAsync(string accountId, CancellationToken token)
         {
-            throw new NotImplementedException();
+            return await _projectDbContext
+                .UsersInRoles
+                .Where(pr=>pr.UserID == accountId)
+                .Select(pr=>pr.Roles)
+                .ToListAsync(token);
         }
     }
 }

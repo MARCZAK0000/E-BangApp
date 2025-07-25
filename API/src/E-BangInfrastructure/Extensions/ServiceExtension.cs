@@ -9,7 +9,7 @@ namespace E_BangInfrastructure.Extensions
 {
     public static class ServiceExtension
     {
-        public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             bool IsDocker = Environment.GetEnvironmentVariable("IS_DOCKER") != null
                 && Environment.GetEnvironmentVariable("IS_DOCKER")!.Equals("true", StringComparison.CurrentCulture);
@@ -30,6 +30,8 @@ namespace E_BangInfrastructure.Extensions
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+
+            return services;
         }
 
     }

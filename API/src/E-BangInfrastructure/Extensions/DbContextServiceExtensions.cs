@@ -10,7 +10,7 @@ namespace E_BangInfrastructure.Extensions
 {
     public static class DbContextServiceExtensions
     {
-        public static void AddProjectDbContext(this IServiceCollection services, IConfiguration configuration, bool isDocker)
+        public static IServiceCollection AddProjectDbContext(this IServiceCollection services, IConfiguration configuration, bool isDocker)
         {
             services.AddDbContext<ProjectDbContext>(options =>
             {
@@ -40,6 +40,7 @@ namespace E_BangInfrastructure.Extensions
                 options.Password.RequireDigit = true;
                 options.Password.RequireUppercase = true;
             });
+            return services;
         }
     }
 }

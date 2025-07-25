@@ -1,4 +1,5 @@
-﻿using E_BangDomain.Repository;
+﻿using E_BangApplication.CQRS.Query.UserHandler;
+using E_BangDomain.Repository;
 using E_BangDomain.ResponseDtos.SharedResponseDtos;
 using Microsoft.AspNetCore.Mvc;
 using MyCustomMediator.Interfaces;
@@ -16,10 +17,10 @@ namespace E_BangAPI.Controllers
         }
 
         [HttpGet("me")]
-        public Task<IActionResult> GetUser()
+        public async Task<IActionResult> GetUser(CancellationToken token)
         {
-            // This is a placeholder for the actual implementation
-            return Task.FromResult<IActionResult>(Ok("User data would be returned here."));
+            var response = await _sender.SendToMediatoR(new GetUserQuery(), token);
+            return response.IsSuccess? Ok(response) : BadRequest(response);
         }
 
         [HttpPost("update")]

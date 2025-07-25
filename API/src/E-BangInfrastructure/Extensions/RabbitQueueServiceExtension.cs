@@ -7,17 +7,12 @@ using E_BangInfrastructure.BackgroundTask;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E_BangInfrastructure.Extensions
 {
     public static class RabbitQueueServiceExtension
     {
-        public static void AddRabbitQueueService(this IServiceCollection services, IConfiguration configuration, bool isDocker) 
+        public static IServiceCollection AddRabbitQueueService(this IServiceCollection services, IConfiguration configuration, bool isDocker)
         {
             services.AddSingleton<IMessageSenderHandlerQueue, MessageSenderHandlerQueue>();
             services.AddTransient<IMessageTask, MessageTask>();
@@ -45,6 +40,7 @@ namespace E_BangInfrastructure.Extensions
                     .ValidateDataAnnotations();
             }
             services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitOptions>>().Value);
+            return services;
         }
     }
 }

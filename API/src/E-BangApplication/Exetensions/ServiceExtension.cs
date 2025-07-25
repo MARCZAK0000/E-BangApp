@@ -8,12 +8,14 @@ namespace E_BangApplication.Exetensions
 {
     public static class ServiceExtension
     {
-        public static void AddApplication(this IServiceCollection services)
+        public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(ProjectMapper));
             services.AddMyCustomMediator();
             services.AddFluentValidationAutoValidation();
             services.AddScoped<IUserContext, UserContext>();
+
+            return services;
         }
     }
 }
