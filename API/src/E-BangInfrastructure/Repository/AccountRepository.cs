@@ -85,11 +85,22 @@ namespace E_BangInfrastructure.Repository
         public async Task<bool> SetNewPasswordAsync(Account account, string newPassword, string token)
         {
             IdentityResult result = await _userManager.ResetPasswordAsync(account, newPassword, token);
+
             return result.Succeeded;
         }
-
+        public async Task<bool> ChangePasswordAsync(Account account, string oldPassword, string newPassword)
+        {
+            IdentityResult result = await _userManager.ChangePasswordAsync(account, oldPassword, newPassword);
+            return result.Succeeded;
+        }
         public async Task<string> GetRefreshTokenAsync(string accountId, CancellationToken token)
             => await _projectDbContext.Account.Where(pr => pr.Id == accountId)
                 .Select(pr => pr.RefreshToken).FirstOrDefaultAsync(token) ?? string.Empty;
+
+        public async Task<bool> LastUdateTimeAsync(string accountID, CancellationToken token) =>
+            await _projectDbContext
+            .Account
+            .Where(pr => pr.Id == accountID)
+                .ExecuteUpdateAsync(pr => pr.SetProperty(p => p.LastUpdateTime, p => DateTime.Now), token) == 0;
     }
 }

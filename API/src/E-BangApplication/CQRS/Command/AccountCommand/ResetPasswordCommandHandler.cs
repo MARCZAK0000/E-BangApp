@@ -27,8 +27,8 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
             {
                 return response;
             }
-            bool isUpdated = await _accountRepository.SetNewPasswordAsync(account.Value, request.Password, request.Token);
-            response.IsSuccess = isUpdated;
+            response.IsSuccess = await _accountRepository.SetNewPasswordAsync(account.Value, request.Password, request.Token)
+                && await _accountRepository.LastUdateTimeAsync(account.Value.Id, token);
             return response;
         }
     }

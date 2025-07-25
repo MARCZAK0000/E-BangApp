@@ -30,6 +30,11 @@ namespace E_BangAPI.Middleware
                 using (dbTransaction = await _dbContext.Database.BeginTransactionAsync())
                 {
                     await next.Invoke(context);
+                    if(context.Response.StatusCode >= 400)
+                    {
+                        await dbTransaction.RollbackAsync();
+                        return;
+                    }
                     await dbTransaction.CommitAsync();
                 }
             }

@@ -5,7 +5,7 @@ using E_BangDomain.RequestDtos.User;
 using E_BangDomain.ResponseDtos.User;
 using MyCustomMediator.Interfaces;
 
-namespace E_BangApplication.CQRS.Command.AccountHandler
+namespace E_BangApplication.CQRS.Command.UserHandler
 {
     public class UpdateUserCommand : UpdateUserDto, IRequest<UpdateUserResponseDto>
     {

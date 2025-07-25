@@ -28,13 +28,8 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
             {
                 return response;
             }
-
-            bool isConfirmed = await _accountRepository.ConfirmEmailAsync(account.Value, request.Token);
-            if(!isConfirmed)
-            {
-                return response;
-            }
-            response.IsSuccess = true;
+            response.IsSuccess = await _accountRepository.ConfirmEmailAsync(account.Value, request.Token)
+                   && await _accountRepository.LastUdateTimeAsync(account.Value.Id, token);
             return response;
         }
     }

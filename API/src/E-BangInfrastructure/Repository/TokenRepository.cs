@@ -124,23 +124,21 @@ namespace E_BangInfrastructure.Repository
 
         public async Task<bool> SaveRefreshTokenAsync(string accountId, string refreshToken, CancellationToken cancellationToken)
         {
-            Account? account = await _dbContext
-                .Account.Where(pr => pr.Id == accountId)
-                .FirstOrDefaultAsync(cancellationToken);
-            if (account is null)
-                return false;
-            account.RefreshToken = refreshToken;
-            return true;
+            int rowAffected = await _dbContext
+                .Account
+                .Where(pr => pr.Id == accountId)
+                .ExecuteUpdateAsync(pr => pr.SetProperty(p => p.RefreshToken, refreshToken), cancellationToken);
+
+            return rowAffected == 1;
         }
         public async Task<bool> SaveTwoWayFactoryTokenAsync(string accountId, string twoWayToken, CancellationToken token)
         {
-            Account? account = await _dbContext
-                .Account.Where(pr => pr.Id == accountId)
-                .FirstOrDefaultAsync(token);
-            if (account is null)
-                return false;
-            account.TwoFactoryCode = twoWayToken;
-            return true;
+            int rowAffected = await _dbContext
+                .Account
+                .Where(pr => pr.Id == accountId)
+                .ExecuteUpdateAsync(pr => pr.SetProperty(p => p.TwoFactoryCode, twoWayToken), token);
+
+            return rowAffected == 1;
         }
 
         public async Task<string> GetRefreshTokenAsync(string accountId, CancellationToken token)

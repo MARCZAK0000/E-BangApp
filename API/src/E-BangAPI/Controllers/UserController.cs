@@ -1,6 +1,6 @@
-﻿using E_BangApplication.CQRS.Query.UserHandler;
-using E_BangDomain.Repository;
-using E_BangDomain.ResponseDtos.SharedResponseDtos;
+﻿using E_BangApplication.Attributes;
+using E_BangApplication.CQRS.Command.UserHandler;
+using E_BangApplication.CQRS.Query.UserHandler;
 using Microsoft.AspNetCore.Mvc;
 using MyCustomMediator.Interfaces;
 
@@ -20,20 +20,21 @@ namespace E_BangAPI.Controllers
         public async Task<IActionResult> GetUser(CancellationToken token)
         {
             var response = await _sender.SendToMediatoR(new GetUserQuery(), token);
-            return response.IsSuccess? Ok(response) : BadRequest(response);
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
-
+        [Transaction]
         [HttpPost("update")]
-        public Task<IActionResult> UpdateUserInfromations(string id)
+        public async Task<IActionResult> UpdateUserInfromations(UpdateUserCommand reqeust, CancellationToken token)
         {
-            // This is a placeholder for the actual implementation
-            return Task.FromResult<IActionResult>(Ok($"User data for ID {id} would be returned here."));
+            var response = await _sender.SendToMediatoR(reqeust, token);
+            return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
+        [Transaction]
         [HttpPost("changePassword")]
-        public Task<IActionResult> ChangePassword(string id)
+        public async Task<IActionResult> ChangePassword(UpdatePasswordCommand request, CancellationToken token)
         {
-            // This is a placeholder for the actual implementation
-            return Task.FromResult<IActionResult>(Ok($"Password for user ID {id} would be changed here."));
+            var result = await _sender.SendToMediatoR(new UpdatePasswordCommand(), token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
-    }   
+    }
 }

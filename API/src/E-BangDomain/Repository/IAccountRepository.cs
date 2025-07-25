@@ -76,7 +76,17 @@ namespace E_BangDomain.Repository
         /// <param name="token"></param>
         /// <returns></returns>
         Task<bool> SetNewPasswordAsync(Account account, string newPassword, string token);
-        
-        
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="oldPassword"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
+        Task<bool> ChangePasswordAsync(Account account, string oldPassword, string newPassword);
+        Task<bool> LastUdateTimeAsync(string accountID, CancellationToken token);
+
+
     }
 }
