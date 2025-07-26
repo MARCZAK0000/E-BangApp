@@ -1,5 +1,5 @@
 ﻿using E_BangApplication.Attributes;
-using E_BangApplication.CQRS.Command.AccountCommand;
+using E_BangApplication.CQRS.Command.AccountHandler;
 using E_BangApplication.CQRS.Query.AccountHandler;
 using Microsoft.AspNetCore.Mvc;
 using MyCustomMediator.Interfaces;

@@ -7,7 +7,7 @@ using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using E_BangDomain.ResponseDtos.Account;
 using MyCustomMediator.Interfaces;
 
-namespace E_BangApplication.CQRS.Command.AccountCommand
+namespace E_BangApplication.CQRS.Command.AccountHandler
 {
     public class RegisterAccountCommand : RegisterAccountDto, IRequest<RegisterAccountResponseDto>
     {
@@ -29,18 +29,26 @@ namespace E_BangApplication.CQRS.Command.AccountCommand
         public async Task<RegisterAccountResponseDto> Handle(RegisterAccountCommand request, CancellationToken cancellationToken)
         {
             RegisterAccountResponseDto response = new();
-            Account? account = await _accountRepository.RegisterAccountAsync(request, cancellationToken);
-            if(account is null)
+            Account account = new();
+            account.Email = request.Email;
+            account.UserName = request.Email;
+            account.NormalizedEmail = request.Email.ToUpperInvariant();
+            account.NormalizedUserName = request.Email.ToUpperInvariant();
+
+            //Add account
+            bool isAccount = await _accountRepository.RegisterAccountAsync(account, request.Password);
+            if(!isAccount)
             {
                 return response;
             }
+
             bool isRoleAssigned = await _roleRepository.AddToRoleLevelZeroAsync(account.Id, cancellationToken);
             if (!isRoleAssigned)
             {
                 throw new InternalServerErrorException("Failed to assign role to the account.");
             }
             string confirmEmailToken = await _accountRepository.GenerateConfirmEmailTokenAsync(account);
-            await _emailRepository.SendRegistrationConfirmAccountEmailAsync(confirmEmailToken, account.Email!, cancellationToken);
+            await _emailRepository.SendRegistrationConfirmAccountEmailAsync(confirmEmailToken, account.Email, cancellationToken);
             response.IsSuccess = true;
             return response;
         }

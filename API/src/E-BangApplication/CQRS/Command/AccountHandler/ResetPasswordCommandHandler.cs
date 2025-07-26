@@ -5,7 +5,7 @@ using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using E_BangDomain.ResponseDtos.Account;
 using MyCustomMediator.Interfaces;
 
-namespace E_BangApplication.CQRS.Command.AccountCommand
+namespace E_BangApplication.CQRS.Command.AccountHandler
 {
     public class ResetPasswordCommand: ResetPasswordDto, IRequest<ResetPasswordResponseDto>
     {

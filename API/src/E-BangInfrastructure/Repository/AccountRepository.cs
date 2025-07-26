@@ -28,18 +28,10 @@ namespace E_BangInfrastructure.Repository
         private readonly ProjectDbContext _projectDbContext = projectDbContext;
 
 
-        public async Task<Account> RegisterAccountAsync(RegisterAccountDto registerAccountDto, CancellationToken token)
+        public async Task<bool> RegisterAccountAsync(Account account,string password)
         {
-            Account user = new();
-            user.Email = registerAccountDto.Email;
-            user.UserName = registerAccountDto.Email;
-            user.NormalizedEmail = registerAccountDto.Email.ToUpperInvariant();
-            user.NormalizedUserName = registerAccountDto.Email.ToUpperInvariant();
-            //await _userStore.SetUserNameAsync(user, registerAccountDto.Email, token);
-            //await _userStore.SetNormalizedUserNameAsync(user, registerAccountDto.Email, token);
-            //await _userEmailStore.SetEmailAsync(user, registerAccountDto.Email, token);
-            await _userManager.CreateAsync(user, registerAccountDto.Password);
-            return user;
+            IdentityResult result = await _userManager.CreateAsync(account, password);
+            return result.Succeeded;
         }
         public async Task<Maybe<Account>> FindAccountByEmailAsync(string email, CancellationToken token)
         {

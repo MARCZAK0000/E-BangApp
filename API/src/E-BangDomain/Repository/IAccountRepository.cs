@@ -11,8 +11,8 @@ namespace E_BangDomain.Repository
         /// </summary>
         /// <param name="registerAccountDto"></param>
         /// <param name="token"></param>
-        /// <returns><see cref="Account"/> Account Details</returns>
-        Task<Account> RegisterAccountAsync(RegisterAccountDto registerAccountDto, CancellationToken token);
+        /// <returns><see cref="Account"/> True or false</returns>
+        Task<bool> RegisterAccountAsync(Account account, string password);
 
         /// <summary>
         /// Check UserName and Password without TwoWayToken 

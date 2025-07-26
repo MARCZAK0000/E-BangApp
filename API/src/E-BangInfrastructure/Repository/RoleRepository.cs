@@ -16,15 +16,15 @@ namespace E_BangInfrastructure.Repository
 
         public async Task<bool> AddToRoleAsync(string accountId, string roleID, CancellationToken token)
         {
-           var result = await _projectDbContext
+           await _projectDbContext
                 .UsersInRoles
                 .AddAsync(new UsersInRole
                 {
                     UserID = accountId,
                     RoleID = roleID
                 }, token);
-            
-            return result is not null && result.Entity is not null;
+
+            return await _projectDbContext.SaveChangesAsync(token) > 0;
         }
 
         public async Task<List<string>> GetRoleNamesByAccountIdAsync(string accountId, CancellationToken token) 
@@ -53,7 +53,7 @@ namespace E_BangInfrastructure.Repository
             {
                 return false; // Role Level Zero not found
             }
-            var result = await _projectDbContext
+            await _projectDbContext
                 .UsersInRoles
                 .AddAsync(new UsersInRole
                 {
@@ -61,7 +61,7 @@ namespace E_BangInfrastructure.Repository
                     RoleID = roleID  // Assuming "0" is the ID for Role Level Zero
                 }, token);
 
-            return result is not null && result.Entity is not null;
+            return await _projectDbContext.SaveChangesAsync(token) > 0;
         }
 
         public async Task<List<Roles>> GetRolesByAccountIdAsync(string accountId, CancellationToken token)
@@ -71,6 +71,20 @@ namespace E_BangInfrastructure.Repository
                 .Where(pr=>pr.UserID == accountId)
                 .Select(pr=>pr.Roles)
                 .ToListAsync(token);
+        }
+
+        public async Task<bool> AddRoleAsync(Roles roles, CancellationToken token)
+        {
+            await _projectDbContext.Roles.AddAsync(roles, token);
+            return await _projectDbContext.SaveChangesAsync(token) > 0;
+        }
+
+        public async Task<bool> UpdateRoleLevelAsync(int minRoleLevel, CancellationToken token)
+        {
+            int rowCount = await _projectDbContext.Roles.Where(pr => pr.RoleLevel >= minRoleLevel)
+                .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.RoleLevel, p=>p.RoleLevel+1),token);
+
+            return rowCount > 0;
         }
     }
 }

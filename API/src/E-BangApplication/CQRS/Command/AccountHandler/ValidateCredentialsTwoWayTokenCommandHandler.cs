@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using MyCustomMediator.Interfaces;
 using System.Security.Claims;
 
-namespace E_BangApplication.CQRS.Command.AccountCommand
+namespace E_BangApplication.CQRS.Command.AccountHandler
 {
     public class ValidateCredentialsTwoWayTokenCommand : LoginAccountDto, IRequest<SignInResponseDto>
     {

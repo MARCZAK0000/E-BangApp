@@ -1,4 +1,5 @@
 ﻿using E_BangDomain.Entities;
+using E_BangDomain.RequestDtos.Role;
 
 namespace E_BangDomain.Repository
 {
@@ -60,6 +61,23 @@ namespace E_BangDomain.Repository
         /// <returns><see langword="true"/> if the role was successfully assigned to the account; otherwise, <see
         /// langword="false"/>.</returns>
         Task<bool> AddToRoleLevelZeroAsync(string accountId, CancellationToken token);
+
+        /// <summary>
+        /// Create new role
+        /// </summary>
+        /// <param name="roles">Unique role</param>
+        /// <param name="token">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns><see langword="true"/> if the level was successfully added; otherwise, <see
+        /// langword="false"/>.</returns>
+        Task<bool> AddRoleAsync(Roles roles, CancellationToken token);
+        /// <summary>
+        /// Update level of role
+        /// </summary>
+        /// <param name="minRoleLevel">Level of last role level changed</param>
+        /// <param name="token">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns><see langword="true"/> if the level was successfully changed; otherwise, <see
+        /// langword="false"/>.</returns>
+        Task<bool> UpdateRoleLevelAsync(int minRoleLevel, CancellationToken token);
 
 
     }

@@ -3,7 +3,7 @@ using E_BangDomain.Repository;
 using E_BangDomain.ResponseDtos.Account;
 using MyCustomMediator.Interfaces;
 
-namespace E_BangApplication.CQRS.Command.AccountCommand
+namespace E_BangApplication.CQRS.Command.AccountHandler
 {
     public class RefreshTokenCommand : IRequest<RefreshTokenResponseDto>
     {
