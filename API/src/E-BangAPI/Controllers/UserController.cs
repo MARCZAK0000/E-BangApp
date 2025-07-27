@@ -19,21 +19,21 @@ namespace E_BangAPI.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> GetUser(CancellationToken token)
         {
-            var response = await _sender.SendToMediatoR(new GetUserQuery(), token);
+            var response = await _sender.SendToMediator(new GetUserQuery(), token);
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
         [Transaction]
         [HttpPost("update")]
         public async Task<IActionResult> UpdateUserInfromations(UpdateUserCommand reqeust, CancellationToken token)
         {
-            var response = await _sender.SendToMediatoR(reqeust, token);
+            var response = await _sender.SendToMediator(reqeust, token);
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
         [Transaction]
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword(UpdatePasswordCommand request, CancellationToken token)
         {
-            var result = await _sender.SendToMediatoR(new UpdatePasswordCommand(), token);
+            var result = await _sender.SendToMediator(new UpdatePasswordCommand(), token);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

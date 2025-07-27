@@ -10,6 +10,11 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 15s
+      retries: 5
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -56,13 +61,25 @@ services:
       - rabbitmq
     networks:
       - postgresnet
-
-  adminer:
-    image: adminer
-    container_name: adminer
-    restart: unless-stopped
-    ports:
+  
+  app3:
+    image: ebangapi
+    container_name: api
+    ports: 
       - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - IS_DOCKER=${IS_DOCKER}
+      - RABBIT_HOST=${RABBIT_HOST}
+      - RABBIT_PORT=${RABBIT_PORT}
+      - RABBIT_USERNAME=${RABBIT_USERNAME}
+      - RABBIT_PASSWORD=${RABBIT_PASSWORD}
+      - RABBIT_VIRTUALHOST=${RABBIT_VIRTUALHOST}
+      - RABBIT_EMAILQUEUE=${RABBIT_EMAILQUEUE}
+    depends_on:
+      - rabbitmq
     networks:
       - postgresnet
 

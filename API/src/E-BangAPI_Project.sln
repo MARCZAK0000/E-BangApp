@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-BangAPI", "E-BangApi\E-BangAPI.csproj", "{C38DD8B0-45BC-436B-B4AA-6FEFEBC4A4E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-BangAPI", "E-BangAPI\E-BangAPI.csproj", "{C38DD8B0-45BC-436B-B4AA-6FEFEBC4A4E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-BangApplication", "E-BangApplication\E-BangApplication.csproj", "{6D1FDC39-3340-4059-A592-A56EB6880943}"
 EndProject

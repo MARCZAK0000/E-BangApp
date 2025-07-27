@@ -23,13 +23,13 @@ namespace E_BangInfrastructure.Extensions
                 services.AddOptions<RabbitOptions>()
                     .Configure(cfg =>
                     {
-                        cfg.Host = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
-                        cfg.Port = Convert.ToInt32(Environment.GetEnvironmentVariable("RABBIT_USERNAME")!);
-                        cfg.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
+                        cfg.Host = Environment.GetEnvironmentVariable("RABBIT_HOST")!;
+                        cfg.Port = Convert.ToInt32(Environment.GetEnvironmentVariable("RABBIT_PORT")!);
+                        cfg.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;
                         cfg.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
-                        cfg.Password = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
-                        cfg.ListenerQueueName = string.Empty;
-                        cfg.SenderQueueName = string.Empty;
+                        cfg.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
+                        cfg.ListenerQueueName = //Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
+                        cfg.SenderQueueName = Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
                     })
                     .ValidateDataAnnotations();
             }

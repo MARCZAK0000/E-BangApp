@@ -1,0 +1,33 @@
+#Official SDK .NET9 SDK image
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS buildenv
+
+#Set workdir to /src
+WORKDIR /src
+#Copy Nuget file
+COPY nuget.config .
+
+COPY .nuget ./.nuget
+
+#Copy sln and csproj into docker container
+COPY API/src/E-BangAPI_Project.sln .
+
+COPY API/src/E-BangAPI ./E-BangAPI
+COPY API/src/E-BangApplication ./E-BangApplication
+COPY API/src/E-BangDomain ./E-BangDomain
+COPY API/src/E-BangInfrastructure ./E-BangInfrastructure
+
+RUN dotnet restore E-BangAPI_Project.sln
+
+RUN dotnet publish E-BangAPI/E-BangAPI.csproj -c Release -o /app
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+
+ENV ASPNETCORE_URLS=http://+:8080
+
+EXPOSE 8080
+
+WORKDIR /app
+
+COPY --from=buildenv /app .
+
+ENTRYPOINT [ "dotnet", "E-BangAPI.dll" ]
