@@ -4,11 +4,11 @@ using FluentValidation;
 
 namespace E_BangApplication.Validation.Account
 {
-    public class RegisterAccountValidator : AbstractValidator<RegisterAccountCommand>
+    public class ResetPasswordValidator : AbstractValidator<ResetPasswordCommand>
     {
-        public RegisterAccountValidator()
+        public ResetPasswordValidator() 
         {
-            Include(new CredentialsValidator());
+            Include(new CredentialsValidator());    
         }
     }
 }
