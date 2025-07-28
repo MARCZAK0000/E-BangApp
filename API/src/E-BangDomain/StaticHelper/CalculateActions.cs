@@ -16,7 +16,7 @@ namespace E_BangDomain.StaticHelper
             bools = [.. result.Reverse()];
         }
 
-        public static Dictionary<Actions, bool> GetActionKeyValuePairs(int number, List<Actions> actions)
+        public static Dictionary<Actions, bool> GetActionKeyValuePairs(int number, IReadOnlyList<Actions> actions)
         {
             CalculateUserActions(out var bools, number, actions.Count);
             var keyVaulePairs = new Dictionary<Actions, bool>();
@@ -25,6 +25,13 @@ namespace E_BangDomain.StaticHelper
                 keyVaulePairs.Add(actions[i], bools[i]);
             }
             return keyVaulePairs;
+        }
+
+        public static int SetActionLevel(Dictionary<Actions, bool> keyValuePairs)
+        {
+           return keyValuePairs
+                .Where(pr=>pr.Value==true)
+                .Sum(pr=>pr.Key.ActionLevel);
         }
     }
 }

@@ -17,6 +17,6 @@ namespace E_BangDomain.Entities
     }
     public partial class Actions
     {
-        public List<ActionInRole> ActionInRoles { get; set; }
+        
     }
 }

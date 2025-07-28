@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace E_BangApplication.Validation.Account
 {
-    public class ForgetPasswordValidator : AbstractValidator<ForgotPasswordTokenQuery>1
+    public class ForgetPasswordValidator : AbstractValidator<ForgotPasswordTokenQuery>
     {
         public ForgetPasswordValidator()
         {

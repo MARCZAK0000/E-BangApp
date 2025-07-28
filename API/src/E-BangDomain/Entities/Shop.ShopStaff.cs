@@ -8,6 +8,7 @@ namespace E_BangDomain.Entities
         public string ShopStaffId { get; set; } = Guid.NewGuid().ToString();    
         public string ShopId { get; set; }
         public string AccountId { get; set; }
+        public int ActionLevel { get; set; } 
     }
 
     public partial class ShopStaff

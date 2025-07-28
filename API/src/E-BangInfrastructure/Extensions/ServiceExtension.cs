@@ -30,6 +30,7 @@ namespace E_BangInfrastructure.Extensions
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IActionRepository, ActionRepository>();
 
             return services;
         }

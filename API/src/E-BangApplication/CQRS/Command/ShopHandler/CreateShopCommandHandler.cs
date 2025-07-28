@@ -46,6 +46,7 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             {
                 ShopStaffId = user.AccountID,
                 ShopId = shop.ShopId,
+                ActionLevel = 7
             };
             shop.ShopStaff.Add(owner);
 
