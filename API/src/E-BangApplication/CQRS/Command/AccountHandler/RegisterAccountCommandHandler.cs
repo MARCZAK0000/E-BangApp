@@ -1,7 +1,6 @@
 ﻿using E_BangApplication.Exceptions;
 using E_BangDomain.Entities;
 using E_BangDomain.HelperRepository;
-using E_BangDomain.IQueueService;
 using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using E_BangDomain.ResponseDtos.Account;
@@ -18,7 +17,7 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
         private readonly IAccountRepository _accountRepository;
         private readonly IEmailRepository _emailRepository;
         private readonly IRoleRepository _roleRepository;
-        public RegisterAccountCommandHandler(IAccountRepository accountRepository, 
+        public RegisterAccountCommandHandler(IAccountRepository accountRepository,
             IEmailRepository emailRepository, IRoleRepository roleRepository)
         {
             _accountRepository = accountRepository;
@@ -34,10 +33,11 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
             account.UserName = request.Email;
             account.NormalizedEmail = request.Email.ToUpperInvariant();
             account.NormalizedUserName = request.Email.ToUpperInvariant();
+            account.TwoFactorEnabled = request.TwoFactorEnable;
 
             //Add account
             bool isAccount = await _accountRepository.RegisterAccountAsync(account, request.Password);
-            if(!isAccount)
+            if (!isAccount)
             {
                 return response;
             }

@@ -2,7 +2,7 @@
 {
     public class CurrentUser
     {
-       
+
         public CurrentUser(string accountID, string emailAddress, List<string> roles)
         {
             AccountID = accountID;
@@ -16,6 +16,6 @@
 
         public List<string> Roles { get; set; }
 
-        
+
     }
 }

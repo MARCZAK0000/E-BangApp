@@ -12,7 +12,7 @@ namespace E_BangApplication.Authentication
         private readonly HttpOnlyTokenOptions _httpOnlyTokenOptions;
 
         public UserContext(IHttpContextAccessor httpContextAccessor
-            ,HttpOnlyTokenOptions httpOnlyTokenOptions)
+            , HttpOnlyTokenOptions httpOnlyTokenOptions)
         {
             _HttpContextAccessor = httpContextAccessor;
             _httpOnlyTokenOptions = httpOnlyTokenOptions;
@@ -33,7 +33,7 @@ namespace E_BangApplication.Authentication
 
         public string GetRefreshToken()
         {
-            return _HttpContextAccessor.HttpContext!.Request.Cookies[_httpOnlyTokenOptions.RefreshToken] ?? 
+            return _HttpContextAccessor.HttpContext!.Request.Cookies[_httpOnlyTokenOptions.RefreshToken] ??
                 throw new UnAuthorizedExceptions("Refresh token not found");
         }
     }

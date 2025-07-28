@@ -5,7 +5,7 @@ using E_BangDomain.EntitiesDto.User;
 
 namespace E_BangApplication.Mapper
 {
-    public class ProjectMapper:Profile
+    public class ProjectMapper : Profile
     {
         public ProjectMapper()
         {
@@ -16,7 +16,7 @@ namespace E_BangApplication.Mapper
                 .ForMember(dest => dest.StreetNumber, opt => opt.MapFrom(src => src.Address.StreetNumber))
                 .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(src => src.Address.PostalCode));
 
-            
+
             CreateMap<Roles, RolesDto>(); //From Roles to RolesDto 
         }
     }

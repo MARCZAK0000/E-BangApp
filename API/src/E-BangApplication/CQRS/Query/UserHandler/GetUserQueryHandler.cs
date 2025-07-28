@@ -5,12 +5,11 @@ using E_BangDomain.EntitiesDto.Role;
 using E_BangDomain.EntitiesDto.User;
 using E_BangDomain.Repository;
 using E_BangDomain.ResponseDtos.User;
-using Microsoft.AspNetCore.Identity;
 using MyCustomMediator.Interfaces;
 
 namespace E_BangApplication.CQRS.Query.UserHandler
 {
-    public class GetUserQuery: IRequest<GetUserResponseDto<UserInfoDto>>
+    public class GetUserQuery : IRequest<GetUserResponseDto<UserInfoDto>>
     {
 
     }
@@ -20,8 +19,8 @@ namespace E_BangApplication.CQRS.Query.UserHandler
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IMapper _mapper;
-        public GetUserQueryHandler(IUserContext userContext, 
-            IUserRepository userRepository, 
+        public GetUserQueryHandler(IUserContext userContext,
+            IUserRepository userRepository,
             IRoleRepository roleRepository,
             IMapper mapper)
         {

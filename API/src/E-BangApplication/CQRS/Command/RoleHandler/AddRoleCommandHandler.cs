@@ -7,7 +7,7 @@ using MyCustomMediator.Interfaces;
 
 namespace E_BangApplication.CQRS.Command.RoleHandler
 {
-    public class AddRoleCommand:AddRoleDto, IRequest<AddRoleResponseDto>
+    public class AddRoleCommand : AddRoleDto, IRequest<AddRoleResponseDto>
     {
     }
 

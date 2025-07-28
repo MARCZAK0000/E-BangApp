@@ -14,7 +14,7 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
 
         private readonly ITokenRepository _tokenRepository;
 
-        public RefreshTokenCommandHandler(IUserContext userContext, 
+        public RefreshTokenCommandHandler(IUserContext userContext,
             ITokenRepository tokenRepository)
         {
             _userContext = userContext;
@@ -27,7 +27,7 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
             CurrentUser currentUser = _userContext.GetCurrentUser();
             string refreshToken = _userContext.GetRefreshToken();
             string refreshTokenDb = await _tokenRepository.GetRefreshTokenAsync(currentUser.AccountID, token);
-            if(!refreshToken.Equals(refreshTokenDb, StringComparison.CurrentCultureIgnoreCase))
+            if (!refreshToken.Equals(refreshTokenDb, StringComparison.CurrentCultureIgnoreCase))
             {
                 return response;
             }

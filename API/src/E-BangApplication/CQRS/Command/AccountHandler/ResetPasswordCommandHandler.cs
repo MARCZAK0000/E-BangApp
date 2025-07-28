@@ -7,7 +7,7 @@ using MyCustomMediator.Interfaces;
 
 namespace E_BangApplication.CQRS.Command.AccountHandler
 {
-    public class ResetPasswordCommand: ResetPasswordDto, IRequest<ResetPasswordResponseDto>
+    public class ResetPasswordCommand : ResetPasswordDto, IRequest<ResetPasswordResponseDto>
     {
     }
     public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, ResetPasswordResponseDto>
@@ -23,7 +23,7 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
         {
             ResetPasswordResponseDto response = new();
             Maybe<Account> account = await _accountRepository.FindAccountByEmailAsync(request.Email, token);
-            if(!account.HasValue ||account.Value is null)
+            if (!account.HasValue || account.Value is null)
             {
                 return response;
             }

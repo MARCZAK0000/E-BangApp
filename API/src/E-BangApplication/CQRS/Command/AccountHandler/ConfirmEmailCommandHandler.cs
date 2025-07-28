@@ -9,7 +9,7 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
 {
     public class ConfirmEmailCommand : ConfirmEmailDto, IRequest<ConfirmEmailResponseDto>
     {
-        
+
     }
     public class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailCommand, ConfirmEmailResponseDto>
     {
@@ -24,7 +24,7 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
         {
             ConfirmEmailResponseDto response = new();
             Maybe<Account> account = await _accountRepository.FindAccountByEmailAsync(request.Email, token);
-            if(!account.HasValue || account.Value is null)
+            if (!account.HasValue || account.Value is null)
             {
                 return response;
             }

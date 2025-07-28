@@ -4,7 +4,6 @@ using E_BangDomain.HelperRepository;
 using E_BangDomain.MaybePattern;
 using E_BangDomain.Repository;
 using E_BangDomain.ResponseDtos.Account;
-using Microsoft.AspNetCore.Identity;
 using MyCustomMediator.Interfaces;
 
 namespace E_BangApplication.CQRS.Query.AccountHandler
@@ -30,8 +29,8 @@ namespace E_BangApplication.CQRS.Query.AccountHandler
         {
             ReSendConfirmEmailResponseDto response = new();
             CurrentUser currentUser = _userContext.GetCurrentUser();
-            if (currentUser is null || 
-                    string.IsNullOrEmpty(currentUser.EmailAddress) 
+            if (currentUser is null ||
+                    string.IsNullOrEmpty(currentUser.EmailAddress)
                     || string.IsNullOrEmpty(currentUser.AccountID))
             {
                 return response;

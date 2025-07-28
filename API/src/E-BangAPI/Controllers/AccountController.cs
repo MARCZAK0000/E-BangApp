@@ -37,8 +37,8 @@ namespace E_BangAPI.Controllers
         }
 
         [Transaction]
-        [HttpPost("loginWithTwoWay")]
-        public async Task<IActionResult> LoginWithTwoWayAsync([FromBody] ValidateCredentialsTwoWayTokenCommand validateCredentials, CancellationToken token)
+        [HttpPost("loginWithTwoFactory")]
+        public async Task<IActionResult> LoginWithTwoWayAsync([FromBody] ValidateCredentialsTwoFactoryTokenCommand validateCredentials, CancellationToken token)
         {
             var response = await _sender.SendToMediator(validateCredentials, token);
             return response.IsSuccess ?

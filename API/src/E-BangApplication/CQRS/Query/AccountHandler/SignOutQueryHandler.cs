@@ -22,9 +22,9 @@ namespace E_BangApplication.CQRS.Query.AccountHandler
         public Task<SignOutResponseDto> Handle(SignOutQuery request, CancellationToken cancellationToken)
         {
             SignOutResponseDto response = new();
-            List<string> cookies = 
+            List<string> cookies =
                 [
-                    _httpOnlyTokenOptions.AccessToken, 
+                    _httpOnlyTokenOptions.AccessToken,
                     _httpOnlyTokenOptions.RefreshToken
                 ];
 

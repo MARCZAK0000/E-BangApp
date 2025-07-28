@@ -11,12 +11,12 @@ using System.Security.Claims;
 
 namespace E_BangApplication.CQRS.Command.AccountHandler
 {
-    public class ValidateCredentialsTwoWayTokenCommand : LoginAccountDto, IRequest<SignInResponseDto>
+    public class ValidateCredentialsTwoFactoryTokenCommand : LoginAccountDto, IRequest<SignInResponseDto>
     {
 
     }
-    public class ValidateCredentialsTwoWayTokenCommandHandler
-        : IRequestHandler<ValidateCredentialsTwoWayTokenCommand, SignInResponseDto>
+    public class ValidateCredentialsTwoFactoryTokenCommandHandler
+        : IRequestHandler<ValidateCredentialsTwoFactoryTokenCommand, SignInResponseDto>
     {
         private readonly IAccountRepository _accountRepository;
 
@@ -26,7 +26,7 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
 
         private readonly HttpOnlyTokenOptions _httpOnlyTokenOptions;
 
-        public ValidateCredentialsTwoWayTokenCommandHandler(IAccountRepository accountRepository,
+        public ValidateCredentialsTwoFactoryTokenCommandHandler(IAccountRepository accountRepository,
             IRoleRepository roleRepository,
             ITokenRepository tokenRepository,
             HttpOnlyTokenOptions httpOnlyTokenOptions)
@@ -37,7 +37,7 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
             _httpOnlyTokenOptions = httpOnlyTokenOptions;
         }
 
-        public async Task<SignInResponseDto> Handle(ValidateCredentialsTwoWayTokenCommand request, CancellationToken token)
+        public async Task<SignInResponseDto> Handle(ValidateCredentialsTwoFactoryTokenCommand request, CancellationToken token)
         {
             SignInResponseDto response = new()
             {
@@ -45,13 +45,13 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
             };
 
             Maybe<Account> maybe = await _accountRepository.FindAccountByEmailAsync(request.Email, token);
-            if (!maybe.HasValue || maybe.Value == null) 
+            if (!maybe.HasValue || maybe.Value == null)
                 return response;
-            
+
             bool isCredentialsValid = await _accountRepository.ValidateLoginWithTwoWayFactoryCodeAsync(maybe.Value, request);
-            if (!isCredentialsValid) 
+            if (!isCredentialsValid)
                 return response;
-            
+
 
             List<string> roles = await _roleRepository.GetRoleNamesByAccountIdAsync(maybe.Value.Id, token);
             List<Claim> claims = _tokenRepository.GenerateClaimsList(maybe.Value, roles);
@@ -86,13 +86,13 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
                 ];
 
             bool isRefreshTokenSaved = await _tokenRepository.SaveRefreshTokenAsync(maybe.Value.Id, refreshToken, token);
-            if (!isRefreshTokenSaved) 
+            if (!isRefreshTokenSaved)
                 return response;
 
             bool isSaved = _tokenRepository.SaveCookies(saveCookies);
-            if (!isSaved) 
+            if (!isSaved)
                 return response;
-            
+
             response.IsSuccess = true;
             return response;
 
