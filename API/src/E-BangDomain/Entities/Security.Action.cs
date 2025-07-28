@@ -10,6 +10,9 @@ namespace E_BangDomain.Entities
         public string ActionID { get; set; } = Guid.NewGuid().ToString();
         public string ActionName { get; set; }  
         public string ActionDescription { get; set; }
+
+        public int ActionLevel { get; set; }
+
         public DateTime LastUpdateTime = DateTime.Now;
     }
     public partial class Actions

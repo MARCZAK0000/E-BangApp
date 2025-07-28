@@ -9,8 +9,8 @@ namespace E_BangDomain.Repository
     {
         Task<Shop?> GetShopByIDAsync(string shopId, CancellationToken cancellationToken);
         Task<PaginationBase<Shop>> GetAllShopsAsync(PaginationModelDto paginationModelDto, CancellationToken cancellationToken);
-        Task<bool> CreateShopAsync(CreateShopDto createShopDto, CancellationToken token);
-        Task<bool> CreateShopBranchAsync(string shopID, CreateShopBranchDto createShopBranchDto, CancellationToken token);
+        Task<bool> CreateShopAsync(Shop createShopDto, CancellationToken token);
+        Task<bool> CreateShopBranchAsync(List<ShopBranchesInformations> shopBranchesInformations, CancellationToken token);
         Task<bool> UpdateShopAsync(Shop shop, CreateShopDto createShopDto, CancellationToken cancellationToken);
         Task<bool> UpdateShopBranchAsync(ShopBranchesInformations branch, CreateShopBranchDto create, CancellationToken cancellationToken);
         Task<bool> ValidMainShopAsync(string shopID, CancellationToken cancellationToken);

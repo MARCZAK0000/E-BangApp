@@ -18,31 +18,16 @@ namespace E_BangInfrastructure.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<bool> CreateShopAsync(CreateShopDto createShopDto, CancellationToken token)
+        public async Task<bool> CreateShopAsync(Shop shop, CancellationToken token)
         {
-            await _dbContext.Shop.AddAsync(entity: new Shop()
-            {
-                ShopName = createShopDto.ShopName,
-                ShopTypeId = createShopDto.ShopTypeID,
-                ShopDescription = createShopDto.ShopDescription,
-            }, cancellationToken: token);
-            return true;
+            await _dbContext.Shop.AddAsync(entity: shop, cancellationToken: token);
+            return await _dbContext.SaveChangesAsync(token) > 0;
         }
 
-        public async Task<bool> CreateShopBranchAsync(string shopID, CreateShopBranchDto createShopBranchDto, CancellationToken token)
+        public async Task<bool> CreateShopBranchAsync(List<ShopBranchesInformations> shopBranchesInformations, CancellationToken token)
         {
-            await _dbContext
-                .ShopAddressInformations
-                .AddAsync(entity: new ShopBranchesInformations
-                {
-                    ShopID = shopID,
-                    ShopCity = createShopBranchDto.ShopCity,
-                    ShopCountry = createShopBranchDto.ShopCountry,
-                    ShopPostalCode = createShopBranchDto.ShopPostalCode,
-                    ShopStreetName = createShopBranchDto.ShopStreetName,
-                    IsMainShop = createShopBranchDto.IsMainShop,
-                }, cancellationToken: token);
-            return true;
+            await _dbContext.ShopAddressInformations.AddRangeAsync(entities: shopBranchesInformations, token);
+            return await _dbContext.SaveChangesAsync(token) > 0;
         }
 
         public async Task<Shop?> GetShopByIDAsync(string shopId, CancellationToken cancellationToken)
@@ -111,5 +96,7 @@ namespace E_BangInfrastructure.Repository
                 .Build();
 
         }
+
+
     }
 }

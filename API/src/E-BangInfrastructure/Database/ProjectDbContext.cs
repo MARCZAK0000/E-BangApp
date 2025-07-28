@@ -13,7 +13,6 @@ namespace E_BangInfrastructure.Database
         public new DbSet<Roles> Roles { get; set; }
         public DbSet<Actions> Actions { get; set; }
         public DbSet<UsersInRole> UsersInRoles { get; set; }
-        public DbSet<ActionInRole> ActionInRoles { get; set; }
         public DbSet<Shop> Shop { get; set; }
         public DbSet<ShopType> ShopTypes { get; set; }
         public DbSet<ShopBranchesInformations> ShopAddressInformations { get; set; }
@@ -74,22 +73,7 @@ namespace E_BangInfrastructure.Database
                 pr.Property(pr => pr.StreetNumber).HasMaxLength(3);
             });
 
-            builder.Entity<ActionInRole>(pr =>
-            {
-                pr.HasKey(pr=>pr.ActionInRoleID);
-
-                pr.HasOne(pr => pr.Role)
-                .WithMany(pr => pr.ActionsInRole)
-                .HasForeignKey(pr => pr.RoleID)
-                .IsRequired(true)
-                .OnDelete(DeleteBehavior.Cascade);
-
-                pr.HasOne(pr => pr.Action)
-               .WithMany(pr => pr.ActionInRoles)
-               .HasForeignKey(pr => pr.ActionID)
-               .IsRequired(true)
-               .OnDelete(DeleteBehavior.Cascade);
-            });
+           
             builder.Entity<Roles>(pr =>
             {
                 pr.HasKey(pr => pr.RoleID);
