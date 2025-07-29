@@ -94,5 +94,11 @@ namespace E_BangInfrastructure.Repository
             .Account
             .Where(pr => pr.Id == accountID)
                 .ExecuteUpdateAsync(pr => pr.SetProperty(p => p.LastUpdateTime, p => DateTime.Now), token) == 0;
+
+        public async Task<string> GetAccountIdFromEmail(string email, CancellationToken token)
+            => await _projectDbContext.Account
+                .Where(pr => pr.Email == email)
+                .Select(pr => pr.Id)
+                .FirstOrDefaultAsync(token) ?? string.Empty;
     }
 }

@@ -97,6 +97,31 @@ namespace E_BangInfrastructure.Repository
 
         }
 
+        public async Task<bool> AddStaffToShop(List<ShopStaff> staff, string shopId,CancellationToken cancellationToken)
+        {
+            if(staff == null || staff.Count == 0)
+            {
+                return false; // No staff to add
+            }
 
+            List<string> staffs = await _dbContext
+                .Staff
+                .Where(pr=> pr.ShopId == shopId)
+                .Select(pr => pr.AccountId)
+                .ToListAsync(cancellationToken);
+
+            List<ShopStaff> newStaff = staff
+                .Where(staffMember => !staffs.Contains(staffMember.AccountId))
+                .ToList();
+            
+            if(newStaff.Count == 0)
+            {
+                return false; // All staff members already exist in the shop
+            }
+
+            await _dbContext.Staff.AddRangeAsync(newStaff, cancellationToken);
+
+            return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
+        }
     }
 }

@@ -87,6 +87,6 @@ namespace E_BangDomain.Repository
         Task<bool> ChangePasswordAsync(Account account, string oldPassword, string newPassword);
         Task<bool> LastUdateTimeAsync(string accountID, CancellationToken token);
 
-
+        Task<string> GetAccountIdFromEmail(string email, CancellationToken token);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using E_BangDomain.Entities;
+using E_BangDomain.Enums;
 using E_BangDomain.Repository;
 using E_BangDomain.StaticData;
 using E_BangDomain.StaticHelper;
@@ -19,10 +20,11 @@ namespace E_BangInfrastructure.Repository
             _actionStaticData = actionStaticData;
         }
 
-        public bool CanUserDoActionAsync(Dictionary<Actions, bool> actions, Actions actionsToPerform)
+        public bool HasPermission(Dictionary<Actions, bool> actions,EAction action)
         {
-            
-            return actions.Any(pr => pr.Key == actionsToPerform && pr.Value);
+            Actions actionToPerform = _actionStaticData.Actions
+                .FirstOrDefault(pr => pr.ActionName == Enum.GetName(action))!;
+            return actions.Any(pr => pr.Key == actionToPerform && pr.Value);
         }
 
         public Dictionary<Actions, bool> GetUserActionsAsync(int number)
@@ -30,7 +32,7 @@ namespace E_BangInfrastructure.Repository
             return CalculateActions.GetActionKeyValuePairs(number, _actionStaticData.Actions);
         }
 
-        public async Task<int> GetUserShopActionLevelAsync(string accountId, string shopId)
+        public async Task<int> GetUserShopActionLevelAsync(string accountId, string shopId, CancellationToken token)
         {
             return await _projectDbContext
                 .Staff

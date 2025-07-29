@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace E_BangDomain.StaticData
 {
+    /// <summary>
+    /// Represents static data for a collection of actions.
+    /// Provides functionality to load and expose actions as a read-only list.
+    /// </summary>
     public class ActionStaticData
     {
         public IReadOnlyList<Actions> Actions;

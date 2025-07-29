@@ -1,5 +1,4 @@
 ﻿using E_BangDomain.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +19,7 @@ namespace E_BangInfrastructure.Database
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductInformations> ProductInformations { get; set; }
         public DbSet<ProductPrice> ProductPrice { get; set; }
-       // public DbSet<ProductHistoryPrice> ProductHistoryPrice { get; set; }
+        // public DbSet<ProductHistoryPrice> ProductHistoryPrice { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -39,8 +38,8 @@ namespace E_BangInfrastructure.Database
             builder.Entity<Users>(pr =>
             {
                 pr.HasKey(pr => pr.UserID);
-                pr.HasIndex(pr=>pr.Email);  
-                pr.HasIndex(pr=>pr.Surname);
+                pr.HasIndex(pr => pr.Email);
+                pr.HasIndex(pr => pr.Surname);
 
                 pr.HasOne(pr => pr.Account)
                     .WithOne(pr => pr.User)
@@ -48,10 +47,10 @@ namespace E_BangInfrastructure.Database
                     .IsRequired(true)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                pr.Property(pr=>pr.FirstName).HasMaxLength(50);
-                pr.Property(pr=>pr.Surname).HasMaxLength(50);
-                pr.Property(pr=>pr.SecondName).HasMaxLength(50);
-                pr.Property(pr=>pr.PhoneNumber).HasMaxLength(13);
+                pr.Property(pr => pr.FirstName).HasMaxLength(50);
+                pr.Property(pr => pr.Surname).HasMaxLength(50);
+                pr.Property(pr => pr.SecondName).HasMaxLength(50);
+                pr.Property(pr => pr.PhoneNumber).HasMaxLength(13);
             });
 
             builder.Entity<UserAddress>(pr =>
@@ -59,7 +58,7 @@ namespace E_BangInfrastructure.Database
                 pr.HasKey(pr => pr.UserID);
                 pr.HasIndex(pr => pr.Country);
 
-               
+
                 pr.HasOne(pr => pr.User)
                 .WithOne(pr => pr.Address)
                 .HasForeignKey<UserAddress>(pr => pr.UserID)
@@ -73,7 +72,7 @@ namespace E_BangInfrastructure.Database
                 pr.Property(pr => pr.StreetNumber).HasMaxLength(3);
             });
 
-           
+
             builder.Entity<Roles>(pr =>
             {
                 pr.HasKey(pr => pr.RoleID);
@@ -82,7 +81,7 @@ namespace E_BangInfrastructure.Database
                 pr.Property(pr => pr.RoleDescription).HasMaxLength(150);
             });
 
-            builder.Entity<UsersInRole>(pr=>
+            builder.Entity<UsersInRole>(pr =>
             {
                 pr.HasKey(pr => pr.UserInRoleID);
                 pr.HasIndex(pr => new { pr.UserID, pr.RoleID }).IsUnique();
@@ -98,7 +97,7 @@ namespace E_BangInfrastructure.Database
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            builder.Entity<Shop>(pr => 
+            builder.Entity<Shop>(pr =>
             {
                 pr.HasIndex(pr => pr.ShopName).IsUnique();
                 pr.Property(pr => pr.ShopName).HasMaxLength(100);
@@ -179,7 +178,7 @@ namespace E_BangInfrastructure.Database
 
                 pr.Property(pr => pr.Price).HasPrecision(2);
             });
-            
+
             base.OnModelCreating(builder);
         }
 
