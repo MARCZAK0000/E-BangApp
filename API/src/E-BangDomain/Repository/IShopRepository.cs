@@ -1,4 +1,5 @@
 ﻿using E_BangDomain.Entities;
+using E_BangDomain.MaybePattern;
 using E_BangDomain.ModelDtos.Pagination;
 using E_BangDomain.Pagination;
 using E_BangDomain.RequestDtos.Shared;
@@ -8,7 +9,7 @@ namespace E_BangDomain.Repository
 {
     public interface IShopRepository
     {
-        Task<Shop?> GetShopByIDAsync(string shopId, CancellationToken cancellationToken);
+        Task<Maybe<Shop>> GetShopByIDAsync(string shopId, CancellationToken cancellationToken);
         Task<PaginationBase<Shop>> GetAllShopsAsync(PaginationModelDto paginationModelDto, CancellationToken cancellationToken);
         Task<bool> CreateShopAsync(Shop createShopDto, CancellationToken token);
         Task<bool> CreateShopBranchAsync(List<ShopBranchesInformations> shopBranchesInformations, CancellationToken token);

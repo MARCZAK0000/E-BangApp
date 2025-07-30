@@ -1,4 +1,5 @@
 ﻿using E_BangDomain.Entities;
+using E_BangDomain.MaybePattern;
 using E_BangDomain.ModelDtos.Pagination;
 using E_BangDomain.Pagination;
 using E_BangDomain.Repository;
@@ -30,16 +31,19 @@ namespace E_BangInfrastructure.Repository
             return await _dbContext.SaveChangesAsync(token) > 0;
         }
 
-        public async Task<Shop?> GetShopByIDAsync(string shopId, CancellationToken cancellationToken)
-            => await _dbContext.Shop.Where(pr => pr.ShopId == shopId).FirstOrDefaultAsync(cancellationToken);
-
-        public async Task<bool> UpdateShopAsync(Shop shop, CreateShopDto createShopDto, CancellationToken cancellationToken)
+        public async Task<Maybe<Shop>> GetShopByIDAsync(string shopId, CancellationToken cancellationToken)
         {
-            shop.ShopName = createShopDto.ShopName;
-            shop.ShopDescription = createShopDto.ShopDescription;
-            shop.ShopTypeId = createShopDto.ShopTypeID;
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return true;
+            return new Maybe<Shop>(await 
+                _dbContext
+                .Shop
+                .Where(pr => pr.ShopId == shopId)
+                .FirstOrDefaultAsync(cancellationToken));
+        }
+
+        public async Task<bool> UpdateShopAsync(Shop shop, CancellationToken cancellationToken)
+        {
+            _dbContext.Shop.Update(shop);
+            return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
         }
 
         public async Task<bool> UpdateShopBranchAsync(ShopBranchesInformations branch, CreateShopBranchDto create, CancellationToken cancellationToken)

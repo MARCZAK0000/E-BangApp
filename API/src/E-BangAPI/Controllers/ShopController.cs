@@ -35,5 +35,27 @@ namespace E_BangAPI.Controllers
             }
             return BadRequest(response);
         }
+
+        [HttpPost("create-branches")]
+        public async Task<IActionResult> CreateShopBranches([FromBody] CreateShopBranchesCommand request, CancellationToken cancellationToken)
+        {
+            var response = await _sender.SendToMediator(request, cancellationToken);
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
+        [HttpPatch("update-branch")]
+        public async Task<IActionResult> UpdateShop([FromBody]UpdateShopCommand command, CancellationToken cancellationToken)
+        {
+            var response = await _sender.SendToMediator(command, cancellationToken);
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
     }
 }
