@@ -8,7 +8,7 @@ namespace E_BangDomain.Repository
     public interface IActionRepository
     {
         Task<int> GetUserShopActionLevelAsync(string accountId, string shoId, CancellationToken token);
-        Dictionary<Actions, bool> GetUserActionsAsync(int number);
+        Dictionary<Actions, bool> GetUserActions(int number);
         bool HasPermission (Dictionary<Actions, bool> actions, EAction action);
     }
 }

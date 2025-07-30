@@ -1,5 +1,6 @@
 ﻿using E_BangApplication.CQRS.Command.ShopHandler;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using MyCustomMediator.Interfaces;
 
 namespace E_BangAPI.Controllers
@@ -36,9 +37,10 @@ namespace E_BangAPI.Controllers
             return BadRequest(response);
         }
 
-        [HttpPost("create-branches")]
-        public async Task<IActionResult> CreateShopBranches([FromBody] CreateShopBranchesCommand request, CancellationToken cancellationToken)
+        [HttpPost("{shopId}/create-branches")]
+        public async Task<IActionResult> CreateShopBranches([FromRoute] string shopId, [FromBody] CreateShopBranchesCommand request, CancellationToken cancellationToken)
         {
+            request.Id = shopId;
             var response = await _sender.SendToMediator(request, cancellationToken);
             if (response.IsSuccess)
             {
@@ -47,8 +49,8 @@ namespace E_BangAPI.Controllers
             return BadRequest(response);
         }
 
-        [HttpPatch("update-branch")]
-        public async Task<IActionResult> UpdateShop([FromBody]UpdateShopCommand command, CancellationToken cancellationToken)
+        [HttpPatch("update-shop")]
+        public async Task<IActionResult> UpdateShop([FromBody] UpdateShopCommand command, CancellationToken cancellationToken)
         {
             var response = await _sender.SendToMediator(command, cancellationToken);
             if (response.IsSuccess)
@@ -57,5 +59,27 @@ namespace E_BangAPI.Controllers
             }
             return BadRequest(response);
         }
+        [HttpPatch("{shopId}/update-branch")]
+        public async Task<IActionResult> UpdateShopBranch([FromRoute] string shopId, [FromBody] UpdateBranchCommand command, CancellationToken cancellationToken)
+        {
+            command.ShopID = shopId;
+            var response = await _sender.SendToMediator(command, cancellationToken);
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+        [HttpDelete("{shopId}/delete-branch/{branch_id}]")]
+        public async Task<IActionResult> DeleteShopBranch([FromRoute] string shopId, [FromRoute] string branch_id, CancellationToken cancellationToken)
+        {
+            var response = await _sender.SendToMediator(new RemoveShopBranchesCommand { ShopID = shopId, BranchId = branch_id }, cancellationToken);
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
     }
 }

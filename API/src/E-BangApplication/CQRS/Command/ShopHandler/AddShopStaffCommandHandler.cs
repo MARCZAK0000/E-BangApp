@@ -33,16 +33,15 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             CurrentUser currentUser = _userContext.GetCurrentUser();
             AddShopStaffResponseDto response = new();
 
-            // Check if the user has permission to create shop branches
             int permissionLevel = await _actionRepository.GetUserShopActionLevelAsync(currentUser.AccountID, request.Id, token);
-            Dictionary<Actions, bool> keyValuePairs = _actionRepository.GetUserActionsAsync(permissionLevel);
+            Dictionary<Actions, bool> keyValuePairs = _actionRepository.GetUserActions(permissionLevel);
             bool hasPermission = _actionRepository.HasPermission(keyValuePairs, EAction.Create);
             if (!hasPermission)
             {
-                _logger.LogError("{nameof} - {date}: User has no permission to {actionName}}",
-                    nameof(CreateShopBranchesCommandHandler),
+                _logger.LogError("{nameof} - {date}: User has no permission to {actionName}",
+                    nameof(AddShopStaffCommandHandler),
                     DateTime.Now,
-                    Enum.GetName(EAction.Create));
+                    Enum.GetName(typeof(EAction), EAction.Create));
                 return response;
             }
 
@@ -59,7 +58,7 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             }
 
             HashSet<string> staffs = [.. await _shopRepository.ListOfStaffIdInShop(request.Id, token)];
-
+            
             List<ShopStaff> uniqueStaff = staffList
                 .Where(pr=>!staffs.Contains(pr.ShopId))
                 .ToList();

@@ -14,12 +14,14 @@ namespace E_BangDomain.Repository
         Task<bool> CreateShopAsync(Shop createShopDto, CancellationToken token);
         Task<bool> CreateShopBranchAsync(List<ShopBranchesInformations> shopBranchesInformations, CancellationToken token);
         Task<bool> AddStaffToShop(List<ShopStaff> staff, CancellationToken cancellationToken);
-        Task<bool> UpdateShopAsync(Shop shop, CreateShopDto createShopDto, CancellationToken cancellationToken);
-        Task<bool> UpdateShopBranchAsync(ShopBranchesInformations branch, CreateShopBranchDto create, CancellationToken cancellationToken);
-        Task<bool> ValidMainShopAsync(string shopID, CancellationToken cancellationToken);
+        Task<bool> UpdateShopAsync(Shop shop, CancellationToken cancellationToken);
+        Task<bool> UpdateShopBranchAsync(ShopBranchesInformations branch, CancellationToken cancellationToken);
+        Task<bool> UpdateMainShopAsync(string shopID, CancellationToken cancellationToken);
         Task<bool> RemoveShopAsync(string shopId, CancellationToken token);
-        Task<bool> RemoveShopBranchAsync(string shopId, string shopBranchId, CancellationToken token);
+        Task<bool> RemoveShopBranchAsync(ShopBranchesInformations delete, CancellationToken token);
+        Task<bool> RemoveMainShopAsync(string shopId, string shopBranchId, CancellationToken cancellationToken);
         Task<List<string>> ListOfStaffIdInShop(string shopId, CancellationToken cancellationToken);
-        Task<List<ShopBranchesInformations>> GetShopBranchesByShopIdAsync(string shopBranchId, CancellationToken cancellationToken)
+        Task<List<ShopBranchesInformations>> GetShopBranchesByShopIdAsync(string shopBranchId, CancellationToken cancellationToken);
+        Task<Maybe<ShopBranchesInformations>> GetShopBranchByIdAsync(string shopBranchId, CancellationToken cancellationToken);
     }
 }

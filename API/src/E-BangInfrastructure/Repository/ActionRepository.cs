@@ -27,7 +27,7 @@ namespace E_BangInfrastructure.Repository
             return actions.Any(pr => pr.Key == actionToPerform && pr.Value);
         }
 
-        public Dictionary<Actions, bool> GetUserActionsAsync(int number)
+        public Dictionary<Actions, bool> GetUserActions(int number)
         {
             return CalculateActions.GetActionKeyValuePairs(number, _actionStaticData.Actions);
         }

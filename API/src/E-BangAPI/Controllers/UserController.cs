@@ -23,7 +23,7 @@ namespace E_BangAPI.Controllers
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
         [Transaction]
-        [HttpPost("update")]
+        [HttpPatch("update")]
         public async Task<IActionResult> UpdateUserInfromations(UpdateUserCommand reqeust, CancellationToken token)
         {
             var response = await _sender.SendToMediator(reqeust, token);

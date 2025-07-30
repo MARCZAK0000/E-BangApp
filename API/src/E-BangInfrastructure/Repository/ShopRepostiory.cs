@@ -3,7 +3,6 @@ using E_BangDomain.MaybePattern;
 using E_BangDomain.ModelDtos.Pagination;
 using E_BangDomain.Pagination;
 using E_BangDomain.Repository;
-using E_BangDomain.RequestDtos.Shop;
 using E_BangInfrastructure.Database;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +32,7 @@ namespace E_BangInfrastructure.Repository
 
         public async Task<Maybe<Shop>> GetShopByIDAsync(string shopId, CancellationToken cancellationToken)
         {
-            return new Maybe<Shop>(await 
+            return new Maybe<Shop>(await
                 _dbContext
                 .Shop
                 .Where(pr => pr.ShopId == shopId)
@@ -45,23 +44,13 @@ namespace E_BangInfrastructure.Repository
             _dbContext.Shop.Update(shop);
             return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
         }
-
-        public async Task<bool> UpdateShopBranchAsync(ShopBranchesInformations branch, CreateShopBranchDto create, CancellationToken cancellationToken)
-        {
-            branch.ShopCity = create.ShopCity;
-            branch.ShopCountry = create.ShopCountry;
-            branch.ShopPostalCode = create.ShopPostalCode;
-            branch.ShopStreetName = create.ShopStreetName;
-            branch.IsMainShop = create.IsMainShop;
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return true;
-        }
-
-        public async Task<bool> ValidMainShopAsync(string shopID, CancellationToken cancellationToken) => await _dbContext
+        public async Task<bool> UpdateMainShopAsync(string shopID, string branchId, CancellationToken cancellationToken) => 
+            await _dbContext
                 .ShopAddressInformations
-                .Where(pr => pr.ShopID == shopID && pr.IsMainShop)
-                .AnyAsync(cancellationToken);
+                .Where(pr => pr.ShopID == shopID && pr.ShopBranchId == branchId)
+                .ExecuteUpdateAsync(pr =>
+                    pr.SetProperty(p => p.IsMainShop, true)
+                        .SetProperty(p => p.LastModifiedTime, DateTime.Now), cancellationToken: cancellationToken) > 0;
         public async Task<bool> RemoveShopAsync(string shopId, CancellationToken token)
         {
             SqlParameter param1 = new("@param1", shopId);
@@ -71,14 +60,12 @@ namespace E_BangInfrastructure.Repository
             return true;
         }
 
-        public async Task<bool> RemoveShopBranchAsync(string shopId, string shopBranchId, CancellationToken token)
+        public async Task<bool> RemoveShopBranchAsync(ShopBranchesInformations delete, CancellationToken token)
         {
-            SqlParameter param1 = new("@param1", shopId);
-            SqlParameter param2 = new("@param2", shopBranchId);
-            await _dbContext
-                .Database
-                .ExecuteSqlRawAsync("EXEC Shop.sp_RemoveShopBranch @param1, @param2", [param1, param2], cancellationToken: token);
-            return true;
+           return await _dbContext
+                .ShopAddressInformations
+                .Where(pr=>pr.ShopID==delete.ShopID)
+                .ExecuteDeleteAsync(token) > 0;
         }
 
         public async Task<PaginationBase<Shop>> GetAllShopsAsync(PaginationModelDto paginationModelDto, CancellationToken cancellationToken)
@@ -105,7 +92,7 @@ namespace E_BangInfrastructure.Repository
         {
             return await _dbContext
                 .ShopAddressInformations
-                .Where(pr=>pr.ShopID == shopBranchId)
+                .Where(pr => pr.ShopID == shopBranchId)
                 .ToListAsync(cancellationToken: cancellationToken);
         }
 
@@ -121,10 +108,33 @@ namespace E_BangInfrastructure.Repository
 
         public async Task<bool> AddStaffToShop(List<ShopStaff> staff, CancellationToken cancellationToken)
         {
-
             await _dbContext.Staff.AddRangeAsync(staff, cancellationToken);
-
             return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
+        }
+
+        public async Task<bool> UpdateShopBranchAsync(ShopBranchesInformations branch, CancellationToken cancellationToken)
+        {
+            _dbContext.ShopAddressInformations.Update(branch);
+            return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
+        }
+
+        public async Task<bool> RemoveMainShopAsync(string shopId, string shopBranchId, CancellationToken cancellationToken)
+        {
+            return await _dbContext
+                .ShopAddressInformations
+                .Where(pr => pr.ShopID == shopId && pr.ShopBranchId == shopBranchId)
+                .ExecuteUpdateAsync(pr =>
+                    pr.SetProperty(p => p.IsMainShop, false)
+                        .SetProperty(p => p.LastModifiedTime, DateTime.Now), cancellationToken: cancellationToken) > 0;
+        }
+
+        public async Task<Maybe<ShopBranchesInformations>> GetShopBranchByIdAsync(string shopBranchId, CancellationToken cancellationToken)
+        {
+            var response = await _dbContext
+                .ShopAddressInformations
+                .Where(pr => pr.ShopBranchId == shopBranchId)
+                .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+            return new Maybe<ShopBranchesInformations>(response);
         }
     }
 }

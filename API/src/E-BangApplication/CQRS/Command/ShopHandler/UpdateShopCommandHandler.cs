@@ -33,29 +33,36 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             UpdateShopResponseDto response = new();
             CurrentUser currentUser = _userContext.GetCurrentUser();
             int permissionLevel = await _actionRepository.GetUserShopActionLevelAsync(currentUser.AccountID, request.ShopId, token);
-            Dictionary<Actions, bool> keyValuePairs = _actionRepository.GetUserActionsAsync(permissionLevel);
+            Dictionary<Actions, bool> keyValuePairs = _actionRepository.GetUserActions(permissionLevel);
             bool hasPermission = _actionRepository.HasPermission(keyValuePairs, EAction.Update);
             if (!hasPermission)
             {
-                _logger.LogError("{nameof} - {date}: User has no permission to {actionName}}",
-                    nameof(CreateShopBranchesCommandHandler),
+                _logger.LogError("{Handler} - {date}: User has no permission to {actionName}",
+                    nameof(UpdateShopCommandHandler),
                     DateTime.Now,
-                    Enum.GetName(EAction.Update));
+                    Enum.GetName(typeof(EAction), EAction.Update));
                 return response;
             }
 
             Maybe<Shop> shop = await _shopRepository.GetShopByIDAsync(request.ShopId, token);
             if(!shop.HasValue || shop.Value is null)
             {
+                _logger.LogError("{Handler} - {Date}: Shop with ID {ShopId} not found",
+                    nameof(UpdateShopCommandHandler),
+                    DateTime.Now,
+                    request.ShopId);
                 return response;
             }
+            shop.Value.ShopName = request.ShopName;
+            shop.Value.ShopDescription = request.ShopDescription;
+            shop.Value.ShopTypeId = request.ShopTypeID;
 
             bool hasUpdate = await _shopRepository.UpdateShopAsync(shop.Value, token);
             if (hasUpdate)
-                _logger.LogInformation("{nameof} - {date}: Shop has been update - Id: {shopId}"
+                _logger.LogInformation("{Handler} - {date}: Shop has been update - Id: {shopId}"
                     , nameof(UpdateShopCommandHandler), DateTime.Now, request.ShopId);
             else
-                _logger.LogInformation("{nameof} - {date}: Shop has not been update - Id: {shopId}"
+                _logger.LogInformation("{Handler} - {date}: Shop has not been update - Id: {shopId}"
                    , nameof(UpdateShopCommandHandler), DateTime.Now, request.ShopId);
 
             response.IsSuccess = hasUpdate;
