@@ -1,4 +1,5 @@
 ﻿using E_BangApplication.Authentication;
+using E_BangDomain.Comparer;
 using E_BangDomain.Entities;
 using E_BangDomain.Enums;
 using E_BangDomain.Repository;
@@ -58,7 +59,23 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
                     IsMainShop = act.IsMainShop,
                 });
             });
-            bool HasAdded = await _shopRepository.CreateShopBranchAsync(branches, token);
+
+            List<ShopBranchesInformations> currentShopBranches =
+                await _shopRepository.GetShopBranchesByShopIdAsync(request.Id, token);
+
+            List<ShopBranchesInformations> uniqueBranches = branches
+                .Except(currentShopBranches, new ShopBranchesComparer())
+                .ToList();
+
+            if(uniqueBranches.Count <= 0)
+            {
+                response.Message = "Branches Already Exists";
+                _logger.LogInformation("{nameof} - {date}: User has not added branches to ShopID: {shopID} - branches already exists"
+                    , nameof(CreateShopBranchesCommandHandler), DateTime.Now, request.Id);
+                return response;
+            }
+
+            bool HasAdded = await _shopRepository.CreateShopBranchAsync(uniqueBranches, token);
             if (HasAdded)
                 _logger.LogInformation("{nameof} - {date}: User has added {count} branches to ShopID: {shopID}",
                     nameof(CreateShopBranchesCommandHandler), DateTime.Now, branches.Count, request.Id);
@@ -66,7 +83,6 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
                 _logger.LogInformation("{nameof} - {date}: User has not added branches to ShopID: {shopID}",
                    nameof(CreateShopBranchesCommandHandler), DateTime.Now, request.Id);
 
-            //Consider check if branches already exist
             response.IsSuccess = HasAdded;
             return response;
         }

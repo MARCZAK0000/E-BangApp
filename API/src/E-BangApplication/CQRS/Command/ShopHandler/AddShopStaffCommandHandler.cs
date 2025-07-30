@@ -57,12 +57,20 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
                     ActionLevel = staff.ActionLevel,
                 });
             }
-            
-            bool hasAdded = await _shopRepository.AddStaffToShop(staffList, request.Id, token);
-            if (!hasAdded)
+
+            HashSet<string> staffs = [.. await _shopRepository.ListOfStaffIdInShop(request.Id, token)];
+
+            List<ShopStaff> uniqueStaff = staffList
+                .Where(pr=>!staffs.Contains(pr.ShopId))
+                .ToList();
+
+            if (uniqueStaff.Count <= 0)
             {
                 response.Message = "Staff already exists in Db";
             }
+
+            bool hasAdded = await _shopRepository.AddStaffToShop(staffList, token);
+            
             response.IsSuccess = hasAdded;
             return response;
         }
@@ -70,5 +78,6 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
     }
     public class AddShopStaffCommand : ListDto<AddShopStaffDto>,IRequest<AddShopStaffResponseDto>
     {
+
     }
 }

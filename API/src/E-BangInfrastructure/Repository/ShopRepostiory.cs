@@ -97,29 +97,28 @@ namespace E_BangInfrastructure.Repository
 
         }
 
-        public async Task<bool> AddStaffToShop(List<ShopStaff> staff, string shopId,CancellationToken cancellationToken)
+        public async Task<List<ShopBranchesInformations>> GetShopBranchesByShopIdAsync(string shopBranchId, CancellationToken cancellationToken)
         {
-            if(staff == null || staff.Count == 0)
-            {
-                return false; // No staff to add
-            }
+            return await _dbContext
+                .ShopAddressInformations
+                .Where(pr=>pr.ShopID == shopBranchId)
+                .ToListAsync(cancellationToken: cancellationToken);
+        }
 
-            List<string> staffs = await _dbContext
+        public async Task<List<string>> ListOfStaffIdInShop(string shopId, CancellationToken cancellationToken)
+        {
+
+            return await _dbContext
                 .Staff
-                .Where(pr=> pr.ShopId == shopId)
+                .Where(pr => pr.ShopId == shopId)
                 .Select(pr => pr.AccountId)
                 .ToListAsync(cancellationToken);
+        }
 
-            List<ShopStaff> newStaff = staff
-                .Where(staffMember => !staffs.Contains(staffMember.AccountId))
-                .ToList();
-            
-            if(newStaff.Count == 0)
-            {
-                return false; // All staff members already exist in the shop
-            }
+        public async Task<bool> AddStaffToShop(List<ShopStaff> staff, CancellationToken cancellationToken)
+        {
 
-            await _dbContext.Staff.AddRangeAsync(newStaff, cancellationToken);
+            await _dbContext.Staff.AddRangeAsync(staff, cancellationToken);
 
             return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
         }
