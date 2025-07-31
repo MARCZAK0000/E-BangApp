@@ -109,7 +109,6 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
     public class RemoveShopBranchesCommand : IRequest<RemoveBranchesResponseDto>
     {
         public string ShopID { get; set; }
-
         public string BranchId { get; set; }
     }
 }

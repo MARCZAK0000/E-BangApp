@@ -16,12 +16,13 @@ namespace E_BangDomain.Repository
         Task<bool> AddStaffToShop(List<ShopStaff> staff, CancellationToken cancellationToken);
         Task<bool> UpdateShopAsync(Shop shop, CancellationToken cancellationToken);
         Task<bool> UpdateShopBranchAsync(ShopBranchesInformations branch, CancellationToken cancellationToken);
-        Task<bool> UpdateMainShopAsync(string shopID, CancellationToken cancellationToken);
+        Task<bool> UpdateMainShopAsync(string shopID, string branchId, CancellationToken cancellationToken);
         Task<bool> RemoveShopAsync(string shopId, CancellationToken token);
         Task<bool> RemoveShopBranchAsync(ShopBranchesInformations delete, CancellationToken token);
         Task<bool> RemoveMainShopAsync(string shopId, string shopBranchId, CancellationToken cancellationToken);
         Task<List<string>> ListOfStaffIdInShop(string shopId, CancellationToken cancellationToken);
         Task<List<ShopBranchesInformations>> GetShopBranchesByShopIdAsync(string shopBranchId, CancellationToken cancellationToken);
         Task<Maybe<ShopBranchesInformations>> GetShopBranchByIdAsync(string shopBranchId, CancellationToken cancellationToken);
+        Task<bool> RemoveAllShopBranchesAsync(string shopId, CancellationToken cancellationToken);
     }
 }

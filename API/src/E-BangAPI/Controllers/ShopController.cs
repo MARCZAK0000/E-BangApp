@@ -80,6 +80,16 @@ namespace E_BangAPI.Controllers
             }
             return BadRequest(response);
         }
+        [HttpDelete("{shopId}/delete-shop")]
+        public async Task<IActionResult> DeleteShop([FromRoute] string shopId, CancellationToken cancellationToken)
+        {
+            var response = await _sender.SendToMediator(new RemoveShopCommand { ShopID = shopId }, cancellationToken);
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
 
     }
 }

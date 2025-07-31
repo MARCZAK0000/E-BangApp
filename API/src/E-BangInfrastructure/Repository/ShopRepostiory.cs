@@ -136,5 +136,13 @@ namespace E_BangInfrastructure.Repository
                 .FirstOrDefaultAsync(cancellationToken: cancellationToken);
             return new Maybe<ShopBranchesInformations>(response);
         }
+
+        public async Task<bool> RemoveAllShopBranchesAsync(string shopId, CancellationToken cancellationToken)
+        {
+            return await _dbContext
+                .ShopAddressInformations
+                .Where(pr => pr.ShopID == shopId)
+                .ExecuteDeleteAsync(cancellationToken: cancellationToken) > 0;
+        }
     }
 }
