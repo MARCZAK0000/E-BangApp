@@ -35,4 +35,14 @@
 	{
         public List<T> Data { get; set; }
     }
+	public class SuccessResponsePaginationDto<T> : SuccessResponseDto where T : class
+	{
+		public T Data { get; set; }
+		protected override void UpdateMessage()
+		{
+			Message = IsSuccess
+				? "Data retrieved successfully."
+				: "Failed to retrieve data.";
+		}
+    }
 }

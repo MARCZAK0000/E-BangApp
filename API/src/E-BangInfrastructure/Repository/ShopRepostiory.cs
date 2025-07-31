@@ -68,23 +68,16 @@ namespace E_BangInfrastructure.Repository
                 .ExecuteDeleteAsync(token) > 0;
         }
 
-        public async Task<PaginationBase<Shop>> GetAllShopsAsync(PaginationModelDto paginationModelDto, CancellationToken cancellationToken)
+        public async Task<List<Shop>> GetAllShopsAsync(PaginationModelDto paginationModelDto, string? filterName = null, int? typeId = null, CancellationToken cancellationToken)
         {
-            var paginationBuilder = new PaginationBuilder<Shop>();
-            int totalCount = await _dbContext.Shop.CountAsync(cancellationToken);
-            List<Shop> shops = await _dbContext
+            return await _dbContext
                 .Shop
-                .Skip((paginationModelDto.PageIndex - 1) * paginationModelDto.PageSize)
+                .Where(pr => (string.IsNullOrEmpty(filterName) || pr.ShopName.ToLower().Contains(filterName.ToLower())) &&
+                             (typeId == null || pr.ShopTypeId == typeId))
+                .OrderBy(pr => pr.ShopName)
+                .Skip(paginationModelDto.PageSize * (paginationModelDto.PageIndex - 1))
                 .Take(paginationModelDto.PageSize)
                 .ToListAsync(cancellationToken: cancellationToken);
-
-            return paginationBuilder
-                .SetItems(shops)
-                .SetPageSize(paginationModelDto.PageSize)
-                .SetPageIndex(paginationModelDto.PageIndex)
-                .SetTotalItmesCount(totalCount)
-                .SetPageCount(paginationModelDto.PageSize, paginationModelDto.PageIndex)
-                .Build();
 
         }
 
