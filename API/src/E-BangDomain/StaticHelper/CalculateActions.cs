@@ -4,13 +4,13 @@ namespace E_BangDomain.StaticHelper
 {
     public static class CalculateActions
     {
-        private static void CalculateUserActions(out bool[] bools, int number, int numberOfAcitons)
+        private static void CalculateUserActions(out bool[] bools, int number, int numberOfActions)
         {
             
-            bool[] result = new bool[numberOfAcitons];
-            for (int i = 0; i < numberOfAcitons; i++)
+            bool[] result = new bool[numberOfActions];
+            for (int i = 0; i < numberOfActions; i++)
             {
-                result[numberOfAcitons - i] = (number & (1 << i)) != 0;
+                result[numberOfActions - i] = (number & (1 << i)) != 0;
             }
 
             bools = [.. result.Reverse()];
@@ -18,7 +18,7 @@ namespace E_BangDomain.StaticHelper
 
         public static Dictionary<Actions, bool> GetActionKeyValuePairs(int number, IReadOnlyList<Actions> actions)
         {
-            CalculateUserActions(out var bools, number, actions.Count);
+            CalculateUserActions(out var bools, number, actions.Count - 1);
             var keyVaulePairs = new Dictionary<Actions, bool>();
             for (int i = 0; i < bools.Length; i++)
             {
