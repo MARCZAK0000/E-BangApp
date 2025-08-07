@@ -44,7 +44,7 @@ namespace E_BangInfrastructure.Repository
             _dbContext.Shop.Update(shop);
             return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
         }
-        public async Task<bool> UpdateMainShopAsync(string shopID, string branchId, CancellationToken cancellationToken) => 
+        public async Task<bool> UpdateMainShopAsync(string shopID, string branchId, CancellationToken cancellationToken) =>
             await _dbContext
                 .ShopAddressInformations
                 .Where(pr => pr.ShopID == shopID && pr.ShopBranchId == branchId)
@@ -62,22 +62,32 @@ namespace E_BangInfrastructure.Repository
 
         public async Task<bool> RemoveShopBranchAsync(ShopBranchesInformations delete, CancellationToken token)
         {
-           return await _dbContext
-                .ShopAddressInformations
-                .Where(pr=>pr.ShopID==delete.ShopID)
-                .ExecuteDeleteAsync(token) > 0;
+            return await _dbContext
+                 .ShopAddressInformations
+                 .Where(pr => pr.ShopID == delete.ShopID)
+                 .ExecuteDeleteAsync(token) > 0;
         }
 
-        public async Task<List<Shop>> GetAllShopsAsync(PaginationModelDto paginationModelDto, string? filterName = null, int? typeId = null, CancellationToken cancellationToken)
+        public async Task<PaginationBase<Shop>> GetAllShopsAsync(PaginationModelDto paginationModelDto, CancellationToken cancellationToken, string? filterName = null, int? typeId = null)
         {
-            return await _dbContext
+            PaginationBuilder<Shop> paginationBuilder = new();
+            var resultBase =  _dbContext
                 .Shop
-                .Where(pr => (string.IsNullOrEmpty(filterName) || pr.ShopName.ToLower().Contains(filterName.ToLower())) &&
-                             (typeId == null || pr.ShopTypeId == typeId))
+                .Where(pr => (string.IsNullOrWhiteSpace(filterName) || pr.ShopName.ToLower().Contains(filterName.ToLower())) &&
+                             (typeId == null || pr.ShopTypeId == typeId));
+            int totalItemsCount = resultBase.Count();
+            var result = await resultBase
                 .OrderBy(pr => pr.ShopName)
                 .Skip(paginationModelDto.PageSize * (paginationModelDto.PageIndex - 1))
                 .Take(paginationModelDto.PageSize)
                 .ToListAsync(cancellationToken: cancellationToken);
+
+            return paginationBuilder
+                .SetPageSize(PageSize: paginationModelDto.PageSize)
+                .SetPageIndex(Index: paginationModelDto.PageIndex)
+                .SetPageCount(PageSize: paginationModelDto.PageIndex, TotalItemsCount: totalItemsCount)
+                .SetItems(Items: result)
+                .Build();
 
         }
 

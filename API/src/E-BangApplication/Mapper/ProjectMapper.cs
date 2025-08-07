@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using E_BangDomain.Entities;
 using E_BangDomain.EntitiesDto.Role;
+using E_BangDomain.EntitiesDto.Shop;
 using E_BangDomain.EntitiesDto.User;
 
 namespace E_BangApplication.Mapper
@@ -18,6 +19,7 @@ namespace E_BangApplication.Mapper
 
 
             CreateMap<Roles, RolesDto>(); //From Roles to RolesDto 
+            CreateMap<Shop, ShopDto>(); //rom Shop to ShopDto
         }
     }
 }
