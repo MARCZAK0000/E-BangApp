@@ -15,17 +15,6 @@ namespace E_BangAPI.Controllers
         {
             _sender = sender;
         }
-        [HttpPost("add-shop-staff")]
-        public async Task<IActionResult> AddShopStaff([FromBody] AddShopStaffCommand command, CancellationToken cancellationToken)
-        {
-            var response = await _sender.SendToMediator(command, cancellationToken);
-            if (response.IsSuccess)
-            {
-                return Ok(response);
-            }
-            return BadRequest(response);
-        }
-
         [HttpPost("create-shop")]
         public async Task<IActionResult> CreateShop([FromBody] CreateShopCommand command, CancellationToken cancellationToken)
         {
@@ -40,7 +29,7 @@ namespace E_BangAPI.Controllers
         [HttpPost("{shopId}/create-branches")]
         public async Task<IActionResult> CreateShopBranches([FromRoute] string shopId, [FromBody] CreateShopBranchesCommand request, CancellationToken cancellationToken)
         {
-            request.Id = shopId;
+            request.ShopId = shopId;
             var response = await _sender.SendToMediator(request, cancellationToken);
             if (response.IsSuccess)
             {

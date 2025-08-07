@@ -33,12 +33,12 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             CurrentUser currentUser = _userContext.GetCurrentUser();
             AddShopStaffResponseDto response = new();
 
-            int permissionLevel = await _actionRepository.GetUserShopActionLevelAsync(currentUser.AccountID, request.Id, token);
+            int permissionLevel = await _actionRepository.GetUserShopActionLevelAsync(currentUser.AccountID, request.ShopId, token);
             Dictionary<Actions, bool> keyValuePairs = _actionRepository.GetUserActions(permissionLevel);
             bool hasPermission = _actionRepository.HasPermission(keyValuePairs, EAction.Create);
             if (!hasPermission)
             {
-                _logger.LogError("{nameof} - {date}: User has no permission to {actionName}",
+                _logger.LogError("{Handler} - {date}: User has no permission to {actionName}",
                     nameof(AddShopStaffCommandHandler),
                     DateTime.Now,
                     Enum.GetName(typeof(EAction), EAction.Create));
@@ -46,37 +46,44 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             }
 
             List<ShopStaff> staffList = [];
-
             foreach (var staff in request.List)
             {
+                
+                Dictionary<Actions, bool> staffActions = _actionRepository.CreateUserActions(staff.CanCreate, staff.CanEdit, staff.CanDelete);
+                int actionLevel = _actionRepository.SetUserShopActionLevel(staffActions);
+                string accountId = await _accountRepository.GetAccountIdFromEmail(staff.EmailAddress, token);
+
                 staffList.Add(new()
                 {
-                    ShopId = request.Id,
-                    AccountId = await _accountRepository.GetAccountIdFromEmail(staff.EmailAddress, token),
-                    ActionLevel = staff.ActionLevel,
+                    ShopId = request.ShopId,
+                    AccountId = accountId,
+                    ActionLevel = actionLevel,
                 });
             }
 
-            HashSet<string> staffs = [.. await _shopRepository.ListOfStaffIdInShop(request.Id, token)];
+            HashSet<string> existingStaffIds = [.. await _shopRepository.ListOfStaffIdInShop(request.ShopId, token)];
             
             List<ShopStaff> uniqueStaff = staffList
-                .Where(pr=>!staffs.Contains(pr.ShopId))
+                .Where(pr=>!existingStaffIds.Contains(pr.AccountId))
                 .ToList();
 
-            if (uniqueStaff.Count <= 0)
+            if (uniqueStaff.Count == 0)
             {
                 response.Message = "Staff already exists in Db";
             }
 
-            bool hasAdded = await _shopRepository.AddStaffToShop(staffList, token);
-            
+            bool hasAdded = await _shopRepository.AddStaffToShop(uniqueStaff, token);
             response.IsSuccess = hasAdded;
+            if (hasAdded)
+            {
+                _logger.LogInformation("Added {Count} new staff members to shop {ShopId}.", uniqueStaff.Count, request.ShopId);
+            }
             return response;
         }
 
     }
     public class AddShopStaffCommand : ListDto<AddShopStaffDto>,IRequest<AddShopStaffResponseDto>
     {
-
+        public string ShopId { get; set; }
     }
 }

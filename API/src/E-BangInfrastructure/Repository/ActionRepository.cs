@@ -38,7 +38,25 @@ namespace E_BangInfrastructure.Repository
                 .Staff
                 .Where(pr=>pr.AccountId == accountId && pr.ShopId == shopId)
                 .Select(pr=>pr.ActionLevel)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(token);
+        }
+
+        public int SetUserShopActionLevel(Dictionary<Actions, bool> keyValuePairs)
+        {
+            return CalculateActions.SetActionLevel(keyValuePairs);
+        }
+        public List<Actions> GetActions()
+        {
+            return _actionStaticData.Actions.ToList();
+        }
+        public Dictionary<Actions, bool> CreateUserActions(bool canCreate, bool canEdit, bool canDelete)
+        {
+            return new()
+            {
+                [_actionStaticData.Actions.Where(pr => pr.ActionName.Equals("Update", StringComparison.CurrentCultureIgnoreCase)).First()] = canEdit,
+                [_actionStaticData.Actions.Where(pr => pr.ActionName.Equals("Create", StringComparison.CurrentCultureIgnoreCase)).First()] = canCreate,
+                [_actionStaticData.Actions.Where(pr => pr.ActionName.Equals("Delete", StringComparison.CurrentCultureIgnoreCase)).First()] = canDelete
+            };
         }
     }
 }

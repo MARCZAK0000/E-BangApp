@@ -10,5 +10,8 @@ namespace E_BangDomain.Repository
         Task<int> GetUserShopActionLevelAsync(string accountId, string shoId, CancellationToken token);
         Dictionary<Actions, bool> GetUserActions(int number);
         bool HasPermission (Dictionary<Actions, bool> actions, EAction action);
+        int SetUserShopActionLevel(Dictionary<Actions, bool> keyValuePairs);
+        List<Actions> GetActions();
+        Dictionary<Actions, bool> CreateUserActions(bool canCreate, bool canEdit, bool canDelete);
     }
 }

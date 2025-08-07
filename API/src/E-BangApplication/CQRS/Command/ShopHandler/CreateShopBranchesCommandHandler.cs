@@ -34,7 +34,7 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             CreateBranchesResponseDto response = new();
 
             // Check if the user has permission to create shop branches
-            int permissionLevel = await _actionRepository.GetUserShopActionLevelAsync(currentUser.AccountID, request.Id, token);
+            int permissionLevel = await _actionRepository.GetUserShopActionLevelAsync(currentUser.AccountID, request.ShopId, token);
             Dictionary<Actions, bool> keyValuePairs = _actionRepository.GetUserActions(permissionLevel);
             bool hasPermission = _actionRepository.HasPermission(keyValuePairs, EAction.Create);
             if (!hasPermission)
@@ -61,7 +61,7 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             });
 
             List<ShopBranchesInformations> currentShopBranches =
-                await _shopRepository.GetShopBranchesByShopIdAsync(request.Id, token);
+                await _shopRepository.GetShopBranchesByShopIdAsync(request.ShopId, token);
 
             List<ShopBranchesInformations> uniqueBranches = branches
                 .Except(currentShopBranches, new ShopBranchesComparer())
@@ -71,17 +71,17 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             {
                 response.Message = "Branches Already Exists";
                 _logger.LogInformation("{Handler} - {date}: User has not added branches to ShopID: {shopID} - branches already exists"
-                    , nameof(CreateShopBranchesCommandHandler), DateTime.Now, request.Id);
+                    , nameof(CreateShopBranchesCommandHandler), DateTime.Now, request.ShopId);
                 return response;
             }
 
             bool HasAdded = await _shopRepository.CreateShopBranchAsync(uniqueBranches, token);
             if (HasAdded)
                 _logger.LogInformation("{Handler} - {date}: User has added {count} branches to ShopID: {shopID}",
-                    nameof(CreateShopBranchesCommandHandler), DateTime.Now, branches.Count, request.Id);
+                    nameof(CreateShopBranchesCommandHandler), DateTime.Now, branches.Count, request.ShopId);
             else
                 _logger.LogInformation("{Handler} - {date}: User has not added branches to ShopID: {shopID}",
-                   nameof(CreateShopBranchesCommandHandler), DateTime.Now, request.Id);
+                   nameof(CreateShopBranchesCommandHandler), DateTime.Now, request.ShopId);
 
             response.IsSuccess = HasAdded;
             return response;
@@ -90,5 +90,6 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
 
     public class CreateShopBranchesCommand : ListDto<CreateShopBranchDto>, IRequest<CreateBranchesResponseDto>
     {
+        public string ShopId { get; set; }
     }
 }
