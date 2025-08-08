@@ -59,7 +59,7 @@ namespace E_BangAPI.Controllers
             }
             return BadRequest(response);
         }
-        [HttpDelete("{shopId}/delete-branch/{branch_id}]")]
+        [HttpDelete("{shopId}/delete-branch/{branch_id}")]
         public async Task<IActionResult> DeleteShopBranch([FromRoute] string shopId, [FromRoute] string branch_id, CancellationToken cancellationToken)
         {
             var response = await _sender.SendToMediator(new RemoveShopBranchesCommand { ShopID = shopId, BranchId = branch_id }, cancellationToken);

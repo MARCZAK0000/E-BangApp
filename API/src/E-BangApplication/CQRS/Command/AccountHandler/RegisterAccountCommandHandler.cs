@@ -4,6 +4,7 @@ using E_BangDomain.HelperRepository;
 using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using E_BangDomain.ResponseDtos.Account;
+using Microsoft.AspNetCore.Identity;
 using MyCustomMediator.Interfaces;
 
 namespace E_BangApplication.CQRS.Command.AccountHandler
@@ -17,12 +18,14 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
         private readonly IAccountRepository _accountRepository;
         private readonly IEmailRepository _emailRepository;
         private readonly IRoleRepository _roleRepository;
+        private readonly IUserRepository _userRepository;
         public RegisterAccountCommandHandler(IAccountRepository accountRepository,
-            IEmailRepository emailRepository, IRoleRepository roleRepository)
+            IEmailRepository emailRepository, IRoleRepository roleRepository, IUserRepository userRepository)
         {
             _accountRepository = accountRepository;
             _emailRepository = emailRepository;
             _roleRepository = roleRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<RegisterAccountResponseDto> Handle(RegisterAccountCommand request, CancellationToken cancellationToken)
@@ -36,12 +39,28 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
             account.TwoFactorEnabled = request.TwoFactorEnable;
 
             //Add account
-            bool isAccount = await _accountRepository.RegisterAccountAsync(account, request.Password);
-            if (!isAccount)
+            IdentityResult identityResult= await _accountRepository.RegisterAccountAsync(account, request.Password);
+            if (!identityResult.Succeeded)
             {
+                response.IsSuccess = false;
+                response.Message += string.Join(", ", identityResult.Errors.Select(s => s.Description));
                 return response;
             }
+            //Add User
+            Users user = new()
+            {
+                UserID = account.Id,
+                Email = request.Email,
+            };  
 
+            bool isUserAdded = await _userRepository.AddUserAsync(user, cancellationToken); 
+            if(!isUserAdded)
+            {
+                response.IsSuccess = false;
+                response.Message += "Failed to add user information.";
+                return response;
+            }
+            //Assign role to account
             bool isRoleAssigned = await _roleRepository.AddToRoleLevelZeroAsync(account.Id, cancellationToken);
             if (!isRoleAssigned)
             {

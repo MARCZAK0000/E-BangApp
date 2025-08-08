@@ -7,10 +7,10 @@ namespace E_BangDomain.Entities
     {
         public string UserID { get; set; }  
         public string Email { get; set; }
-        public string FirstName { get; set; }
-        public string Surname { get; set; }
+        public string? FirstName { get; set; }
+        public string? Surname { get; set; }
         public string? SecondName { get; set; }   
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         public DateTime LastUpdateTime { get; set; } = DateTime.UtcNow;
     }
 

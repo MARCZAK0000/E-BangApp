@@ -5,8 +5,10 @@ using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using E_BangDomain.RequestDtos.TokenRepostitoryDtos;
 using E_BangDomain.ResponseDtos.Account;
+using E_BangDomain.ResultsPattern;
 using E_BangDomain.Settings;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using MyCustomMediator.Interfaces;
 using System.Security.Claims;
 
@@ -48,9 +50,12 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
             if (!maybe.HasValue || maybe.Value == null)
                 return response;
 
-            bool isCredentialsValid = await _accountRepository.ValidateLoginCredentialsAsync(maybe.Value, request);
-            if (!isCredentialsValid)
+            Result isCredentialsValid = await _accountRepository.ValidateLoginCredentialsAsync(maybe.Value, request);
+            if (!isCredentialsValid.IsSuccess)
+            {
+                response.IsSuccess = false;
                 return response;
+            }
 
             if (maybe.Value.TwoFactorEnabled)
             {

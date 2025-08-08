@@ -8,7 +8,6 @@ using E_BangApplication.Validation.Account;
 using E_BangApplication.Validation.Role;
 using E_BangApplication.Validation.User;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using MyCustomMediator.Classes;
 using System.Reflection;
@@ -21,7 +20,6 @@ namespace E_BangApplication.Exetensions
         {
             services.AddAutoMapper(typeof(ProjectMapper));
             services.AddMyCustomMediator(Assembly.GetAssembly(typeof(RegisterAccountCommand)));
-            services.AddFluentValidationAutoValidation();
             services.AddScoped<IUserContext, UserContext>();
 
             services.AddScoped<IValidator<RegisterAccountCommand>, RegisterAccountValidator>();

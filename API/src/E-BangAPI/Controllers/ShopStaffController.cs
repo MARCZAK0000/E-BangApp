@@ -26,7 +26,11 @@ namespace E_BangAPI.Controllers
             }
             return BadRequest(response);
         }
-        //[HttpPatch("shop")]
+        [HttpPatch("shop/{shopId}/shopstaff/remove-shop-staff/{staffId}")]
+        public async Task<IActionResult> RemoveShopStaff([FromRoute] RemoveShopStaffCommand request, CancellationToken token)
+        {
+            throw new NotImplementedException();
+        }
 
     }
 }

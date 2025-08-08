@@ -2,7 +2,9 @@
 using E_BangDomain.MaybePattern;
 using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.AccountRepositoryDtos;
+using E_BangDomain.ResultsPattern;
 using E_BangInfrastructure.Database;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -28,26 +30,41 @@ namespace E_BangInfrastructure.Repository
         private readonly ProjectDbContext _projectDbContext = projectDbContext;
 
 
-        public async Task<bool> RegisterAccountAsync(Account account,string password)
-        {
-            IdentityResult result = await _userManager.CreateAsync(account, password);
-            return result.Succeeded;
-        }
+        public async Task<IdentityResult> RegisterAccountAsync(Account account,string password)
+            => await _userManager.CreateAsync(account, password);
         public async Task<Maybe<Account>> FindAccountByEmailAsync(string email, CancellationToken token)
         {
             Account? user = await _userManager.FindByEmailAsync(email);
             return new Maybe<Account>(user);
         }
-        public async Task<bool> ValidateLoginCredentialsAsync(Account user, LoginAccountDto login)
-        {
-            SignInResult result = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
-            return result.Succeeded;
-        }
-
-        public async Task<bool> ValidateLoginWithTwoWayFactoryCodeAsync(Account user, LoginAccountDto login)
+        public async Task<Result> ValidateLoginCredentialsAsync(Account user, LoginAccountDto login)
         {
             SignInResult signInResult = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
-            return signInResult.Succeeded && user.TwoFactoryCode.Equals(login.TwoFactorCode, StringComparison.CurrentCultureIgnoreCase);
+            return signInResult.Succeeded
+                ? Result.Success()
+                : Result.Failure(errorMessage: [
+                    new Errors(
+                        "Invalid Credentials",
+                        $"Invalid credentials for user '{user.Email}'. " +
+                        "Please verify your email and password."
+                    )
+                ]);
+        }
+
+        public async Task<Result> ValidateLoginWithTwoWayFactoryCodeAsync(Account user, LoginAccountDto login)
+        {
+            SignInResult signInResult = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
+            return signInResult.Succeeded 
+                && user.TwoFactoryCode != null 
+                    && user.TwoFactoryCode.Equals(login.TwoFactorCode, StringComparison.CurrentCultureIgnoreCase)
+                        ?Result.Success()
+                            : Result.Failure(errorMessage: [
+                                new Errors(
+                                    "Invalid Credentials",
+                                    $"Invalid credentials for user '{user.Email}'. Two-factor code: '{login.TwoFactorCode ?? "N/A"}'. " +
+                                    $"Please verify your email, password, and two-factor code."
+                                )]);
+
         }
 
         public async Task<string> GenerateConfirmEmailTokenAsync(Account user)
@@ -55,11 +72,15 @@ namespace E_BangInfrastructure.Repository
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             return WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
         }
-        public async Task<bool> ConfirmEmailAsync(Account account, string confirmToken)
+        public async Task<Result> ConfirmEmailAsync(Account account, string confirmToken)
         {
             string decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(confirmToken));
             IdentityResult result = await _userManager.ConfirmEmailAsync(account, decodedToken);
-            return result.Succeeded;
+            
+            return result.Succeeded?
+                    Result.Success():
+                        Result.Failure(result.Errors.Select(e =>
+                            new Errors("Email Confirmation Failed", e.Description)));
         }
 
         public async Task<Maybe<Account>> FindAccountByIdAsync(string accountId)
@@ -77,7 +98,6 @@ namespace E_BangInfrastructure.Repository
         public async Task<bool> SetNewPasswordAsync(Account account, string newPassword, string token)
         {
             IdentityResult result = await _userManager.ResetPasswordAsync(account, newPassword, token);
-
             return result.Succeeded;
         }
         public async Task<bool> ChangePasswordAsync(Account account, string oldPassword, string newPassword)

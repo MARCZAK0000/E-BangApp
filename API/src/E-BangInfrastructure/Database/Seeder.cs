@@ -45,11 +45,6 @@ namespace E_BangInfrastructure.Database
                         new Actions { ActionName = "Delete", ActionDescription = "Delete Action", ActionLevel = 4 }
                     );
                 }
-                
-                else
-                {
-                    _logger.LogError("{nameof} at {date} : Failed to connect to database", nameof(Seeder), DateTime.Now);
-                }
             }
             await _context.SaveChangesAsync();
         }

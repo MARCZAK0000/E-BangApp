@@ -3,6 +3,7 @@ using E_BangDomain.MaybePattern;
 using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using E_BangDomain.ResponseDtos.Account;
+using E_BangDomain.ResultsPattern;
 using MyCustomMediator.Interfaces;
 
 namespace E_BangApplication.CQRS.Command.AccountHandler
@@ -26,10 +27,18 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
             Maybe<Account> account = await _accountRepository.FindAccountByEmailAsync(request.Email, token);
             if (!account.HasValue || account.Value is null)
             {
+                response.IsSuccess = false;
                 return response;
             }
-            response.IsSuccess = await _accountRepository.ConfirmEmailAsync(account.Value, request.Token)
-                   && await _accountRepository.LastUdateTimeAsync(account.Value.Id, token);
+            Result result = await _accountRepository.ConfirmEmailAsync(account.Value, request.Token);
+            if (!result.IsSuccess)
+            {
+                response.IsSuccess = false;
+                response.Message += string.Join(", ", result.ErrorMessage);
+                return response;
+            }
+            bool hasUpdate = await _accountRepository.LastUdateTimeAsync(account.Value.Id, token);
+            response.IsSuccess = hasUpdate;
             return response;
         }
     }

@@ -19,6 +19,15 @@ namespace E_BangInfrastructure.Repository
                 .Include(u => u.Address)
                 .FirstOrDefaultAsync(token);
 
+        public async Task<bool> AddUserAsync(Users user, CancellationToken token)
+        {
+            await _projectDbContext
+                .Users
+                .AddAsync(user, token);
+            
+            return await _projectDbContext
+                .SaveChangesAsync(token)>0;
+        }
         public async Task<bool> UpdateUserAsync(Users user, CancellationToken token)
         {
             _projectDbContext

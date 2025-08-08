@@ -35,9 +35,8 @@ namespace E_BangInfrastructure.Extensions
             services.Configure<IdentityOptions>(options =>
             {
                 options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedAccount = true;
-                options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequireDigit = true;
+                options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = true;
             });
             return services;

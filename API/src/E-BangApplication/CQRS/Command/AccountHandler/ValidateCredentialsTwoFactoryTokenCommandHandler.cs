@@ -4,6 +4,7 @@ using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using E_BangDomain.RequestDtos.TokenRepostitoryDtos;
 using E_BangDomain.ResponseDtos.Account;
+using E_BangDomain.ResultsPattern;
 using E_BangDomain.Settings;
 using Microsoft.AspNetCore.Http;
 using MyCustomMediator.Interfaces;
@@ -48,9 +49,13 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
             if (!maybe.HasValue || maybe.Value == null)
                 return response;
 
-            bool isCredentialsValid = await _accountRepository.ValidateLoginWithTwoWayFactoryCodeAsync(maybe.Value, request);
-            if (!isCredentialsValid)
+            Result isCredentialsValid = await _accountRepository.ValidateLoginWithTwoWayFactoryCodeAsync(maybe.Value, request);
+            if (!isCredentialsValid.IsSuccess)
+            {
+                response.IsSuccess = isCredentialsValid.IsSuccess;
+                response.Message += string.Join(", ", response.Message, isCredentialsValid.Errors.ToString());
                 return response;
+            }
 
 
             List<string> roles = await _roleRepository.GetRoleNamesByAccountIdAsync(maybe.Value.Id, token);
