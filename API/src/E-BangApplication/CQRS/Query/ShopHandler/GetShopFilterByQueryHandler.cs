@@ -48,7 +48,7 @@ namespace E_BangApplication.CQRS.Query.ShopHandler
     public class GetShopByFilterQuery : IRequest<GetShopByFilterResponseDto>
     {
         public string? FilterName { get; set; }
-        public int ShopTypeId { get; set; } = 0;
+        public int ShopTypeId { get; set; }
         public PaginationModelDto PaginationModelDto { get; set; }
     }
     

@@ -39,6 +39,12 @@ namespace E_BangInfrastructure.Extensions
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = true;
             });
+
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("RedisConnectionString");
+            });
             return services;
         }
     }

@@ -4,12 +4,14 @@ using E_BangApplication.CQRS.Command.RoleHandler;
 using E_BangApplication.CQRS.Command.UserHandler;
 using E_BangApplication.CQRS.Query.AccountHandler;
 using E_BangApplication.Mapper;
+using E_BangApplication.Pipelines;
 using E_BangApplication.Validation.Account;
 using E_BangApplication.Validation.Role;
 using E_BangApplication.Validation.User;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using MyCustomMediator.Classes;
+using MyCustomMediator.Interfaces;
 using System.Reflection;
 
 namespace E_BangApplication.Exetensions
@@ -22,6 +24,8 @@ namespace E_BangApplication.Exetensions
             services.AddMyCustomMediator(Assembly.GetAssembly(typeof(RegisterAccountCommand)));
             services.AddScoped<IUserContext, UserContext>();
 
+
+            // Registering the validators
             services.AddScoped<IValidator<RegisterAccountCommand>, RegisterAccountValidator>();
             services.AddScoped<IValidator<VerifyCredentialsCommand>, VerifyCredentialsValidator>();
             services.AddScoped<IValidator<ValidateCredentialsTwoFactoryTokenCommand>, ValidateCredentialsTwoFactoryTokenValidator>();
@@ -32,6 +36,10 @@ namespace E_BangApplication.Exetensions
             services.AddScoped<IValidator<UpdateUserCommand>, UpdateUserValidator>();
             services.AddScoped<IValidator<AddRoleCommand>, AddRoleValidator>();
 
+
+            // Registering the pipeline behaviors
+            services.AddScoped(typeof(IPipeline<,>), typeof(CachingBehavior<,>));
+            services.AddScoped(typeof(IPipeline<,>), typeof(ValidationBehavior<,>));    
             return services;
         }
     }

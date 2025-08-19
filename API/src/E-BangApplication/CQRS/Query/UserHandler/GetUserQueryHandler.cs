@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using E_BangApplication.Authentication;
+using E_BangApplication.Cache;
+using E_BangApplication.Cache.Base;
 using E_BangDomain.Entities;
 using E_BangDomain.EntitiesDto.Role;
 using E_BangDomain.EntitiesDto.User;
@@ -9,9 +11,10 @@ using MyCustomMediator.Interfaces;
 
 namespace E_BangApplication.CQRS.Query.UserHandler
 {
-    public class GetUserQuery : IRequest<GetUserResponseDto<UserInfoDto>>
+    public class GetUserQuery : IRequest<GetUserResponseDto<UserInfoDto>>, ICacheable
     {
-
+        public string CacheKey { get; set; } = CacheConstant.UserInfoCacheKey;
+        public TimeSpan CacheDuration { get; set; } = TimeSpan.FromMinutes(5);
     }
     public class GetUserQueryHandler : IRequestHandler<GetUserQuery, GetUserResponseDto<UserInfoDto>>
     {

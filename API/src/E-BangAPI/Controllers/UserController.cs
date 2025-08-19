@@ -1,4 +1,6 @@
 ﻿using E_BangApplication.Attributes;
+using E_BangApplication.Authentication;
+using E_BangApplication.Cache.Base;
 using E_BangApplication.CQRS.Command.UserHandler;
 using E_BangApplication.CQRS.Query.UserHandler;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +13,19 @@ namespace E_BangAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly ISender _sender;
-        public UserController(ISender sender)
+        private readonly IUserContext _userContext;
+        public UserController(ISender sender, IUserContext userContext)
         {
             _sender = sender;
+            _userContext = userContext;
         }
 
         [HttpGet("me")]
         public async Task<IActionResult> GetUser(CancellationToken token)
         {
-            var response = await _sender.SendToMediator(new GetUserQuery(), token);
+            GetUserQuery query = new();
+            query.CacheKey += _userContext.GetCurrentUser().AccountID.ToString();    
+            var response = await _sender.SendToMediator(query, token);
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }
         [Transaction]
