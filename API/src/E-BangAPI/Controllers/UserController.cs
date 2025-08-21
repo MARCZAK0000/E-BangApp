@@ -32,6 +32,7 @@ namespace E_BangAPI.Controllers
         [HttpPatch("update")]
         public async Task<IActionResult> UpdateUserInfromations(UpdateUserCommand reqeust, CancellationToken token)
         {
+            reqeust.CacheKey += _userContext.GetCurrentUser().AccountID.ToString();  
             var response = await _sender.SendToMediator(reqeust, token);
             return response.IsSuccess ? Ok(response) : BadRequest(response);
         }

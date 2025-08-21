@@ -8,6 +8,7 @@ using E_BangApplication.Pipelines;
 using E_BangApplication.Validation.Account;
 using E_BangApplication.Validation.Role;
 using E_BangApplication.Validation.User;
+using E_BangDomain.Cache;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using MyCustomMediator.Classes;
@@ -36,6 +37,7 @@ namespace E_BangApplication.Exetensions
             services.AddScoped<IValidator<UpdateUserCommand>, UpdateUserValidator>();
             services.AddScoped<IValidator<AddRoleCommand>, AddRoleValidator>();
 
+            
 
             // Registering the pipeline behaviors
             services.AddScoped(typeof(IPipeline<,>), typeof(CachingBehavior<,>));

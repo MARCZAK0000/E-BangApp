@@ -11,7 +11,5 @@ namespace E_BangApplication.Cache.Base
         public const string UserInfoCacheKey = "UserInfoCacheKey: ";
 
         public const string ShopInfoCacheKey = "ShopInfoCacheKey: ";
-
-
     }
 }
