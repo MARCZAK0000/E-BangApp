@@ -31,12 +31,7 @@ namespace E_BangAzureWorker.Containers
                     //{
                     //    //return;
                     //};
-                    var pendingMigrations = await serviceDbContext.Database.GetPendingMigrationsAsync();
-                    if(pendingMigrations.Any())
-                    {
-                        await serviceDbContext.Database.MigrateAsync();
-                        _logger.LogInformation("Migration at {Date}", DateTime.Now);
-                    }
+                    await serviceDbContext.Database.MigrateAsync();
                 }
 
             }

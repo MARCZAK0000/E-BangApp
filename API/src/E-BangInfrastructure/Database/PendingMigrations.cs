@@ -22,7 +22,7 @@ namespace E_BangInfrastructure.Database
             if (_context.Database.CanConnect())
             {
                 _logger.LogInformation("{nameof} at {date} : Get Pending Migrations", nameof(PendingMigrations), DateTime.Now);
-                _context.Database.GetPendingMigrations();
+                _context.Database.Migrate();
             }
         }
     }

@@ -28,12 +28,7 @@ namespace E_BangEmailWorker.Seeder
             ServiceDbContext serviceDbContext = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
             if (await serviceDbContext.Database.CanConnectAsync())
             {
-                var pendingMigrations = await serviceDbContext.Database.GetPendingMigrationsAsync();
-                if (pendingMigrations.Any())
-                {
-                    await serviceDbContext.Database.MigrateAsync();
-                }
-                await serviceDbContext.Database.EnsureCreatedAsync();
+                await serviceDbContext.Database.MigrateAsync();
             }
         }
 
