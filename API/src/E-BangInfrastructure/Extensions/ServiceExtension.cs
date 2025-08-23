@@ -1,5 +1,7 @@
-﻿using E_BangDomain.HelperRepository;
+﻿using E_BangDomain.Cache;
+using E_BangDomain.HelperRepository;
 using E_BangDomain.Repository;
+using E_BangInfrastructure.Cache;
 using E_BangInfrastructure.HelperRepository;
 using E_BangInfrastructure.Repository;
 using Microsoft.Extensions.Configuration;
@@ -34,6 +36,17 @@ namespace E_BangInfrastructure.Extensions
 
             return services;
         }
-
+        public static IServiceCollection AddCacheStrategyFactory<TRequest, TResponse>(this IServiceCollection services)
+        {
+            services.AddScoped<ICacheStrategy<TRequest, TResponse>, AddToCacheStrategy<TRequest, TResponse>>();
+            services.AddScoped<ICacheStrategy<TRequest, TResponse>, RemoveFromCacheStrategy<TRequest, TResponse>>();
+            services.AddScoped<Func<bool, ICacheStrategy<TRequest, TResponse>>>(sp => key =>
+            {
+                if (key)
+                    return sp.GetRequiredService<AddToCacheStrategy<TRequest, TResponse>>();
+                return sp.GetRequiredService<RemoveFromCacheStrategy<TRequest, TResponse>>();
+            });
+            return services;
+        }
     }
 }
