@@ -41,7 +41,7 @@ namespace E_BangApplication.Exetensions
 
             // Registering the pipeline behaviors
             services.AddScoped(typeof(IPipeline<,>), typeof(CachingBehavior<,>));
-            services.AddScoped(typeof(IPipeline<,>), typeof(ValidationBehavior<,>));    
+            services.AddScoped(typeof(IPipeline<,>), typeof(ValidationPipeline<,>));    
             return services;
         }
     }

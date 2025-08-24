@@ -1,6 +1,6 @@
 ﻿namespace E_BangDomain.ResultsPattern
 {
-    public class Result
+    public sealed class Result
     {
         public bool IsSuccess { get; private set; }
         public string ErrorMessage { get; private set; } = string.Empty;

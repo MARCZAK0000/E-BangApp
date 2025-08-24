@@ -34,19 +34,18 @@ namespace E_BangInfrastructure.Extensions
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IActionRepository, ActionRepository>();
 
-            return services;
-        }
-        public static IServiceCollection AddCacheStrategyFactory<TRequest, TResponse>(this IServiceCollection services)
-        {
-            services.AddScoped<ICacheStrategy<TRequest, TResponse>, AddToCacheStrategy<TRequest, TResponse>>();
-            services.AddScoped<ICacheStrategy<TRequest, TResponse>, RemoveFromCacheStrategy<TRequest, TResponse>>();
-            services.AddScoped<Func<bool, ICacheStrategy<TRequest, TResponse>>>(sp => key =>
+            services.AddScoped<AddToCacheStrategy>();
+            services.AddScoped<RemoveFromCacheStrategy>();  
+
+            services.AddScoped<Func<bool, ICacheStrategy>>(serviceProvider => key =>
             {
-                if (key)
-                    return sp.GetRequiredService<AddToCacheStrategy<TRequest, TResponse>>();
-                return sp.GetRequiredService<RemoveFromCacheStrategy<TRequest, TResponse>>();
+                return key
+                    ? serviceProvider.GetRequiredService<AddToCacheStrategy>()
+                    : serviceProvider.GetRequiredService<RemoveFromCacheStrategy>();
             });
+
             return services;
         }
+        
     }
 }

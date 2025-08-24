@@ -1,16 +1,12 @@
 ﻿using E_BangApplication.Cache;
 using E_BangDomain.Cache;
 using Microsoft.Extensions.Caching.Distributed;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace E_BangInfrastructure.Cache
 {
-    public class AddToCacheStrategy: ICacheStrategy
+    public class AddToCacheStrategy : ICacheStrategy
     {
         private readonly IDistributedCache _cache;
 

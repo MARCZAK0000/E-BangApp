@@ -7,7 +7,7 @@ namespace E_BangDomain.StaticHelper
         private readonly static string _chars = "abcdefghijklmnoprstuvwxyz123456789";
         public static string GenerateRandomNumberCode()
         {
-            var digits = Enumerable.Repeat(RandomNumberGenerator.GetInt32(0, 10), 6).Select(x => x.ToString());
+            var digits = Enumerable.Range(RandomNumberGenerator.GetInt32(0, 10), 6).Select(x => x.ToString());
 
             return string.Concat(digits);
         }  

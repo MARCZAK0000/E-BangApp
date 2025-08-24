@@ -34,25 +34,26 @@ namespace E_BangApplication.Pipelines
         /// pipeline.</returns>
         public async Task<TResponse> SendToPipeline(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken token)
         {
+            var requestType = request.GetType();
+            var requestInterfaces = requestType.GetInterfaces();
             // Add to Cache
-            if (request is ICacheable cache)
+            if (requestType.GetInterfaces().Contains(typeof(ICacheable)))
             {
-                var result = _cacheStrategyFactory.Invoke(true);
-                return await result.Handle(request, async () => 
-                {
-                    return await next();    
-                }, token);
+                //var result = _cacheStrategyFactory.Invoke(true);
+                //return await result.Handle(request, async () => 
+                //{
+                //    return await next();    
+                //}, token);
             }
             // Remove from Cache
-            if(request is ICacheRemovable cacheDisposable)
+            if(requestType.GetInterfaces().Contains(typeof(ICacheRemovable)))
             {
-                var result = _cacheStrategyFactory.Invoke(false);
-                return await result.Handle(request, async () =>
-                {
-                    return await next();
-                }, token);
+                //var result = _cacheStrategyFactory.Invoke(false);
+                //return await result.Handle(request, async () =>
+                //{
+                //    return await next();
+                //}, token);
             }
-
             return await next();
         }
     }

@@ -1,4 +1,6 @@
 ﻿using E_BangApplication.Authentication;
+using E_BangApplication.Cache;
+using E_BangApplication.Cache.Base;
 using E_BangDomain.Entities;
 using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.User;
@@ -7,8 +9,9 @@ using MyCustomMediator.Interfaces;
 
 namespace E_BangApplication.CQRS.Command.UserHandler
 {
-    public class UpdateUserCommand : UpdateUserDto, IRequest<UpdateUserResponseDto>
+    public class UpdateUserCommand : UpdateUserDto, IRequest<UpdateUserResponseDto>, ICacheRemovable
     {
+        public string CacheKey { get ; set ; } = CacheConstant.UserInfoCacheKey;
     }
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UpdateUserResponseDto>
     {

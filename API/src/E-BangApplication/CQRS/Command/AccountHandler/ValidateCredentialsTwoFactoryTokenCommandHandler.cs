@@ -53,7 +53,7 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
             if (!isCredentialsValid.IsSuccess)
             {
                 response.IsSuccess = isCredentialsValid.IsSuccess;
-                response.Message += string.Join(", ", response.Message, isCredentialsValid.Errors.ToString());
+                response.Message += string.Join(", ", response.Message, isCredentialsValid.ErrorMessage.ToString());
                 return response;
             }
 
