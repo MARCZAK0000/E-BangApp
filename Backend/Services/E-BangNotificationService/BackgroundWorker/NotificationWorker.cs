@@ -11,6 +11,7 @@ namespace E_BangNotificationService.BackgroundWorker
 
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
+        private IServiceScope? scope;
         public NotificationWorker(IInformations informations,
             ILogger<NotificationWorker> logger, IServiceScopeFactory serviceScopeFactory)
         {
@@ -30,6 +31,7 @@ namespace E_BangNotificationService.BackgroundWorker
         {
             _informations.IsWorking = false;
             _informations.ClosedTime = DateTime.Now;
+            scope?.Dispose();
             _logger.LogInformation("{Date}: Close Connection", DateTime.Now);
             return base.StopAsync(cancellationToken);
         }
@@ -37,7 +39,7 @@ namespace E_BangNotificationService.BackgroundWorker
         {
             try
             {
-                using var scope = _serviceScopeFactory.CreateScope();
+                scope = _serviceScopeFactory.CreateScope();
                 IRabbitMQService rabbitMQService = scope.ServiceProvider.GetRequiredService<IRabbitMQService>();
                 await rabbitMQService.CreateListenerQueueAsync(stoppingToken);
 
@@ -58,5 +60,6 @@ namespace E_BangNotificationService.BackgroundWorker
             }
 
         }
+        
     }
 }

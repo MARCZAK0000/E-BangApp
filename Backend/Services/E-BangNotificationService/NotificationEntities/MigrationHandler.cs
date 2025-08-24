@@ -13,14 +13,9 @@ namespace E_BangNotificationService.NotificationEntities
 
         public async Task MigrateDb()
         {
-            await _notification.Database.EnsureCreatedAsync(); 
             if(await _notification.Database.CanConnectAsync())
             {
-                var pendingMigrations = await _notification.Database.GetPendingMigrationsAsync();
-                if (pendingMigrations.Any())
-                {
-                    await _notification.Database.MigrateAsync();
-                }
+                await _notification.Database.MigrateAsync();
             }
         }
     }

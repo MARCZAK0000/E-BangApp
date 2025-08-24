@@ -5,10 +5,14 @@ namespace E_BangAzureWorker;
 
 public class Worker : BackgroundService
 {
-    private IRabbitMQService? _rabbitMQService;
-    private IEventPublisher? _eventPublisher;
     private readonly ILogger<Worker> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
+
+    private IServiceScope? _scope;
+    private IEventPublisher? _eventPublisher;
+    private IRabbitMQService? _rabbitMQService;
+    private Task? _listenerTask;
+    private CancellationToken _stoppingToken;
 
     public Worker(ILogger<Worker> logger, IServiceScopeFactory serviceScopeFactory)
     {
@@ -16,42 +20,84 @@ public class Worker : BackgroundService
         _serviceScopeFactory = serviceScopeFactory;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _stoppingToken = stoppingToken;
+
         try
         {
-            using var scope = _serviceScopeFactory.CreateScope();
-            _eventPublisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
-            _rabbitMQService = scope.ServiceProvider.GetRequiredService<IRabbitMQService>();
-            await _rabbitMQService.HandleReciverQueueAsync(stoppingToken);
+            _scope = _serviceScopeFactory.CreateScope();
+            _eventPublisher = _scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            _rabbitMQService = _scope.ServiceProvider.GetRequiredService<IRabbitMQService>();
 
-            _eventPublisher!.ReceivedMessageAsync += async (sender, obj) =>
+            _listenerTask = Task.Run(async () =>
             {
-                await _rabbitMQService.HandleSendQueueAsync(obj, stoppingToken);
-            };
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                await Task.Delay(1000, stoppingToken);
-            }
+                try
+                {
+                    await StartListenerAsync(stoppingToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "B³¹d w listenerze RabbitMQ");
+                }
+            }, stoppingToken);
+
+            _eventPublisher.ReceivedMessageAsync += OnReceivedMessageAsync;
+
+            return Task.CompletedTask;
         }
         catch (Exception err)
         {
-            _logger.LogError("Email Worker: Error ocured at {Date} in Worker: {ex}", DateTime.Now, err.Message);
+            _logger.LogError(err, "Email Worker: Error occurred at {Date}", DateTime.Now);
             if (System.Diagnostics.Debugger.IsAttached)
-            {
                 System.Diagnostics.Debugger.Break();
-            }
         }
+        return Task.CompletedTask;
+    }
 
-    }
-    public override Task StartAsync(CancellationToken cancellationToken)
+    private async Task OnReceivedMessageAsync(object? sender, EventMessageArgs e)
     {
-        _logger.LogInformation("Email Worker: Worker Initailized at {DateTime}", DateTime.Now);
-        return base.StartAsync(cancellationToken);
+        if (_rabbitMQService != null)
+        {
+            await _rabbitMQService.HandleSendQueueAsync(e, _stoppingToken);
+        }
     }
-    public override Task StopAsync(CancellationToken cancellationToken)
+
+    private async Task StartListenerAsync(CancellationToken stoppingToken)
+    {
+        if (_rabbitMQService != null)
+        {
+            await _rabbitMQService.HandleReciverQueueAsync(stoppingToken);
+        }
+    }
+
+    public override async Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Email Worker: Worker Closed at {DateTime}", DateTime.Now);
-        return base.StopAsync(cancellationToken);
+
+        if (_eventPublisher != null)
+            _eventPublisher.ReceivedMessageAsync -= OnReceivedMessageAsync;
+
+        if (_listenerTask != null)
+        {
+            try
+            {
+                await _listenerTask;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "B³¹d podczas zatrzymywania listenera RabbitMQ");
+            }
+        }
+        _scope?.Dispose();
+
+        await base.StopAsync(cancellationToken);
+    }
+
+    public override Task StartAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Email Worker: Worker Initialized at {DateTime}", DateTime.Now);
+        return base.StartAsync(cancellationToken);
     }
 }
+

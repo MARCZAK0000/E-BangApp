@@ -4,7 +4,10 @@ namespace E_BangEmailWorker;
 
 public class Worker : BackgroundService
 {
+    private IRabbitQueueService? rabbitQueue;
     private readonly ILogger<Worker> _logger;
+    private IServiceScope? scope;
+    private Task? _listenerTask;
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
     public Worker(ILogger<Worker> logger, IServiceScopeFactory serviceScopeFactory)
@@ -15,33 +18,53 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        try
+        scope = _serviceScopeFactory.CreateScope();
+        rabbitQueue = scope.ServiceProvider.GetRequiredService<IRabbitQueueService>();
+
+        _listenerTask = Task.Run(async () =>
         {
-            using IServiceScope scope = _serviceScopeFactory.CreateScope();
-            IRabbitQueueService rabbitQueue = scope.ServiceProvider.GetRequiredService<IRabbitQueueService>();
-            await rabbitQueue.HandleRabbitQueueAsync(stoppingToken);
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                await Task.Delay(1000, stoppingToken);
+                await InitializeQueueAsync(stoppingToken);
             }
-        }
-        catch (Exception err)
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in listener");
+            }
+        }, stoppingToken);
+
+        while (!stoppingToken.IsCancellationRequested)
         {
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                System.Diagnostics.Debugger.Break();
-            }
-            _logger.LogError("Unexptected error in worker: {0}", err.Message);
+            await Task.Delay(1000, stoppingToken);
         }
     }
+
+    private async Task InitializeQueueAsync(CancellationToken cancellationToken)
+    {
+        await rabbitQueue?.HandleRabbitQueueAsync(cancellationToken);
+    }
+
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Worker initalized at {Date}", DateTime.Now);
         return base.StartAsync(cancellationToken);
     }
-    public override Task StopAsync(CancellationToken cancellationToken)
+    public override async Task StopAsync(CancellationToken cancellationToken)
     {
+        if(_listenerTask != null )
+        {
+            try
+            {
+                await _listenerTask;
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error in listener task during stopping.");
+                throw;
+            }
+        }   
+        scope?.Dispose();
         _logger.LogInformation($"Stop {DateTime.Now}");
-        return base.StopAsync(cancellationToken);
+        await base.StopAsync(cancellationToken);
     }
 }
