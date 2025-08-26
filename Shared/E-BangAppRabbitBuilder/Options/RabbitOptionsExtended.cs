@@ -2,8 +2,8 @@
 {
     public class RabbitOptionsExtended : RabbitOptionsBase
     {
-        List<QueueOptions> ListenerQueues { get; set; }
-        List<QueueOptions> SenderQueues { get; set; }
+        public List<QueueOptions> ListenerQueues { get; set; }
+        public List<QueueOptions> SenderQueues { get; set; }
 
         public override string ToString()
         {
