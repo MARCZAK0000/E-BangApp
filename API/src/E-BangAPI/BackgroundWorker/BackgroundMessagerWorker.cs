@@ -15,15 +15,15 @@ namespace E_BangAPI.BackgroundWorker
             while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(2000, stoppingToken);
-                //var workitem = await _messageHandlerQueueService.DequeueAsync(stoppingToken);
-                //try
-                //{
-                //    await workitem(stoppingToken);
-                //}
-                //catch (Exception ex)
-                //{
-                //    throw new Exception(ex.Message);
-                //}
+                var workitem = await _messageHandlerQueueService.DequeueAsync(stoppingToken);
+                try
+                {
+                    await workitem(stoppingToken);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
             }
         }
     }

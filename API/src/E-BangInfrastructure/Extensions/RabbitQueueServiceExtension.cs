@@ -20,7 +20,7 @@ namespace E_BangInfrastructure.Extensions
 
             if (isDocker)
             {
-                services.AddOptions<RabbitOptions>()
+                services.AddOptions<RabbitOptionsExtended>()
                     .Configure(cfg =>
                     {
                         cfg.Host = Environment.GetEnvironmentVariable("RABBIT_HOST")!;
@@ -28,15 +28,17 @@ namespace E_BangInfrastructure.Extensions
                         cfg.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;
                         cfg.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
                         cfg.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
-                        cfg.ListenerQueueName = //Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
+                        cfg.ListenerQueues = new List<string> { Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")! };
                         cfg.SenderQueueName = Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
+                        //cfg.ListenerQueueName = //Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
+                        //cfg.SenderQueueName = Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
                     })
                     .ValidateDataAnnotations();
             }
             else
             {
                 services.AddOptions<RabbitOptions>()
-                    .BindConfiguration("Rabbit Options")
+                    .BindConfiguration("RabbitOptions")
                     .ValidateDataAnnotations();
             }
             services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitOptions>>().Value);
