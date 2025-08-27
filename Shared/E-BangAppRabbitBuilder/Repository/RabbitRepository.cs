@@ -1,4 +1,5 @@
-﻿using E_BangAppRabbitBuilder.Options;
+﻿using E_BangAppRabbitBuilder.Configuration;
+using E_BangAppRabbitBuilder.Options;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
@@ -8,9 +9,11 @@ namespace E_BangAppRabbitBuilder.Repository
     {
         private readonly ILogger<RabbitRepository> _logger;
 
-        public RabbitRepository(ILogger<RabbitRepository> logger)
+        private readonly ConfigurationOptions _configurationOptions;
+        public RabbitRepository(ILogger<RabbitRepository> logger, ConfigurationOptions configurationOptions)
         {
             _logger = logger;
+            _configurationOptions = configurationOptions;
         }
 
         public async Task<IChannel> CreateChannelAsync(IConnection connection)
@@ -28,8 +31,7 @@ namespace E_BangAppRabbitBuilder.Repository
 
         public async Task<IConnection> CreateConnectionAsync(RabbitOptionsBase options)
         {
-            int maxAttempts = 5;
-            for (int attempts = 1; attempts <= maxAttempts; attempts++)
+            for (int i = 1; i <= _configurationOptions.ConnectionRetryCount; i++)
             {
                 try
                 {
@@ -43,18 +45,18 @@ namespace E_BangAppRabbitBuilder.Repository
                         RequestedConnectionTimeout = TimeSpan.FromSeconds(10),
                     };
                     IConnection connection = await factory.CreateConnectionAsync();
-                    _logger.LogInformation("{Date} - RabbitMQ connected on attempt {Attempt}", DateTime.Now, attempts);
+                    _logger.LogInformation("{Date} - RabbitMQ connected on attempt {Attempt}", DateTime.Now, i);
                     return connection;  
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning("{Date} - Attempt {Attempt}: Connection failed - {ex}", DateTime.Now, attempts, e.Message);
-                    if (attempts == maxAttempts)
+                    _logger.LogWarning("{Date} - Attempt {Attempt}: Connection failed - {ex}", DateTime.Now, i, e.Message);
+                    if (i == _configurationOptions.ConnectionRetryCount)
                     {
-                        _logger.LogError("All {Max} connection attempts failed.", maxAttempts);
+                        _logger.LogError("All {Max} connection attempts failed.", _configurationOptions.ConnectionRetryCount);
                         throw;
                     }
-                    await Task.Delay(TimeSpan.FromSeconds(2)); 
+                    await Task.Delay(TimeSpan.FromSeconds(_configurationOptions.ConnectionRetryDelaySeconds)); 
                 }
             }
             throw new Exception("Unable to create RabbitMQ connection.");

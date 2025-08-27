@@ -1,4 +1,6 @@
-﻿using E_BangAppRabbitBuilder.Options;
+﻿using E_BangAppRabbitBuilder.Configuration;
+using E_BangAppRabbitBuilder.Exceptions;
+using E_BangAppRabbitBuilder.Options;
 using E_BangAppRabbitBuilder.Repository;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -11,11 +13,15 @@ namespace E_BangAppRabbitBuilder.Service.Sender
     {
         private readonly IRabbitRepository _repository;
         private readonly ILogger<RabbitSenderService> _logger;
+        private readonly ConfigurationOptions _configOptions;
 
-        public RabbitSenderService(IRabbitRepository repository, ILogger<RabbitSenderService> logger)
+        public RabbitSenderService(IRabbitRepository repository, 
+            ILogger<RabbitSenderService> logger,
+            ConfigurationOptions configurationOptions)
         {
             _repository = repository;
             _logger = logger;
+            _configOptions = configurationOptions;
         }
 
         /// <summary>
@@ -57,9 +63,9 @@ namespace E_BangAppRabbitBuilder.Service.Sender
             }, token);
         }
 
-        private async Task RetryConnection(Func<Task> connection, CancellationToken token, int retries = 5, int timeDelay = 10)
+        private async Task RetryConnection(Func<Task> connection, CancellationToken token)
         {
-            for (int attempts = 1; attempts <= retries; attempts++)
+            for (int attempts = 1; attempts <= _configOptions.ServiceRetryCount; attempts++)
             {
                 try
                 {
@@ -77,13 +83,13 @@ namespace E_BangAppRabbitBuilder.Service.Sender
                 {
                     _logger.LogWarning("Attempt {Attempt}: RabbitMQ connection failed - {ErrorMessage}", attempts, ex.Message);
 
-                    if (attempts == retries)
+                    if (attempts == _configOptions.ServiceRetryCount)
                     {
-                        _logger.LogError(ex, "All {MaxAttempts} connection attempts failed", retries);
-                        throw;
+                        _logger.LogError(ex, "All {MaxAttempts} connection attempts failed", _configOptions.ServiceRetryCount);
+                        throw new TooManyRetriesException($"All {_configOptions.ServiceRetryCount} connection attempts failed");
                     }
 
-                    await Task.Delay(TimeSpan.FromSeconds(timeDelay), token);
+                    await Task.Delay(TimeSpan.FromSeconds(_configOptions.ServiceRetryDelaySeconds), token);
                 }
             }
         }

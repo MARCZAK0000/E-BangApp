@@ -1,10 +1,12 @@
-﻿using E_BangAppRabbitBuilder.Options;
+﻿using E_BangAppRabbitBuilder.Configuration;
+using E_BangAppRabbitBuilder.Exceptions;
+using E_BangAppRabbitBuilder.Options;
 using E_BangAppRabbitBuilder.Repository;
 using Microsoft.Extensions.Logging;
-using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
-using System.Text.Json;
+using RabbitMQ.Client.Events;
 using System.Text;
+using System.Text.Json;
 
 namespace E_BangAppRabbitBuilder.Service.Listener
 {
@@ -12,11 +14,12 @@ namespace E_BangAppRabbitBuilder.Service.Listener
     {
         private readonly IRabbitRepository _repository;
         private readonly ILogger<RabbitListenerService> _logger;
-
-        public RabbitListenerService(IRabbitRepository repository, ILogger<RabbitListenerService> logger)
+        private readonly ConfigurationOptions _configurationOptions;
+        public RabbitListenerService(IRabbitRepository repository, ILogger<RabbitListenerService> logger, ConfigurationOptions configurationOptions)
         {
             _repository = repository;
             _logger = logger;
+            _configurationOptions = configurationOptions;
         }
 
         /// <summary>
@@ -86,16 +89,16 @@ namespace E_BangAppRabbitBuilder.Service.Listener
         /// <param name="maxAttempts">The maximum number of connection attempts. Defaults to 5.</param>
         /// <param name="delaySeconds">The delay, in seconds, between retry attempts. Defaults to 10.</param>
         /// <returns></returns>
-        private async Task RetryConnection(Func<Task> connectAction, CancellationToken token, int maxAttempts = 5, int delaySeconds = 10)
+        private async Task RetryConnection(Func<Task> connectAction, CancellationToken token)
         {
             
-            for (int attempts = 1; attempts <= maxAttempts; attempts++)
+            for (int i = 1; i <= _configurationOptions.ServiceRetryCount; i++)
             {
                 try
                 {
                     token.ThrowIfCancellationRequested();
                     await connectAction();
-                    _logger.LogInformation("{Date} - RabbitMQ connected on attempt {Attempt}", DateTime.Now, attempts);
+                    _logger.LogInformation("{Date} - RabbitMQ connected on attempt {Attempt}", DateTime.Now, i);
                     return;
                 }
                 catch (OperationCanceledException)
@@ -105,13 +108,13 @@ namespace E_BangAppRabbitBuilder.Service.Listener
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning("{Date} - Attempt {Attempt}: Connection failed - {ex}", DateTime.Now, attempts, e.Message);
-                    if (attempts == maxAttempts)
+                    _logger.LogWarning("{Date} - Attempt {Attempt}: Connection failed - {ex}", DateTime.Now, i, e.Message);
+                    if (i == _configurationOptions.ServiceRetryCount)
                     {
-                        _logger.LogError("All {Max} connection attempts failed.", maxAttempts);
-                        throw;
+                        _logger.LogError("All {Max} connection attempts failed.", _configurationOptions.ServiceRetryCount);
+                        throw new TooManyRetriesException($"All {_configurationOptions.ServiceRetryCount} connection attempts failed");
                     }
-                    await Task.Delay(TimeSpan.FromSeconds(delaySeconds), token);
+                    await Task.Delay(TimeSpan.FromSeconds(_configurationOptions.ServiceRetryDelaySeconds), token);
                 }
             }
         }
