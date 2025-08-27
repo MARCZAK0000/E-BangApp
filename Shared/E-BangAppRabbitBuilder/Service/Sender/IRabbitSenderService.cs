@@ -13,6 +13,7 @@ namespace E_BangAppRabbitBuilder.Service.Sender
         /// <param name="rabbitOptions">Options</param>
         /// <param name="message"></param>
         /// <returns></returns>
-        Task InitSenderRabbitQueueAsync<T>(RabbitOptions rabbitOptions, T message) where T : class;
+        Task InitSenderRabbitQueueAsync<T>(RabbitOptions rabbitOptions, T message, CancellationToken token) where T : class;
+        Task InitSenderRabbitQueueAsync<T>(RabbitOptionsExtended rabbitOptions, T message, string rabbitQueueName,CancellationToken token) where T : class;
     }
 }

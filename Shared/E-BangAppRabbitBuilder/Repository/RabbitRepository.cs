@@ -26,7 +26,7 @@ namespace E_BangAppRabbitBuilder.Repository
             }
         }
 
-        public async Task<IConnection> CreateConnectionAsync(RabbitOptions options)
+        public async Task<IConnection> CreateConnectionAsync(RabbitOptionsBase options)
         {
             int maxAttempts = 5;
             for (int attempts = 1; attempts <= maxAttempts; attempts++)
@@ -43,7 +43,7 @@ namespace E_BangAppRabbitBuilder.Repository
                         RequestedConnectionTimeout = TimeSpan.FromSeconds(10),
                     };
                     IConnection connection = await factory.CreateConnectionAsync();
-                    _logger.LogInformation("RabbitMQ connected on attempt {Attempt}", attempts);
+                    _logger.LogInformation("{Date} - RabbitMQ connected on attempt {Attempt}", DateTime.Now, attempts);
                     return connection;  
                 }
                 catch (Exception e)
