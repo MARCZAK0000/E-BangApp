@@ -1,6 +1,6 @@
-﻿
-using E_BangAppRabbitSharedClass.BuildersDto.Body;
+﻿using E_BangAppRabbitSharedClass.BuildersDto.Body;
 using E_BangAppRabbitSharedClass.Enums;
+using System.Reflection;
 
 
 namespace E_BangAppEmailBuilder.src.Templates
@@ -9,58 +9,84 @@ namespace E_BangAppEmailBuilder.src.Templates
     {
         internal static string ReadTemplateFromFile(string fileName)
         {
-            string rootPath = GetProjectDirectoryPath();
-            string filePath = Path.Combine(rootPath, fileName);
-            if (File.Exists(filePath))
+            try
             {
-                return string.Join(Environment.NewLine, File.ReadLines(filePath));
-            }
-            else
-            {
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceName = $"E_BangAppEmailBuilder.Files.{fileName}";
+                
+                using var stream = assembly.GetManifestResourceStream(resourceName);
+                if (stream != null)
+                {
+                    using var reader = new StreamReader(stream);
+                    return reader.ReadToEnd();
+                }
+                
+                string rootPath = GetProjectDirectoryPath();
+                string filePath = Path.Combine(rootPath, fileName);
+                if (File.Exists(filePath))
+                {
+                    return File.ReadAllText(filePath);
+                }
+                
                 return string.Empty;
             }
+            catch (Exception ex)
+            {
+                throw new FileNotFoundException($"Template file '{fileName}' not found as embedded resource or file. Error: {ex.Message}", ex);
+            }
         }
+
         internal static List<BodyEmailTemplateTypeOptions> ReadBodyTemplateFromFile()
         {
             var templateList = new List<BodyEmailTemplateTypeOptions>();
-            var folderPath = GetProjectDirectoryPath();
-
-            if (!Directory.Exists(folderPath))
+            
+            try
             {
-                throw new Exception("Invalid Directory");
-            }
-            var files = Directory.GetFiles(folderPath).Where(pr => pr.Contains("body", StringComparison.OrdinalIgnoreCase)).ToList();
-            foreach (var file in files)
-            {
-                string filePath = Path.Combine(folderPath, file);
-                if (File.Exists(filePath))
+                var assembly = Assembly.GetExecutingAssembly();
+                var resourceNames = assembly.GetManifestResourceNames()
+                    .Where(name => name.Contains("Files") && name.Contains("body", StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+                
+                foreach (var resourceName in resourceNames)
                 {
-                    string fileName = file.Remove(startIndex: file.IndexOf("Body"))
-                        .Replace(folderPath + "\\", string.Empty);
-                    string templateTypeName = Enum.GetNames<EEnumEmailBodyBuilderType>()
-                        .Where(pr => pr.ToLower()
-                            .Contains(fileName, StringComparison.CurrentCultureIgnoreCase))
-                                .FirstOrDefault()
-                                    ?? string.Empty;
-                    if (string.IsNullOrEmpty(templateTypeName))
+                    using var stream = assembly.GetManifestResourceStream(resourceName);
+                    if (stream != null)
                     {
-                        continue;
+                        using var reader = new StreamReader(stream);
+                        var content = reader.ReadToEnd();
+                       
+                        var fileName = resourceName.Split('.').LastOrDefault() ?? string.Empty;
+                        var templateTypeName = Enum.GetNames<EEnumEmailBodyBuilderType>()
+                            .FirstOrDefault(name => fileName.Contains(name, StringComparison.OrdinalIgnoreCase));
+                        
+                        if (!string.IsNullOrEmpty(templateTypeName))
+                        {
+                            templateList.Add(new BodyEmailTemplateTypeOptions
+                            {
+                                TemplateTypeName = templateTypeName,
+                                TemplateBody = content
+                            });
+                        }
                     }
-                    templateList.Add(new BodyEmailTemplateTypeOptions
-                    {
-                        TemplateTypeName = templateTypeName,
-                        TemplateBody = string.Join(Environment.NewLine, File.ReadLines(file))
-                    });
                 }
+                
+                if (templateList.Count == 0)
+                {
+                    throw new InvalidOperationException("No email body templates found in embedded resources");
+                }
+                
+                return templateList;
             }
-            return templateList;
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Error reading email template files from embedded resources: {ex.Message}", ex);
+            }
         }
         private static string GetProjectDirectoryPath()
         {
-            string currentAsemblyDirectory = Directory.GetCurrentDirectory();
-            string rootFolder = Directory.GetParent(currentAsemblyDirectory)?.Parent?.Parent?.Parent?.FullName ?? string.Empty;
-            return Path.Combine(rootFolder, "E-BangAppEmailBuilder", "Files");
-
+            string assemblyLocation = Assembly.GetExecutingAssembly().Location;
+            string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? string.Empty;
+            return Path.Combine(assemblyDirectory, "Files");
         }
     }
 }
