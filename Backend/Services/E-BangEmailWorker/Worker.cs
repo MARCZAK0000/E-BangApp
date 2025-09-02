@@ -1,3 +1,4 @@
+using E_BangAppRabbitBuilder.Exceptions;
 using E_BangEmailWorker.Services;
 
 namespace E_BangEmailWorker;
@@ -8,7 +9,7 @@ public class Worker : BackgroundService
     private readonly ILogger<Worker> _logger;
     private IServiceScope? scope;
     private Task? _listenerTask;
-
+    private CancellationToken handlerStopToken;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     public Worker(ILogger<Worker> logger, IServiceScopeFactory serviceScopeFactory)
     {
@@ -18,18 +19,29 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        handlerStopToken = stoppingToken;
         scope = _serviceScopeFactory.CreateScope();
         rabbitQueue = scope.ServiceProvider.GetRequiredService<IRabbitQueueService>();
-
         _listenerTask = Task.Run(async () =>
         {
             try
             {
-                await InitializeQueueAsync(stoppingToken);
+                await InitializeQueueAsync(handlerStopToken);
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogInformation("Operation was canceled, stopping the service.");
+                throw;
+            }
+            catch (TooManyRetriesException err)
+            {
+                _logger.LogError(err, "Too many retries, stopping the service.");
+                throw;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in listener");
+                throw;
             }
         }, stoppingToken);
 
@@ -41,7 +53,7 @@ public class Worker : BackgroundService
 
     private async Task InitializeQueueAsync(CancellationToken cancellationToken)
     {
-        await rabbitQueue?.HandleRabbitQueueAsync(cancellationToken);
+        await rabbitQueue!.HandleRabbitQueueAsync(cancellationToken);
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)

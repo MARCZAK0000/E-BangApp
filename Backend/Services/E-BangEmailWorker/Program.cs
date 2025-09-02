@@ -9,6 +9,7 @@ using E_BangEmailWorker.Seeder;
 using E_BangEmailWorker.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 public class Program
 {
@@ -37,8 +38,14 @@ public class Program
             builder.Services.AddScoped<IDatabaseRepository, DatabaseRepository>();
             builder.Services.AddScoped<IMessageRepository, MessageRepository>();
             builder.Services.AddScoped<IRabbitQueueService, RabbitQueueService>();
-            builder.Services.AddScoped<IBuilderEmail, BuilderEmail>();
-            builder.Services.AddRabbitService();
+            builder.Services.AddScoped<IBuilderEmail, BuilderEmail>();  
+            builder.Services.AddRabbitService(cfg =>
+            {
+                cfg.ConnectionRetryCount = 3;
+                cfg.ConnectionRetryDelaySeconds = 1;
+                cfg.ServiceRetryCount = 5;
+                cfg.ServiceRetryDelaySeconds = 2;
+            });
             builder.Services.AddSingleton<DatabaseSeed>();
             builder.Services.AddDbContext<ServiceDbContext>(options =>
             {
@@ -65,8 +72,8 @@ public class Program
                         options.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
                         options.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
                         options.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;
-                        options.ListenerQueueName = Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
-                        options.SenderQueueName = "";
+                        options.ListenerQueueName = JsonSerializer.Deserialize<QueueOptions>(Environment.GetEnvironmentVariable("RABBIT_LISTENERQUEUENAME")!)!;
+                        options.SenderQueueName = new();
                     });
             }
             else

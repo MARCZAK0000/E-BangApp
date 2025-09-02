@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="E-BangAppRabbitBuilder" Version="1.1.0" />
+    <PackageReference Include="E-BangAppRabbitBuilder" Version="2.0.2" />
     <PackageReference Include="E-BangAppRabbitSharedClass" Version="1.0.0" />
     <PackageReference Include="EmailBuilder" Version="1.0.0" />
     <PackageReference Include="MailKit" Version="4.10.0" />

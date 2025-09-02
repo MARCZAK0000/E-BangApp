@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="E-BangAppRabbitBuilder" Version="1.1.0" />
+    <PackageReference Include="E-BangAppRabbitBuilder" Version="2.0.2" />
     <PackageReference Include="E-BangAppRabbitSharedClass" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
