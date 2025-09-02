@@ -7,6 +7,7 @@ using E_BangInfrastructure.BackgroundTask;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace E_BangInfrastructure.Extensions
 {
@@ -16,7 +17,13 @@ namespace E_BangInfrastructure.Extensions
         {
             services.AddSingleton<IMessageSenderHandlerQueue, MessageSenderHandlerQueue>();
             services.AddTransient<IMessageTask, MessageTask>();
-            services.AddRabbitService();
+            services.AddRabbitService(cfg=>
+            {
+                cfg.ServiceRetryCount = 5;
+                cfg.ServiceRetryDelaySeconds = 2;
+                cfg.ConnectionRetryCount = 3;
+                cfg.ConnectionRetryDelaySeconds = 2;
+            });
 
             if (isDocker)
             {
@@ -28,20 +35,18 @@ namespace E_BangInfrastructure.Extensions
                         cfg.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;
                         cfg.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
                         cfg.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
-                        cfg.ListenerQueues = new List<string> { Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")! };
-                        cfg.SenderQueueName = Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
-                        //cfg.ListenerQueueName = //Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
-                        //cfg.SenderQueueName = Environment.GetEnvironmentVariable("RABBIT_EMAILQUEUE")!;
+                        cfg.ListenerQueues = [];
+                        cfg.SenderQueues = JsonSerializer.Deserialize<List<QueueOptions>>(Environment.GetEnvironmentVariable("API_LISTENER_QUEUE_OPTIONS")!); 
                     })
                     .ValidateDataAnnotations();
             }
             else
             {
-                services.AddOptions<RabbitOptions>()
+                services.AddOptions<RabbitOptionsExtended>()
                     .BindConfiguration("RabbitOptions")
                     .ValidateDataAnnotations();
             }
-            services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitOptions>>().Value);
+            services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitOptionsExtended>>().Value);
             return services;
         }
     }

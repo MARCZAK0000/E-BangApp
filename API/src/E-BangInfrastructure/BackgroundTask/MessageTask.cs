@@ -7,6 +7,8 @@ using RabbitMQ.Client;
 using System.Text;
 using E_BangAppRabbitBuilder.Service.Sender;
 using E_BangAppRabbitBuilder.Options;
+using E_BangDomain.Enums;
+using E_BangDomain.Dictionary;
 
 namespace E_BangInfrastructure.BackgroundTask
 {
@@ -16,8 +18,8 @@ namespace E_BangInfrastructure.BackgroundTask
 
         private readonly IRabbitSenderService _rabbitSenderService;
 
-        private readonly RabbitOptions _rabbitOptions;
-        public MessageTask(ILogger<MessageTask> logger, IRabbitSenderService rabbitSenderService, RabbitOptions rabbitOptions)
+        private readonly RabbitOptionsExtended _rabbitOptions;
+        public MessageTask(ILogger<MessageTask> logger, IRabbitSenderService rabbitSenderService, RabbitOptionsExtended rabbitOptions)
         {
             _logger = logger;
             _rabbitSenderService = rabbitSenderService;
@@ -32,12 +34,13 @@ namespace E_BangInfrastructure.BackgroundTask
         /// <returns></returns>
         public async Task SendToRabbitChannelAsync<T>(RabbitMessageBaseDto<T> parameters, CancellationToken token) where T : class
         {
+            string queueName = RabbitChannelDictionary.RabbitChannelName.Where(pr=>pr.Key == parameters.RabbitChannel)
+                .Select(pr=>pr.Value).FirstOrDefault() ?? throw new ArgumentNullException($"Queue with channel '{parameters.RabbitChannel}' not found in SenderQueues.");
             try
             {
-                _rabbitOptions.SenderQueueName = Enum.GetName(parameters.RabbitChannel)!;
                 _logger.LogInformation("Message Task: Add to Queue at {Date}, Message Type {type}, Message Queue: {queue}", 
-                    DateTime.Now, typeof(T).Name, _rabbitOptions.SenderQueueName);
-                await _rabbitSenderService.InitSenderRabbitQueueAsync(_rabbitOptions, parameters.Message);
+                    DateTime.Now, typeof(T).Name, _rabbitOptions.SenderQueues?.ToString());
+                await _rabbitSenderService.InitSenderRabbitQueueAsync(_rabbitOptions, parameters.Message, queueName, token);
             }
             catch (Exception e)
             {
