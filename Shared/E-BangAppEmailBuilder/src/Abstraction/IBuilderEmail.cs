@@ -2,6 +2,8 @@
 using E_BangAppRabbitSharedClass.BuildersDto.Body;
 using E_BangAppRabbitSharedClass.BuildersDto.Footer;
 using E_BangAppRabbitSharedClass.BuildersDto.Header;
+using E_BangAppRabbitSharedClass.Enums;
+using System.Text.Json;
 namespace E_BangAppEmailBuilder.src.Abstraction
 {
     public interface IBuilderEmail
@@ -14,7 +16,7 @@ namespace E_BangAppEmailBuilder.src.Abstraction
         /// <param name="body"></param>
         /// <param name="footer"></param>
         /// <returns>Returns an instance of <see cref="EmailMessage"/></returns>
-        EmailMessage GenerateMessage<T>(HeaderDefaultTemplateBuilder header, T body, FooterDefualtTemplateBuilder footer);
+        EmailMessage GenerateMessage(HeaderDefaultTemplateBuilder header, (EEnumEmailBodyBuilderType type, JsonElement element) body, FooterDefualtTemplateBuilder footer);
 
     }
 }

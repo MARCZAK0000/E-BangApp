@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace E_BangAppEmailBuilder.src.EmailBodyStrategy.StrategyBase
@@ -12,19 +13,22 @@ namespace E_BangAppEmailBuilder.src.EmailBodyStrategy.StrategyBase
     public class GenerateTwoWayTokenBody : IGenerateBodyBase
     {
         private readonly IReadTemplates _readTemplates = ReadTemplates.GetInstance();
-        public string GenerateBody<T>(T parameters)
+        
+        public string GenerateBody(JsonElement parameters)
         {
-            if(parameters is TwoWayTokenBodyBuilder builder)
+            var twoWayToken = JsonSerializer.Deserialize<RegistrationBodyBuilder>(parameters)
+              ?? throw new InvalidOperationException("Invalid parameters type");
+            
+            string template = _readTemplates.GetDefaultBodyTemplate(twoWayToken.TemplateName);
+            
+            if (string.IsNullOrEmpty(template))
             {
-                string template = _readTemplates.GetDefaultBodyTemplate(builder.TemplateName);
-                if (string.IsNullOrEmpty(template))
-                {
-                    throw new InvalidOperationException("Empty Body Template");
-                }
-                return template.Replace("[email]", builder.Email).Replace("[token]", builder.Token);
+                throw new InvalidOperationException("Empty Body Template");
             }
-            throw new InvalidOperationException("Invalid Parameters");
-
+            
+            return template
+                .Replace("[email]", twoWayToken.Email ?? string.Empty)
+                .Replace("[token]", twoWayToken.Token ?? string.Empty);
         }
     }
 }

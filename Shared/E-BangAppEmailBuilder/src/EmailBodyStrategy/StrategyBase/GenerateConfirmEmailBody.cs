@@ -1,24 +1,25 @@
 ﻿using E_BangAppEmailBuilder.src.Templates;
 using E_BangAppRabbitSharedClass.BuildersDto.Body;
 using E_BangAppRabbitSharedClass.BuildersDto.Body.BodyBuilder;
+using System.Text.Json;
 
 namespace E_BangAppEmailBuilder.src.EmailBodyStrategy.StrategyBase
 {
     internal class GenerateConfirmEmailBody : IGenerateBodyBase
     {
         private readonly IReadTemplates _readTemplates = ReadTemplates.GetInstance();
-        public string GenerateBody<T>(T parameters)
+        public string GenerateBody(JsonElement parameters)
         {
-            if(parameters is ConfirmEmailTokenBodyBuilder bodyBuilder)
+            var confirmEmail = JsonSerializer.Deserialize<RegistrationBodyBuilder>(parameters)
+               ?? throw new InvalidOperationException("Invalid parameters type");
+            string template = _readTemplates.GetDefaultBodyTemplate(confirmEmail.TemplateName);
+            if (string.IsNullOrEmpty(template))
             {
-                string template = _readTemplates.GetDefaultBodyTemplate(bodyBuilder.TemplateName);
-                if (string.IsNullOrEmpty(template))
-                {
-                    throw new InvalidOperationException("Empty Body Template");
-                }
-                return template.Replace("[verification-token]", bodyBuilder.Token??string.Empty);
+                throw new InvalidOperationException("Empty Body Template");
             }
-            throw new InvalidOperationException("Invalid parameters type");
+
+            return template.Replace("[verification-token]", confirmEmail.Token??string.Empty);
+            
         }
     }
 }

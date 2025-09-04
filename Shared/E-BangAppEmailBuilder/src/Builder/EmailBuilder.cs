@@ -4,14 +4,16 @@ using E_BangAppEmailBuilder.src.Templates;
 using E_BangAppRabbitSharedClass.BuildersDto.Body;
 using E_BangAppRabbitSharedClass.BuildersDto.Footer;
 using E_BangAppRabbitSharedClass.BuildersDto.Header;
+using E_BangAppRabbitSharedClass.Enums;
+using System.Text.Json;
 namespace E_BangAppEmailBuilder.src.Builder
 {
-    internal class EmailBuilder
+    public class EmailBuilder
     {
         private string _header;
         private string _body;
         private string _footer;
-        internal EmailBuilder()
+        public EmailBuilder()
         {
             _header = string.Empty;
             _body = string.Empty;
@@ -113,12 +115,11 @@ namespace E_BangAppEmailBuilder.src.Builder
         /// </remarks>
         /// </summary>
         /// <returns>Returns an instance of <see cref="EmailBuilder"/> with the generated body.</returns>
-        public EmailBuilder GenerateBody<T>(T parameters)
+        public EmailBuilder GenerateBody(EEnumEmailBodyBuilderType emailType, JsonElement elements)
         {
-            IGenerateBodyBase strategy = _generateBodyStrategy.SwitchStrategy(parameters);
-            _body = strategy.GenerateBody(parameters);
+            IGenerateBodyBase strategy = _generateBodyStrategy.SwitchStrategy(emailType);
+            _body = strategy.GenerateBody(elements);
             return this;
-
         }
         #endregion
 
