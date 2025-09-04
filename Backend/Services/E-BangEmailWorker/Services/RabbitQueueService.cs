@@ -1,16 +1,12 @@
 ﻿using E_BangAppEmailBuilder.src.Abstraction;
 using E_BangAppRabbitBuilder.Options;
 using E_BangAppRabbitBuilder.Service.Listener;
-using E_BangAppRabbitSharedClass.BuildersDto.Body.BodyBase;
+using E_BangAppRabbitSharedClass.BuildersDto.RabbitMessageChilds;
 using E_BangAppRabbitSharedClass.RabbitModel;
 using E_BangEmailWorker.Exceptions;
 using E_BangEmailWorker.Model;
-using E_BangEmailWorker.OptionsPattern;
 using E_BangEmailWorker.Repository;
 using MimeKit;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System.Text;
 using System.Text.Json;
 namespace E_BangEmailWorker.Services
 {
@@ -49,13 +45,14 @@ namespace E_BangEmailWorker.Services
         }
         public async Task HandleRabbitQueueAsync(CancellationToken token)
         {
-            _logger.LogInformation("{Date} - Email Rabbit Queue: Rabbit Options: {userName}, {password}, {host}",DateTime.Now, _rabbitOptions.UserName, _rabbitOptions.Password, _rabbitOptions.Host);
+            _logger.LogInformation("{Date} - Email Rabbit Queue: Rabbit Options: {userName}, {password}, {host}", DateTime.Now, _rabbitOptions.UserName, _rabbitOptions.Password, _rabbitOptions.Host);
             await _rabbitListenerService.InitListenerRabbitQueueAsync(rabbitOptions: _rabbitOptions, async (EmailServiceRabbitMessageModel messageModel) =>
             {
+                EmailBody emailBody = JsonSerializer.Deserialize<EmailBody>(messageModel.Message) ?? throw new InvalidDataException("Invalid Data in json deserialize to EmailBody");
                 string emailRawHTML = _builderEmail
-                    .GenerateMessage(messageModel.Body.Header, messageModel.Body.Body, messageModel.Body.Footer)
+                    .GenerateMessage(emailBody.Header, (messageModel.EEnumEmailBodyBuilderType,emailBody.Body), emailBody.Footer)
                     .Message;
-                MimeMessage mimeMessage = _messageRepository.BuildMessage(new SendMailDto(messageModel.AddressTo, emailRawHTML, messageModel.Subject), token);
+                MimeMessage mimeMessage = _messageRepository.BuildMessage(new SendMailDto(emailBody.AdressedTo, emailRawHTML, emailBody.Subject), token);
                 bool isSend = await _emailRepository.SendEmailAsync(mimeMessage, token);
                 if (!isSend)
                 {
@@ -63,7 +60,7 @@ namespace E_BangEmailWorker.Services
                     throw new MesseageNotSendException("Email Message Problem");
                 }
                 _logger.LogInformation("{Date} - Email Rabbit Queue: Sending email: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", DateTime.Now, mimeMessage.From, mimeMessage.To);
-                await _databaseRepository.SaveEmailInfo(messageModel, token);
+                await _databaseRepository.SaveEmailInfo(emailBody, token);
                 _logger.LogInformation("{Date} - Email Rabbit Queue: Saving email info: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", DateTime.Now, mimeMessage.From, mimeMessage.To);
             }, token);
         }

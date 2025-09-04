@@ -1,4 +1,5 @@
-﻿using E_BangAppRabbitSharedClass.RabbitModel;
+﻿using E_BangAppRabbitSharedClass.BuildersDto.RabbitMessageChilds;
+using E_BangAppRabbitSharedClass.RabbitModel;
 using E_BangEmailWorker.Database;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -14,7 +15,7 @@ namespace E_BangEmailWorker.Repository
             _logger = logger;
         }
 
-        public async Task SaveEmailInfo(EmailServiceRabbitMessageModel emailServiceRabbitMessageModel, CancellationToken token)
+        public async Task SaveEmailInfo(EmailBody emailBody, CancellationToken token)
         {
             
             using IDbContextTransaction dbContextTransaction 
@@ -23,7 +24,7 @@ namespace E_BangEmailWorker.Repository
             {
                 await _context.Emails.AddAsync(new Email
                 {
-                    EmailAddress = emailServiceRabbitMessageModel.AddressTo,
+                    EmailAddress = emailBody.AdressedTo,
                     CreatedTime = DateTime.UtcNow,
                     IsSend = true,
                     SendTime = DateTime.UtcNow,

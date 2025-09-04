@@ -1,10 +1,11 @@
-﻿using E_BangAppRabbitSharedClass.RabbitModel;
+﻿using E_BangAppRabbitSharedClass.BuildersDto.RabbitMessageChilds;
+using E_BangAppRabbitSharedClass.RabbitModel;
 
 namespace E_BangEmailWorker.Repository
 {
     public interface IDatabaseRepository
     {
-        Task SaveEmailInfo(EmailServiceRabbitMessageModel emailServiceRabbitMessageModel, CancellationToken token);
+        Task SaveEmailInfo(EmailBody emailServiceRabbitMessageModel, CancellationToken token);
 
     }
 }
