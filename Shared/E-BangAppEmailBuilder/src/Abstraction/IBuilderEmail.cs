@@ -14,7 +14,7 @@ namespace E_BangAppEmailBuilder.src.Abstraction
         /// <param name="body"></param>
         /// <param name="footer"></param>
         /// <returns>Returns an instance of <see cref="EmailMessage"/></returns>
-        EmailMessage GenerateMessage(HeaderDefaultTemplateBuilder header, object body, FooterDefualtTemplateBuilder footer);
+        EmailMessage GenerateMessage<T>(HeaderDefaultTemplateBuilder header, T body, FooterDefualtTemplateBuilder footer);
 
     }
 }

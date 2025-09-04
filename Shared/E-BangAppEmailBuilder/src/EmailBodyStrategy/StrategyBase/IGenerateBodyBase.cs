@@ -2,6 +2,6 @@
 {
     public interface IGenerateBodyBase
     {
-        string GenerateBody(object parameters);
+        string GenerateBody<T>(T parameters);
     }
 }

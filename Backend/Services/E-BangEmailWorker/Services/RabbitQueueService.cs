@@ -1,6 +1,7 @@
 ﻿using E_BangAppEmailBuilder.src.Abstraction;
 using E_BangAppRabbitBuilder.Options;
 using E_BangAppRabbitBuilder.Service.Listener;
+using E_BangAppRabbitSharedClass.BuildersDto.Body.BodyBase;
 using E_BangAppRabbitSharedClass.RabbitModel;
 using E_BangEmailWorker.Exceptions;
 using E_BangEmailWorker.Model;

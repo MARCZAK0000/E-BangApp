@@ -1,4 +1,4 @@
-﻿namespace E_BangAppRabbitSharedClass.BuildersDto.Body
+﻿namespace E_BangAppRabbitSharedClass.Template
 {
     public class BodyEmailTemplateTypeOptions
     {

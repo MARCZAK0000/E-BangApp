@@ -1,5 +1,6 @@
 ﻿using E_BangAppEmailBuilder.src.Templates;
 using E_BangAppRabbitSharedClass.BuildersDto.Body;
+using E_BangAppRabbitSharedClass.BuildersDto.Body.BodyBuilder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +12,19 @@ namespace E_BangAppEmailBuilder.src.EmailBodyStrategy.StrategyBase
     public class GenerateTwoWayTokenBody : IGenerateBodyBase
     {
         private readonly IReadTemplates _readTemplates = ReadTemplates.GetInstance();
-        public string GenerateBody(object parameters)
+        public string GenerateBody<T>(T parameters)
         {
-            TwoWayTokenBodyBuilder registration = (TwoWayTokenBodyBuilder)parameters;
-            string template = _readTemplates.GetDefaultBodyTemplate(registration.TemplateName);
-            if (string.IsNullOrEmpty(template))
+            if(parameters is TwoWayTokenBodyBuilder builder)
             {
-                throw new InvalidOperationException("Empty Body Template");
+                string template = _readTemplates.GetDefaultBodyTemplate(builder.TemplateName);
+                if (string.IsNullOrEmpty(template))
+                {
+                    throw new InvalidOperationException("Empty Body Template");
+                }
+                return template.Replace("[email]", builder.Email).Replace("[token]", builder.Token);
             }
-            return template.Replace("[email]", registration.Email).Replace("[token]", registration.Token);
-       }
+            throw new InvalidOperationException("Invalid Parameters");
+
+        }
     }
 }

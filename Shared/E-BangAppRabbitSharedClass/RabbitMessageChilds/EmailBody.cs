@@ -1,4 +1,5 @@
-﻿using E_BangAppRabbitSharedClass.BuildersDto.Footer;
+﻿using E_BangAppRabbitSharedClass.BuildersDto.Body.BodyBase;
+using E_BangAppRabbitSharedClass.BuildersDto.Footer;
 using E_BangAppRabbitSharedClass.BuildersDto.Header;
 
 namespace E_BangAppRabbitSharedClass.RabbitMessageChilds

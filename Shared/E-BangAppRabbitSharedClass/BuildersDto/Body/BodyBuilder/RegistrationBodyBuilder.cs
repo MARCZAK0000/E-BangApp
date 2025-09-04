@@ -1,12 +1,15 @@
-﻿using E_BangAppRabbitSharedClass.Enums;
+﻿using E_BangAppRabbitSharedClass.BuildersDto.Body.BodyBase;
+using E_BangAppRabbitSharedClass.Enums;
 
-namespace E_BangAppRabbitSharedClass.BuildersDto.Body
+namespace E_BangAppRabbitSharedClass.BuildersDto.Body.BodyBuilder
 {
     /// <summary>
     /// Used to pass Registration Parameters
     /// </summary>
     public class RegistrationBodyBuilder : EmailBodyBuilderBase
     {
+        public string Email { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty;
         public override string TemplateName {
             get
             {

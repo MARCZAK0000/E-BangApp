@@ -1,4 +1,5 @@
 ﻿using E_BangAppRabbitSharedClass.BuildersDto.Body;
+using E_BangAppRabbitSharedClass.Template;
 
 namespace E_BangAppEmailBuilder.src.Templates
 {

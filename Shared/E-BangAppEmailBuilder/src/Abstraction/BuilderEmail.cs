@@ -6,7 +6,7 @@ namespace E_BangAppEmailBuilder.src.Abstraction
 {
     public class BuilderEmail : IBuilderEmail
     {
-        public EmailMessage GenerateMessage(HeaderDefaultTemplateBuilder header, object body, FooterDefualtTemplateBuilder footer)
+        public EmailMessage GenerateMessage<T>(HeaderDefaultTemplateBuilder header, T body, FooterDefualtTemplateBuilder footer)
         {
             var emailBuilder = new EmailBuilder();
 

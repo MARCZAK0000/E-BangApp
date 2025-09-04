@@ -113,7 +113,7 @@ namespace E_BangAppEmailBuilder.src.Builder
         /// </remarks>
         /// </summary>
         /// <returns>Returns an instance of <see cref="EmailBuilder"/> with the generated body.</returns>
-        public EmailBuilder GenerateBody(object parameters)
+        public EmailBuilder GenerateBody<T>(T parameters)
         {
             IGenerateBodyBase strategy = _generateBodyStrategy.SwitchStrategy(parameters);
             _body = strategy.GenerateBody(parameters);

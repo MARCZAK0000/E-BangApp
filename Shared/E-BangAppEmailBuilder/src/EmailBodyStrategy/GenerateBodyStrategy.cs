@@ -1,5 +1,6 @@
 ﻿using E_BangAppEmailBuilder.src.EmailBodyStrategy.StrategyBase;
 using E_BangAppRabbitSharedClass.BuildersDto.Body;
+using E_BangAppRabbitSharedClass.BuildersDto.Body.BodyBuilder;
 using E_BangAppRabbitSharedClass.Enums;
 
 namespace E_BangAppEmailBuilder.src.EmailBodyStrategy
@@ -35,15 +36,16 @@ namespace E_BangAppEmailBuilder.src.EmailBodyStrategy
          * DISCLAIMER!!!!!
          */
 
-        private readonly Dictionary<Type, IGenerateBodyBase> strategyDictionary = new()
+        private readonly Dictionary<EEnumEmailBodyBuilderType, IGenerateBodyBase> strategyDictionary = new()
         {
-            {typeof(RegistrationBodyBuilder), new GenerateRegistrationBody()},
-            {typeof(ConfirmEmailTokenBodyBuilder), new GenerateConfirmEmailBody()},
-            {typeof(TwoWayTokenBodyBuilder), new GenerateTwoWayTokenBody()},
+            {EEnumEmailBodyBuilderType.Registration, new GenerateRegistrationBody()},
+            {EEnumEmailBodyBuilderType.ConfirmEmail, new GenerateConfirmEmailBody()},
+            {EEnumEmailBodyBuilderType.TwoWayToken, new GenerateTwoWayTokenBody()},
         };
         public IGenerateBodyBase SwitchStrategy(object parameters)
         {
-            if(strategyDictionary.TryGetValue(parameters.GetType(), out var strategy))
+
+            if(strategyDictionary.TryGetValue(typeof(T), out var strategy))
             {
                 return strategy;
             }

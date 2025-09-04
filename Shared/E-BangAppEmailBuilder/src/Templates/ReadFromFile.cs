@@ -1,5 +1,6 @@
 ﻿using E_BangAppRabbitSharedClass.BuildersDto.Body;
 using E_BangAppRabbitSharedClass.Enums;
+using E_BangAppRabbitSharedClass.Template;
 using System.Reflection;
 
 
@@ -55,9 +56,8 @@ namespace E_BangAppEmailBuilder.src.Templates
                         using var reader = new StreamReader(stream);
                         var content = reader.ReadToEnd();
                        
-                        var fileName = resourceName.Split('.').LastOrDefault() ?? string.Empty;
                         var templateTypeName = Enum.GetNames<EEnumEmailBodyBuilderType>()
-                            .FirstOrDefault(name => fileName.Contains(name, StringComparison.OrdinalIgnoreCase));
+                            .FirstOrDefault(name => resourceName.Contains(name, StringComparison.OrdinalIgnoreCase));
                         
                         if (!string.IsNullOrEmpty(templateTypeName))
                         {
