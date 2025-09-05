@@ -15,7 +15,7 @@ namespace E_BangEmailWorker.Repository
             _logger = logger;
         }
 
-        public async Task SaveEmailInfo(EmailBody emailBody, CancellationToken token)
+        public async Task SaveEmailInfo(EmailBody emailBody, bool isSend, CancellationToken token)
         {
             
             using IDbContextTransaction dbContextTransaction 
@@ -26,7 +26,7 @@ namespace E_BangEmailWorker.Repository
                 {
                     EmailAddress = emailBody.AdressedTo,
                     CreatedTime = DateTime.UtcNow,
-                    IsSend = true,
+                    IsSend = isSend,
                     SendTime = DateTime.UtcNow,
                 }, token);
                 await dbContextTransaction.CommitAsync(token);

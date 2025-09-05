@@ -5,7 +5,7 @@ namespace E_BangEmailWorker.Repository
 {
     public interface IDatabaseRepository
     {
-        Task SaveEmailInfo(EmailBody emailServiceRabbitMessageModel, CancellationToken token);
+        Task SaveEmailInfo(EmailBody emailServiceRabbitMessageModel, bool isSend, CancellationToken token);
 
     }
 }

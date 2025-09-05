@@ -48,7 +48,7 @@ namespace E_BangNotificationService.Service
                 {
                     _logger.LogError("Notification not send from AccountID: {Id} to AccountId{Id2}", messageModel.SenderId, messageModel!.ReciverId);
                 }
-            });
+            }, token);
 
         }
     }

@@ -57,10 +57,11 @@ namespace E_BangEmailWorker.Services
                 if (!isSend)
                 {
                     _logger.LogError("{Date} - Email Rabbit Queue: There is a problem with email message: {messageModel}", DateTime.Now, messageModel);
+                    await _databaseRepository.SaveEmailInfo(emailBody, isSend, token);
                     throw new MesseageNotSendException("Email Message Problem");
                 }
                 _logger.LogInformation("{Date} - Email Rabbit Queue: Sending email: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", DateTime.Now, mimeMessage.From, mimeMessage.To);
-                await _databaseRepository.SaveEmailInfo(emailBody, token);
+                await _databaseRepository.SaveEmailInfo(emailBody, isSend, token);
                 _logger.LogInformation("{Date} - Email Rabbit Queue: Saving email info: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", DateTime.Now, mimeMessage.From, mimeMessage.To);
             }, token);
         }
