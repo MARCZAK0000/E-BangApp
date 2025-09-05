@@ -2,6 +2,6 @@
 {
     public class EmailBodyBuilderBase
     {
-        public virtual string TemplateName { get; set; }
+        public virtual string? TemplateName { get; set; }
     }
 }

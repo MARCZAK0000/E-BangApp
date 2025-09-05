@@ -7,10 +7,11 @@ namespace E_BangAppRabbitSharedClass.BuildersDto.Body.BodyBuilder
     {
         public string Email { get; set; } = string.Empty;
         public string Token { get; set; } = string.Empty;
-        public override string TemplateName { 
+        public string PageUrl { get; set; } = string.Empty;
+        public override string? TemplateName { 
             get
             {
-                return Enum.GetName(EEnumEmailBodyBuilderType.ChangePassword)!;
+                return Enum.GetName(EEnumEmailBodyBuilderType.ChangePassword);
             }
             
         }
