@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using E_BangAppEmailBuilder.src.Options;
+using System.Text.Json;
 
 namespace E_BangAppEmailBuilder.src.EmailBodyStrategy.StrategyBase
 {

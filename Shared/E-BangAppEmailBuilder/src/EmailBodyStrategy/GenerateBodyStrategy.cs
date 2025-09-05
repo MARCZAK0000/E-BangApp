@@ -1,6 +1,6 @@
 ﻿using E_BangAppEmailBuilder.src.EmailBodyStrategy.StrategyBase;
+using E_BangAppEmailBuilder.src.Exceptions;
 using E_BangAppRabbitSharedClass.Enums;
-using System.Text.Json;
 
 namespace E_BangAppEmailBuilder.src.EmailBodyStrategy
 {
@@ -34,7 +34,7 @@ namespace E_BangAppEmailBuilder.src.EmailBodyStrategy
          * NAME OF ENUM MUST BE THE SAME LIKE NAME OF FILE(TEMPLATE)
          * DISCLAIMER!!!!!
          */
-        private readonly Dictionary<EEnumEmailBodyBuilderType,IGenerateBodyBase> strategyDictionary = new()
+        private readonly Dictionary<EEnumEmailBodyBuilderType, IGenerateBodyBase> strategyDictionary = new()
         {
             {EEnumEmailBodyBuilderType.Registration, new GenerateRegistrationBody()},
             {EEnumEmailBodyBuilderType.ConfirmEmail,new GenerateConfirmEmailBody()},
@@ -52,7 +52,7 @@ namespace E_BangAppEmailBuilder.src.EmailBodyStrategy
             {
                 return strategy;
             }
-            throw new InvalidOperationException("Invalid Email Body Type");
+            throw new InvalidStrategyException("Invalid Email Body Type");
         }
 
 

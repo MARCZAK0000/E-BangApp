@@ -9,18 +9,18 @@
   
   <PropertyGroup>
     <PackageId>EmailBuilder</PackageId>
-    <Version>1.0.7</Version>
+    <Version>1.0.8</Version>
     <Authors>MARCZAK0000</Authors>
     <Description>Email builder</Description>
     <PackageTags>email, email builder</PackageTags>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="E-BangAppRabbitSharedClass" Version="1.0.6" />
-  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Files\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="E-BangAppRabbitSharedClass" Version="1.0.8" />
   </ItemGroup>
  
 </Project>

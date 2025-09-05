@@ -1,14 +1,15 @@
 ﻿using E_BangAppRabbitSharedClass.BuildersDto.Body;
 using E_BangAppRabbitSharedClass.Enums;
+using E_BangAppRabbitSharedClass.Exceptions;
 using E_BangAppRabbitSharedClass.Template;
 using System.Reflection;
 
 
 namespace E_BangAppEmailBuilder.src.Templates
 {
-    internal static class ReadFromFile
+    public static class ReadFromFile
     {
-        internal static string ReadTemplateFromFile(string fileName)
+        public static string ReadTemplateFromFile(string fileName)
         {
             try
             {
@@ -24,20 +25,19 @@ namespace E_BangAppEmailBuilder.src.Templates
                 
                 string rootPath = GetProjectDirectoryPath();
                 string filePath = Path.Combine(rootPath, fileName);
-                if (File.Exists(filePath))
+                if (!File.Exists(filePath))
                 {
-                    return File.ReadAllText(filePath);
+                    throw new FileNotFoundException($"Template file '{fileName}' not found as embedded resource or file.");
                 }
-                
-                return string.Empty;
+                return File.ReadAllText(filePath);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new FileNotFoundException($"Template file '{fileName}' not found as embedded resource or file. Error: {ex.Message}", ex);
+                throw;
             }
         }
 
-        internal static List<BodyEmailTemplateTypeOptions> ReadBodyTemplateFromFile()
+        public static List<BodyEmailTemplateTypeOptions> ReadBodyTemplateFromFile()
         {
             var templateList = new List<BodyEmailTemplateTypeOptions>();
             
@@ -72,14 +72,14 @@ namespace E_BangAppEmailBuilder.src.Templates
                 
                 if (templateList.Count == 0)
                 {
-                    throw new InvalidOperationException("No email body templates found in embedded resources");
+                    throw new EmailTemplatedNotFoundException("No email body templates found in embedded resources");
                 }
                 
                 return templateList;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new InvalidOperationException($"Error reading email template files from embedded resources: {ex.Message}", ex);
+                throw;
             }
         }
         private static string GetProjectDirectoryPath()

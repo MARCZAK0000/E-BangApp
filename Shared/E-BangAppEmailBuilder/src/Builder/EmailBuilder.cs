@@ -1,5 +1,6 @@
 ﻿using E_BangAppEmailBuilder.src.EmailBodyStrategy;
 using E_BangAppEmailBuilder.src.EmailBodyStrategy.StrategyBase;
+using E_BangAppEmailBuilder.src.Options;
 using E_BangAppEmailBuilder.src.Templates;
 using E_BangAppRabbitSharedClass.BuildersDto.Body;
 using E_BangAppRabbitSharedClass.BuildersDto.Footer;
@@ -13,6 +14,7 @@ namespace E_BangAppEmailBuilder.src.Builder
         private string _header;
         private string _body;
         private string _footer;
+
         public EmailBuilder()
         {
             _header = string.Empty;

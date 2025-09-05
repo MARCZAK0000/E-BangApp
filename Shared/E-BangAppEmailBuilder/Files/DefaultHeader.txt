@@ -1,4 +1,18 @@
-<div style="background-color: #0078D4; padding: 20px; text-align: center; color: #ffffff;">
-    <h1 style="margin: 0; font-size: 28px;">Welcome to EBang</h1>
-    <p style="margin: 5px 0 0; font-size: 16px;">Dear [email], thank you for being part of our community.</p>
+﻿<div style="font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; text-align: center; color: #ffffff; border-radius: 8px 8px 0 0;">
+    <div style="margin-bottom: 15px;">
+        <h1 style="margin: 0; font-size: 32px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+            🚀 Welcome to EBang
+        </h1>
+    </div>
+    
+    <div style="background-color: rgba(255,255,255,0.1); padding: 15px; border-radius: 6px; backdrop-filter: blur(10px);">
+        <p style="margin: 0; font-size: 18px; font-weight: 500; line-height: 1.4;">
+            Dear <strong>[email]</strong>, thank you for being part of our amazing community! 
+        </p>
+        <p style="margin: 8px 0 0; font-size: 14px; opacity: 0.9;">
+            We're here to support you every step of the way ✨
+        </p>
+    </div>
+    
+    <div style="margin-top: 20px; height: 3px; background: linear-gradient(90deg, #FFD700, #FFA500, #FF6347); border-radius: 2px; opacity: 0.8;"></div>
 </div>

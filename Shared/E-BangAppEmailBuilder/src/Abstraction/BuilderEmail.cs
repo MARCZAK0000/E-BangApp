@@ -1,4 +1,5 @@
 ﻿using E_BangAppEmailBuilder.src.Builder;
+using E_BangAppEmailBuilder.src.Options;
 using E_BangAppRabbitSharedClass.BuildersDto.Footer;
 using E_BangAppRabbitSharedClass.BuildersDto.Header;
 using E_BangAppRabbitSharedClass.Enums;
