@@ -127,7 +127,10 @@ namespace E_BangInfrastructure.Repository
             int rowAffected = await _dbContext
                 .Account
                 .Where(pr => pr.Id == accountId)
-                .ExecuteUpdateAsync(pr => pr.SetProperty(p => p.RefreshToken, refreshToken), cancellationToken);
+                .ExecuteUpdateAsync(pr => pr
+                    .SetProperty(p => p.RefreshToken, refreshToken)
+                    .SetProperty(p => p.RefreshTokenExpireDate, DateTime.UtcNow),
+                    cancellationToken);
 
             return rowAffected == 1;
         }
@@ -136,7 +139,10 @@ namespace E_BangInfrastructure.Repository
             int rowAffected = await _dbContext
                 .Account
                 .Where(pr => pr.Id == accountId)
-                .ExecuteUpdateAsync(pr => pr.SetProperty(p => p.TwoFactoryCode, twoWayToken), token);
+                .ExecuteUpdateAsync(pr => pr
+                    .SetProperty(p => p.TwoFactoryCode, twoWayToken)
+                    .SetProperty(p=>p.TwoFactoryCodeExpireDate, DateTime.Now), 
+                    token);
 
             return rowAffected == 1;
         }

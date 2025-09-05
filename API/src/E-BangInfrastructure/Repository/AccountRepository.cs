@@ -57,6 +57,7 @@ namespace E_BangInfrastructure.Repository
             return signInResult.Succeeded 
                 && user.TwoFactoryCode != null 
                     && user.TwoFactoryCode.Equals(login.TwoFactorCode, StringComparison.CurrentCultureIgnoreCase)
+                       && user.TwoFactoryCodeExpireDate >= DateTime.Now
                         ?Result.Success()
                             : Result.Failure(errorMessage: [
                                 new Errors(
