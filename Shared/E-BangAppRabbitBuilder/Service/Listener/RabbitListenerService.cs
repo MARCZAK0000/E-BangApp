@@ -175,6 +175,7 @@ namespace E_BangAppRabbitBuilder.Service.Listener
                     {
                         _logger.LogError("{Date} - Error processing message: {ex}", DateTime.Now, messageEx.Message);
                         await channel.BasicNackAsync(deliveryTag: ea.DeliveryTag, multiple: false, requeue: false);
+                        
                     }
                 };
 
@@ -185,8 +186,9 @@ namespace E_BangAppRabbitBuilder.Service.Listener
             }
             catch (Exception ex)
             {
-                _logger.LogError("{Date} - ListenerQueue : Failed to initialize RabbitMQ listener for queue {queueName}. Error: {ex}. Application will continue without RabbitMQ functionality.", 
+                _logger.LogError("{Date} - ListenerQueue : Failed to initialize RabbitMQ listener for queue {queueName}. Error: {ex}.", 
                     DateTime.Now, queueOptions?.QueueName ?? "Unknown", ex.Message);
+                throw;
             }
         }
     }
