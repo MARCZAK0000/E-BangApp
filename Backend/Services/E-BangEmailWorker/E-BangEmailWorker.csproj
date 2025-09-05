@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="E-BangAppRabbitBuilder" Version="2.0.2" />
-    <PackageReference Include="EmailBuilder" Version="1.0.7" />
+    <PackageReference Include="E-BangAppRabbitBuilder" Version="2.0.3" />
+    <PackageReference Include="EmailBuilder" Version="1.0.8" />
     <PackageReference Include="MailKit" Version="4.10.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.2" />

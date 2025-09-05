@@ -22,7 +22,7 @@ public class Program
                 .AddConsole()
                 .SetMinimumLevel(LogLevel.Information);
         });
-        var logger = loggerFactory.CreateLogger<Program>(); 
+        var logger = loggerFactory.CreateLogger<Program>();
         try
         {
             bool isDocker = false;
@@ -38,7 +38,7 @@ public class Program
             builder.Services.AddScoped<IDatabaseRepository, DatabaseRepository>();
             builder.Services.AddScoped<IMessageRepository, MessageRepository>();
             builder.Services.AddScoped<IRabbitQueueService, RabbitQueueService>();
-            builder.Services.AddScoped<IBuilderEmail, BuilderEmail>();  
+            builder.Services.AddScoped<IBuilderEmail, BuilderEmail>();
             builder.Services.AddRabbitService(cfg =>
             {
                 cfg.ConnectionRetryCount = 3;
@@ -49,8 +49,8 @@ public class Program
             builder.Services.AddSingleton<DatabaseSeed>();
             builder.Services.AddDbContext<ServiceDbContext>(options =>
             {
-                string connectionString = isDocker? 
-                    Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")!:
+                string connectionString = isDocker ?
+                    Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")! :
                     builder.Configuration.GetConnectionString("DbConnectionString")!;
                 options.UseSqlServer(connectionString);
             });
@@ -84,7 +84,7 @@ public class Program
                     .BindConfiguration("RabbitOptions");
             }
             builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitOptions>>().Value);
-            
+
 
             #endregion
             builder.Services.AddHostedService<Worker>();

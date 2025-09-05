@@ -1,4 +1,4 @@
-using E_BangAppRabbitBuilder.Exceptions;
+﻿using E_BangAppRabbitBuilder.Exceptions;
 using E_BangEmailWorker.Services;
 
 namespace E_BangEmailWorker;
@@ -28,6 +28,7 @@ public class Worker : BackgroundService
             {
                 await InitializeQueueAsync(handlerStopToken);
             }
+            
             catch (OperationCanceledException)
             {
                 _logger.LogInformation("Operation was canceled, stopping the service.");
@@ -47,6 +48,19 @@ public class Worker : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
+            if (_listenerTask.IsCompleted && _listenerTask.IsFaulted)
+            {
+                _logger.LogError("Listener task failed, stopping the worker.");
+                try
+                {
+                    await _listenerTask; 
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Listener task failed with exception.");
+                    throw; 
+                }
+            }
             await Task.Delay(1000, stoppingToken);
         }
     }
@@ -72,7 +86,6 @@ public class Worker : BackgroundService
             catch (Exception)
             {
                 _logger.LogError("Error in listener task during stopping.");
-                throw;
             }
         }   
         scope?.Dispose();
