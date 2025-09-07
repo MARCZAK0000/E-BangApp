@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>E_BangAppRabbitSharedClass</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>App.RabbitSharedClass</PackageId>
+    <Version>1.0.8</Version>
+    <Authors>MARCZAK0000</Authors>
+    <Description>SharedClass</Description>
+    <PackageTags>shared, rabbitmq, notifications</PackageTags>
+  </PropertyGroup>
+</Project>

@@ -1,5 +1,0 @@
-<p>Thank you for singing with us. To complete your registration, please use the following token to verify your account:</p>
-<p>
-    <mark style="background-color: #FFFF00; padding: 5px;">[token]</mark>
-</p>
-<p>Copy and paste this token into the verification page to confirm your account.</p>

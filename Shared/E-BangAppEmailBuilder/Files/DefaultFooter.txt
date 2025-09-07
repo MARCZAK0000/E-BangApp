@@ -1,5 +1,0 @@
-<div style="background-color: #f4f4f4; padding: 20px; text-align: center; color: #333333; font-size: 14px;">
-    <p style="margin: 5px 0;">Thank you for choosing Ebang.</p>
-    <p style="margin: 5px 0;">If you have any questions, feel free to contact us at <a href="mailto:support@ebang.com" style="color: #0078D4;">support@ebang.com</a>.</p>
-    <p style="margin: 5px 0;">&copy; [year] Ebang. All rights reserved.</p>
-</div>
