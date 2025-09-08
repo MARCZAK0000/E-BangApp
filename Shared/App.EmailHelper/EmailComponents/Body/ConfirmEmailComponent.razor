@@ -1,0 +1,73 @@
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+    <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #333; margin: 0; font-size: 28px;">Confirm Your Email</h1>
+            <p style="color: #666; font-size: 16px; margin: 10px 0 0 0;">Please verify your email address</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+            <p style="color: #333; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">
+                Hello,
+            </p>
+            <p style="color: #333; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">
+                We need to confirm your email address to ensure account security and enable important notifications.
+            </p>
+            <p style="color: #666; font-size: 14px; line-height: 1.5; margin-bottom: 30px;">
+                Email to confirm: <strong>@Email</strong>
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="@Url?token=@Token&email=@System.Net.WebUtility.UrlEncode(Email)" 
+               style="display: inline-block; padding: 15px 30px; background-color: #17a2b8; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold; transition: background-color 0.3s;">
+                Confirm Email Address
+            </a>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background-color: #e7f3ff; border-radius: 5px; border-left: 4px solid #17a2b8;">
+            <p style="color: #0c5460; font-size: 14px; line-height: 1.5; margin: 0;">
+                <strong>Note:</strong> This confirmation link will expire in 24 hours for security reasons.
+            </p>
+        </div>
+        
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <p style="color: #666; font-size: 14px; line-height: 1.5; margin-bottom: 10px;">
+                If the button above doesn't work, copy and paste this link into your browser:
+            </p>
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #dee2e6; word-break: break-all;">
+                <code style="color: #17a2b8; font-size: 12px;">
+                    @Url?token=@Token&email=@System.Net.WebUtility.UrlEncode(Email)
+                </code>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <p style="color: #333; font-size: 14px; line-height: 1.5; margin-bottom: 10px;">
+                <strong>Why confirm your email?</strong>
+            </p>
+            <ul style="color: #666; font-size: 14px; line-height: 1.5; margin: 0; padding-left: 20px;">
+                <li>Secure your account</li>
+                <li>Receive important notifications</li>
+                <li>Enable password recovery</li>
+                <li>Complete your account setup</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
+            <p style="color: #999; font-size: 12px; margin: 0;">
+                This email was sent to @Email. If you didn't request this confirmation, you can safely ignore this email.
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Email { get; set; }
+
+    [Parameter]
+    public string Token { get; set; }
+
+    [Parameter]
+    public string Url { get; set; }
+}

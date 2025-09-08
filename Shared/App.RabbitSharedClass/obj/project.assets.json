@@ -8,24 +8,24 @@
     "net9.0": []
   },
   "packageFolders": {
-    "C:\\Users\\jjmar\\.nuget\\packages\\": {},
+    "C:\\Users\\marczak.j\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.8",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\Shared\\App.RabbitSharedClass\\App.RabbitSharedClass.csproj",
+      "projectUniqueName": "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\Shared\\App.RabbitSharedClass\\App.RabbitSharedClass.csproj",
       "projectName": "App.RabbitSharedClass",
-      "projectPath": "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\Shared\\App.RabbitSharedClass\\App.RabbitSharedClass.csproj",
-      "packagesPath": "C:\\Users\\jjmar\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\Shared\\App.RabbitSharedClass\\obj\\",
+      "projectPath": "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\Shared\\App.RabbitSharedClass\\App.RabbitSharedClass.csproj",
+      "packagesPath": "C:\\Users\\marczak.j\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\Shared\\App.RabbitSharedClass\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\NuGet.Config",
-        "C:\\Users\\jjmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\NuGet.Config",
+        "C:\\Users\\marczak.j\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -35,7 +35,8 @@
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "C:\\Program Files\\dotnet\\library-packs": {},
-        "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\.nuget": {},
+        "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\.nuget": {},
+        "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\.nuget": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

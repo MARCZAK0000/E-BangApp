@@ -1,18 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>E_BangAppRabbitSharedClass</RootNamespace>
+    <RootNamespace>App.RabbitSharedClass</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <PropertyGroup>
-<<<<<<< HEAD:Shared/E-BangAppRabbitSharedClass/E-BangAppRabbitSharedClass.csproj
-    <PackageId>E-BangAppRabbitSharedClass</PackageId>
-=======
     <PackageId>App.RabbitSharedClass</PackageId>
->>>>>>> emailbuilder:Shared/App.RabbitSharedClass/App.RabbitSharedClass.csproj
     <Version>1.0.8</Version>
     <Authors>MARCZAK0000</Authors>
     <Description>SharedClass</Description>

@@ -1,0 +1,23 @@
+﻿<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8f9fa; padding: 20px 0;">
+    <tr>
+        <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <tr>
+                    <td style="padding: 30px 40px; text-align: center; border-bottom: 1px solid #e9ecef;">
+                        <h1 style="margin: 0; color: #212529; font-family: Arial, sans-serif; font-size: 28px; font-weight: bold;">
+                            @AppName
+                        </h1>
+                        <p style="margin: 15px 0 0 0; color: #6c757d; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5;">
+                            Witamy w naszej aplikacji! Dziękujemy za korzystanie z naszych usług.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+@code {
+    [Parameter]
+    public string AppName { get; set; };
+}

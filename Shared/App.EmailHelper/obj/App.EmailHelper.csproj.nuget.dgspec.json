@@ -1,24 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\Shared\\App.EmailHelper\\App.EmailHelper.csproj": {}
+    "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\Shared\\App.EmailHelper\\App.EmailHelper.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\Shared\\App.EmailHelper\\App.EmailHelper.csproj": {
+    "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\Shared\\App.EmailHelper\\App.EmailHelper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\Shared\\App.EmailHelper\\App.EmailHelper.csproj",
+        "projectUniqueName": "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\Shared\\App.EmailHelper\\App.EmailHelper.csproj",
         "projectName": "App.EmailHelper",
-        "projectPath": "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\Shared\\App.EmailHelper\\App.EmailHelper.csproj",
-        "packagesPath": "C:\\Users\\jjmar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\Shared\\App.EmailHelper\\obj\\",
+        "projectPath": "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\Shared\\App.EmailHelper\\App.EmailHelper.csproj",
+        "packagesPath": "C:\\Users\\marczak.j\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\Shared\\App.EmailHelper\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\NuGet.Config",
-          "C:\\Users\\jjmar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\NuGet.Config",
+          "C:\\Users\\marczak.j\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -28,7 +28,8 @@
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
-          "C:\\Users\\jjmar\\Desktop\\BankProject\\E-BANGProject\\.nuget": {},
+          "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\.nuget": {},
+          "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\.nuget": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -53,13 +54,13 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
-            "Microsoft.AspNetCore.Components.Web": {
+            "App.EmailRender.Shared": {
               "target": "Package",
-              "version": "[9.0.5, )"
+              "version": "[2.0.6, )"
             },
             "Microsoft.Extensions.DependencyInjection.Abstractions": {
               "target": "Package",
-              "version": "[9.0.5, )"
+              "version": "[9.0.8, )"
             }
           },
           "imports": [
