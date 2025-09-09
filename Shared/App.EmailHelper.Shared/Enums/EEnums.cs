@@ -1,18 +1,18 @@
 ﻿namespace App.EmailHelper.Shared.Enums
 {
-    public enum HeaderEnum
+    public enum EEmailHeaderType
     {
-        Defualt = 0,
+        Default = 0,
         Custom = 1
     }
-    public enum EEnumEmailBodyBuilderType
+    public enum EEmailBodyType
     {
         Registration = 0,
         ConfirmEmail = 1,
         ChangePassword = 2,
         TwoWayToken = 3,
     }
-    public enum FooterEnum
+    public enum EEmailFooterType
     {
         Defualt = 0,
         Custom = 1
