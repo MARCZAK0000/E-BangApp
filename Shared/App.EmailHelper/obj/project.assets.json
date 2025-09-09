@@ -551,7 +551,7 @@
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "2.0.6",
     "restore": {
       "projectUniqueName": "C:\\Users\\marczak.j\\OneDrive - Elettric 80\\Desktop\\Repo\\e-bangapp\\Shared\\App.EmailHelper\\App.EmailHelper.csproj",
       "projectName": "App.EmailHelper",

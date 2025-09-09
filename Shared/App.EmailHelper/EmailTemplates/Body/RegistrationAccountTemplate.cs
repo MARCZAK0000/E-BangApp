@@ -1,28 +1,52 @@
-﻿using App.EmailRender.Shared.Abstraction;
+﻿using App.EmailHelper.EmailParameters.Body;
+using App.EmailHelper.EmailTemplates.Base;
+using App.EmailHelper.Exceptions;
+using App.EmailRender.Shared.Abstraction;
+using EmailComponents.Body;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace App.EmailHelper.EmailTemplates.Body
 {
-    public class RegistrationAccountTemplate : IEmailTemplate
+    public class RegistrationAccountTemplate : BaseTemplate, IEmailTemplate
     {
         private readonly IEmailRenderComponent _emailRenderComponent;
 
-        private readonly ILogger<RegistrationAccountTemplate> _logger;  
+        private readonly ILogger<RegistrationAccountTemplate> _logger;
 
         public RegistrationAccountTemplate(IEmailRenderComponent emailRenderComponent, ILogger<RegistrationAccountTemplate> logger)
         {
             _logger = logger;
             _emailRenderComponent = emailRenderComponent;
         }
-        public Task<string> RenderTemplateAsync<TParameters>(TParameters parameters) where TParameters : IEmailParameters
+        public async Task<string> RenderTemplateAsync<TParameters>(TParameters parameters) where TParameters : IEmailParameters
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (parameters is not RegistrationAccountParameters typedParameters)
+                {
+                    throw new EmailParametersEmptyException("Invalid parameters type. Expected RegistrationAccountParameters.");
+                }
+                var result = await RenderComponentTemplateAsync<RegistrationAccountComponent, RegistrationAccountParameters>
+                    (typedParameters, _emailRenderComponent);
+                return result;
+            }
+            catch (EmailParametersEmptyException ex)
+            {
+                _logger.LogError(ex, "{Date} - {ClassName} : {ErrorMessage}", DateTime.UtcNow, nameof(RegistrationAccountTemplate), ex.Message);
+                throw;
+            }
+            catch (EmailTemplateEmptyException err)
+            {
+                _logger.LogError(err, "{Date} - {ClassName} : {ErrorMessage}", DateTime.UtcNow, nameof(RegistrationAccountTemplate), err.Message);
+                throw;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Date} - {ClassName} : {ErrorMessage}", DateTime.UtcNow, nameof(RegistrationAccountTemplate), e.Message);
+                throw;
+            }
+
+
         }
     }
 }
