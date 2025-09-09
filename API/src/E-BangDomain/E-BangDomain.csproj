@@ -14,9 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="E-BangAppRabbitSharedClass" Version="1.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.8" />
   </ItemGroup>
 
 </Project>
