@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,16 +6,24 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
   <PropertyGroup>
     <PackageId>App.EmailHelper</PackageId>
-    <Version>2.0.6</Version>
+    <Version>2.0.10</Version>
     <Authors>MARCZAK0000</Authors>
     <Description>Email Helper</Description>
     <PackageTags>EmailHelper, Components, Generate Templates</PackageTags>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="App.EmailRender.Shared" Version="2.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.8" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
   </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
 
 </Project>

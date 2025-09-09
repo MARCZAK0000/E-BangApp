@@ -1,8 +1,8 @@
-﻿using App.EmailHelper.EmailParameters.Body;
+﻿using App.EmailHelper.EmailComponents.Body;
+using App.EmailHelper.EmailParameters.Body;
 using App.EmailHelper.EmailTemplates.Base;
 using App.EmailHelper.Exceptions;
 using App.EmailRender.Shared.Abstraction;
-using EmailComponents.Body;
 using Microsoft.Extensions.Logging;
 
 namespace App.EmailHelper.EmailTemplates.Body
@@ -20,7 +20,7 @@ namespace App.EmailHelper.EmailTemplates.Body
         {
             try
             {
-                if(parameters is not TwoWayTokenParameters typedParameters)
+                if (parameters is not TwoWayTokenParameters typedParameters)
                 {
                     throw new EmailParametersEmptyException("Invalid parameters type. Expected TwoWayTokenParameters.");
                 }
@@ -40,8 +40,8 @@ namespace App.EmailHelper.EmailTemplates.Body
             }
             catch (Exception e)
             {
-                _logger.LogError("{Date} - {ClassName} : {ErrorMessage}", DateTime.UtcNow, nameof(TwoWayTokenTemplate), 
-                    "An unexpected error occurred while rendering the email template."+e.Message);
+                _logger.LogError("{Date} - {ClassName} : {ErrorMessage}", DateTime.UtcNow, nameof(TwoWayTokenTemplate),
+                    "An unexpected error occurred while rendering the email template." + e.Message);
                 throw;
             }
         }

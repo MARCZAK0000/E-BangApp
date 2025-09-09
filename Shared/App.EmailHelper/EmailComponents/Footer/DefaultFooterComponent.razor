@@ -1,0 +1,18 @@
+@namespace App.EmailHelper.EmailComponents.Footer
+
+<footer style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #dee2e6; margin-top: 30px;">
+    <div style="max-width: 600px; margin: 0 auto;">
+        <p style="margin: 0; font-size: 14px; color: #6c757d; line-height: 1.5;">
+            &copy; @Year @AppName. All rights reserved.
+        </p>
+        
+    </div>
+</footer>
+
+@code {
+    [Parameter]
+    public string AppName { get; set; }
+
+    [Parameter]
+    public string Year { get; set; }
+}

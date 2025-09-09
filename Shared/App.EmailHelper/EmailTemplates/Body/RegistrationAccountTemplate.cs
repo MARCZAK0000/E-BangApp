@@ -1,8 +1,8 @@
-﻿using App.EmailHelper.EmailParameters.Body;
+﻿using App.EmailHelper.EmailComponents.Body;
+using App.EmailHelper.EmailParameters.Body;
 using App.EmailHelper.EmailTemplates.Base;
 using App.EmailHelper.Exceptions;
 using App.EmailRender.Shared.Abstraction;
-using EmailComponents.Body;
 using Microsoft.Extensions.Logging;
 
 namespace App.EmailHelper.EmailTemplates.Body
