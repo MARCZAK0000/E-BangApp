@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>App.EmailHelper.Shared</id>
+    <version>2.0.6</version>
+    <authors>MARCZAK0000</authors>
+    <description>Email Helper Shared</description>
+    <tags>Email Helper Shared, Enums</tags>
+    <repository type="git" commit="29bf2a4ba055e0b44bbbdd9d19a92b296d831d0e" />
+    <dependencies>
+      <group targetFramework="net9.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\marczak.j\OneDrive - Elettric 80\Desktop\Repo\e-bangapp\Shared\App.EmailHelper.Shared\bin\Debug\net9.0\App.EmailHelper.Shared.dll" target="lib\net9.0\App.EmailHelper.Shared.dll" />
+  </files>
+</package>

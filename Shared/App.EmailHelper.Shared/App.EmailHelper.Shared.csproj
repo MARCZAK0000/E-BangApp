@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PackageId>App.EmailHelper.Shared</PackageId>
+    <Version>2.0.6</Version>
+    <Authors>MARCZAK0000</Authors>
+    <Description>Email Helper Shared</Description>
+    <PackageTags>Email Helper Shared, Enums</PackageTags>
+  </PropertyGroup>
+</Project>
