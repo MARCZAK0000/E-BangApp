@@ -9,18 +9,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="E-BangAppRabbitBuilder" Version="2.0.3" />
-    <PackageReference Include="EmailBuilder" Version="1.0.8" />
-    <PackageReference Include="MailKit" Version="4.10.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2">
+    <PackageReference Include="App.EmailHelper" Version="2.0.10" />
+    <PackageReference Include="App.EmailRender" Version="2.0.7" />
+    <PackageReference Include="App.EmailRender.Shared" Version="2.0.6" />
+    <PackageReference Include="App.EmailSender" Version="2.0.3" />
+    <PackageReference Include="App.RabbitBuilder" Version="3.0.1" />
+    <PackageReference Include="App.RabbitSharedClass" Version="2.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
-    <PackageReference Include="MimeKit" Version="4.10.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
     <PackageReference Include="NLog" Version="5.4.0" />
-    <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
   </ItemGroup>
 </Project>

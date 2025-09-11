@@ -3,11 +3,11 @@ namespace E_BangEmailWorker.OptionsPattern
     public class EmailConnectionOptions
     {
 
-        public required string EmailName { get; set; }
-        public required string Password { get; set; }
-        public required string SmptHost { get; set; }
+        public string EmailName { get; set; }
+        public string Password { get; set; }
+        public string SmptHost { get; set; }
         public int Port { get; set; }
-        public required string Salt { get; set; }
+        public string Salt { get; set; }
 
         public override bool Equals(object? obj)
         {

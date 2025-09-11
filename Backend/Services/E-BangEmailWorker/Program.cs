@@ -1,4 +1,9 @@
-using E_BangAppEmailBuilder.src.Abstraction;
+using App.EmailBuilder.Extensions;
+using App.EmailHelper.EmailTemplates.Body;
+using App.EmailHelper.EmailTemplates.Footer;
+using App.EmailHelper.EmailTemplates.Header;
+using App.EmailRender.Shared.Abstraction;
+using App.RenderEmail.Extensions;
 using E_BangAppRabbitBuilder.Options;
 using E_BangAppRabbitBuilder.ServiceExtensions;
 using E_BangEmailWorker;
@@ -7,6 +12,7 @@ using E_BangEmailWorker.OptionsPattern;
 using E_BangEmailWorker.Repository;
 using E_BangEmailWorker.Seeder;
 using E_BangEmailWorker.Services;
+using E_BangEmailWorker.Strategy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
@@ -25,6 +31,7 @@ public class Program
         var logger = loggerFactory.CreateLogger<Program>();
         try
         {
+
             bool isDocker = false;
             string? isDockerEnv = Environment.GetEnvironmentVariable("IS_DOCKER");
             if (isDockerEnv != null && isDockerEnv.Equals("true", StringComparison.CurrentCultureIgnoreCase))
@@ -32,13 +39,21 @@ public class Program
                 isDocker = true;
             }
             var builder = Host.CreateApplicationBuilder(args);
+            var emailOptions = new EmailConnectionOptions();
+            builder.Configuration.GetSection("EmailConnectionOptions").Bind(emailOptions);
             #region Service Registration
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
-            builder.Services.AddScoped<IEmailRepository, EmailRepository>();
             builder.Services.AddScoped<IDatabaseRepository, DatabaseRepository>();
             builder.Services.AddScoped<IMessageRepository, MessageRepository>();
             builder.Services.AddScoped<IRabbitQueueService, RabbitQueueService>();
-            builder.Services.AddScoped<IBuilderEmail, BuilderEmail>();
+            builder.Services.AddRenderEmailService();
+            builder.Services.AddEmailSenderService(cfg =>
+            {
+                cfg.Port = emailOptions.Port;
+                cfg.SmptHost = emailOptions.SmptHost;
+                cfg.EmailName = emailOptions.EmailName;
+                cfg.Password = emailOptions.Password;
+            });
             builder.Services.AddRabbitService(cfg =>
             {
                 cfg.ConnectionRetryCount = 3;
@@ -55,12 +70,25 @@ public class Program
                 options.UseSqlServer(connectionString);
             });
 
+
+            ///Strategy
+            ///
+            builder.Services.AddScoped<IEmailTemplate, DefaultFooterTemplate>();
+            builder.Services.AddScoped<IEmailTemplate, DefaultHeaderTemplate>();
+            builder.Services.AddScoped<IEmailTemplate, RegistrationAccountTemplate>();
+            builder.Services.AddScoped<IEmailTemplate, ConfirmEmailTemplate>();
+            builder.Services.AddScoped<IEmailTemplate, TwoWayTokenTemplate>();
+
+            builder.Services.AddScoped<DefaultFooterTemplate>();
+            builder.Services.AddScoped<DefaultHeaderTemplate>();
+            builder.Services.AddScoped<RegistrationAccountTemplate>();
+            builder.Services.AddScoped<ConfirmEmailTemplate>();
+            builder.Services.AddScoped<TwoWayTokenTemplate>();
+
+            builder.Services.AddSingleton<StrategyFactory>();
+            ///
             #endregion
             #region OptionsPattern
-            builder.Services.AddOptions<EmailConnectionOptions>()
-                    .ValidateOnStart()
-                    .BindConfiguration("EmailConnectionOptions");
-            builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptionsMonitor<EmailConnectionOptions>>().CurrentValue);
             if (isDocker)
             {
                 logger.LogInformation("{Date}: Take info from ENV, Rabbit Options: {rabbit}", DateTime.Now, Environment.GetEnvironmentVariable("RABBIT_HOST"));
@@ -75,6 +103,8 @@ public class Program
                         options.ListenerQueueName = JsonSerializer.Deserialize<QueueOptions>(Environment.GetEnvironmentVariable("RABBIT_LISTENERQUEUENAME")!)!;
                         options.SenderQueueName = new();
                     });
+
+                
             }
             else
             {
@@ -84,7 +114,7 @@ public class Program
                     .BindConfiguration("RabbitOptions");
             }
             builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitOptions>>().Value);
-
+            builder.Services.AddSingleton(emailOptions);
 
             #endregion
             builder.Services.AddHostedService<Worker>();
