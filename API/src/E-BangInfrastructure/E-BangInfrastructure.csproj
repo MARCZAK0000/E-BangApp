@@ -10,9 +10,9 @@
   <ItemGroup>
     <PackageReference Include="App.EmailHelper" Version="2.0.10" />
     <PackageReference Include="App.EmailHelper.Shared" Version="2.0.9" />
-    <PackageReference Include="App.EmailRender" Version="2.0.6" />
-    <PackageReference Include="App.RabbitBuilder" Version="3.0.0" />
-    <PackageReference Include="App.RabbitSharedClass" Version="2.0.9" />
+    <PackageReference Include="App.EmailRender" Version="2.0.7" />
+    <PackageReference Include="App.RabbitBuilder" Version="3.0.1" />
+    <PackageReference Include="App.RabbitSharedClass" Version="2.0.10" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />

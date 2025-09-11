@@ -9,6 +9,7 @@ using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.Product;
 using E_BangInfrastructure.Database;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace E_BangInfrastructure.Repository
 {
@@ -34,7 +35,7 @@ namespace E_BangInfrastructure.Repository
                 ShopID = createProductDto.ShopId,
             }, cancellationToken: cancellationToken);
 
-            return true;
+            return await _projectDbContext.SaveChangesAsync(cancellationToken)>0;
         }
         public async Task<bool> CreateProductPriceAndCountInformationsAsync(string productId, decimal price, int count, CancellationToken cancellationToken)
         {
@@ -46,19 +47,19 @@ namespace E_BangInfrastructure.Repository
                     ProductID = productId,
                     ProductCount = count
                 }, cancellationToken);
-            return true;
+            return await _projectDbContext.SaveChangesAsync(cancellationToken) > 0;
         }
-        public Task<bool> UpdateCount(ProductPrice productPrice, int productCount)
+        public async Task<bool> UpdateCount(ProductPrice productPrice, int productCount)
         {
             productPrice.ProductCount = productCount;
-            return Task.FromResult(true);
+            return await _projectDbContext.SaveChangesAsync() > 0;
         }
-        public Task<bool> UpdateProductAsync(Product product, CreateProductDto updateProductDto, CancellationToken cancellationToken)
+        public async Task<bool> UpdateProductAsync(Product product, CreateProductDto updateProductDto, CancellationToken cancellationToken)
         {
             product.ProductName = updateProductDto.ProductName;
             product.ProductDescription = updateProductDto.ProductDescription;
             product.LastModifiedTime = DateTime.UtcNow;
-            return Task.FromResult(true);
+            return await _projectDbContext.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> InsertProductFileAsync(Product product, InsertProductFileDto updateProductImageDto, CancellationToken cancellationToken)
@@ -85,7 +86,7 @@ namespace E_BangInfrastructure.Repository
                 RabbitChannel = E_BangDomain.Enums.ERabbitChannel.AzureChannel
             }, cancellationToken);
 
-            return true;
+            return await _projectDbContext.SaveChangesAsync(cancellationToken) > 0;
         }
 
 

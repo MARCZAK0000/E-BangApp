@@ -91,18 +91,18 @@ namespace E_BangInfrastructure.Repository
 
         }
 
-        public async Task<List<ShopBranchesInformations>> GetShopBranchesByShopIdAsync(string shopBranchId, CancellationToken cancellationToken)
+        public Task<List<ShopBranchesInformations>> GetShopBranchesByShopIdAsync(string shopBranchId, CancellationToken cancellationToken)
         {
-            return await _dbContext
+            return _dbContext
                 .ShopAddressInformations
                 .Where(pr => pr.ShopID == shopBranchId)
                 .ToListAsync(cancellationToken: cancellationToken);
         }
 
-        public async Task<List<string>> ListOfStaffIdInShop(string shopId, CancellationToken cancellationToken)
+        public Task<List<string>> ListOfStaffIdInShop(string shopId, CancellationToken cancellationToken)
         {
 
-            return await _dbContext
+            return _dbContext
                 .Staff
                 .Where(pr => pr.ShopId == shopId)
                 .Select(pr => pr.AccountId)
