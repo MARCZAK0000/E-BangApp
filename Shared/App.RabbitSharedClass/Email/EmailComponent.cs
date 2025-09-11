@@ -14,12 +14,12 @@ namespace App.RabbitSharedClass.Email
         public string AddressTo { get; }
 
 
-        public EmailComponent(HeaderComponent<THeader> header, BodyComponent<TBody> bodyComponent, FooterComponent<TFooter> footerComponent, 
+        public EmailComponent(HeaderComponent<THeader> header, BodyComponent<TBody> body, FooterComponent<TFooter> footer, 
             string subject, string addressTo )
         {
             Header = header;
-            Body = bodyComponent;
-            Footer = footerComponent;
+            Body = body;
+            Footer = footer;
             Subject = subject;
             AddressTo = addressTo;
         }

@@ -4,13 +4,13 @@ namespace App.RabbitSharedClass.Email.Component
 {
     public class BodyComponent<T> where T : class
     {
-        public BodyComponent(EEmailBodyType headerType, T bodyParameters)
+        public BodyComponent(EEmailBodyType bodyType, T bodyParameters)
         {
-            HeaderType = headerType;
+            BodyType = bodyType;
             BodyParameters = bodyParameters;
         }
 
-        public EEmailBodyType HeaderType { get; set; }
+        public EEmailBodyType BodyType { get; set; }
 
         public T BodyParameters { get; set; }
     }
