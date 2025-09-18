@@ -33,12 +33,12 @@ internal class Program
             string connectionString = isDocker ?
                 Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")! :
                 builder.Configuration.GetConnectionString("DbConnectionsString")!;
-            options.UseNpgsql(connectionString);
+            options.UseSqlServer(connectionString);
         });
         builder.Services.AddSingleton<IInformations, Informations>();
         builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
         builder.Services.AddRabbitService();
-        builder.Services.AddScoped<IPostgresDbRepostiory, PostgresDbRepostiory>();
+        builder.Services.AddScoped<IDbRepository, DbRepository>();
         builder.Services.AddHostedService<NotificationWorker>();
 
         #region Options Pattern

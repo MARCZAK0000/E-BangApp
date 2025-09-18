@@ -5,13 +5,8 @@ using E_BangAppRabbitSharedClass.AzureRabbitModel;
 using E_BangAzureWorker.AzureStrategy;
 using E_BangAzureWorker.DatabaseFactory;
 using E_BangAzureWorker.EventPublisher;
-using E_BangAzureWorker.JSON;
 using E_BangAzureWorker.Model;
 using E_BangAzureWorker.Notification;
-using E_BangAzureWorker.Repository;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System.Text;
 
 namespace E_BangAzureWorker.Services
 {
@@ -62,13 +57,13 @@ namespace E_BangAzureWorker.Services
                             await _eventPublisher.OnRecivedMessage(this, new EventMessageArgs(messageModel.AccountID!, messageModel.AzureStrategyEnum));
                         }
                     }
-                });
+                }, cancellationToken);
         }
 
         public async Task HandleSendQueueAsync(EventMessageArgs args, CancellationToken cancellationToken)
         {
             SendModel message = Notifications.GenerateMessage(args);
-            await _rabbitSenderService.InitSenderRabbitQueueAsync(_rabbitMQSettings, message);
+            await _rabbitSenderService.InitSenderRabbitQueueAsync(_rabbitMQSettings, message, cancellationToken);
         }
     }
 }

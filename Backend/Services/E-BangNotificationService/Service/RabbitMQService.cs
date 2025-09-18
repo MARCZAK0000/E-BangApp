@@ -1,6 +1,7 @@
 ﻿using E_BangAppRabbitBuilder.Options;
 using E_BangAppRabbitBuilder.Service.Listener;
 using E_BangAppRabbitSharedClass.RabbitModel;
+using E_BangNotificationService.NotificationEntities;
 using E_BangNotificationService.Repository;
 using Microsoft.AspNetCore.SignalR;
 using SignalRHub;
@@ -16,7 +17,7 @@ namespace E_BangNotificationService.Service
 
         private readonly IHubContext<NotificationHub, INotificationClient> _hubContext;
 
-        private readonly IPostgresDbRepostiory _postgresDbRepostiory;
+        private readonly IDbRepository _dbRepo;
 
         private readonly IRabbitListenerService _rabbitListenerService;
 
@@ -24,13 +25,13 @@ namespace E_BangNotificationService.Service
             RabbitOptions rabbitOptions,
             IHubContext<NotificationHub,
             INotificationClient> hubContext,
-            IPostgresDbRepostiory postgresDbRepostiory,
+            IDbRepository dbRepo,
             IRabbitListenerService rabbitListenerService)
         {
             _logger = logger;
             _rabbitOptions = rabbitOptions;
             _hubContext = hubContext;
-            _postgresDbRepostiory = postgresDbRepostiory;
+            _dbRepo = dbRepo;
             _rabbitListenerService = rabbitListenerService;
         }
 
@@ -38,7 +39,17 @@ namespace E_BangNotificationService.Service
         {
             await _rabbitListenerService.InitListenerRabbitQueueAsync(_rabbitOptions, async (NotificationRabbitMessageModel messageModel) =>
             {
-                bool IsSaved = await _postgresDbRepostiory.SaveNotificationAsync(messageModel, token);
+                Notifcation notifcation = new Notifcation()
+                {
+                    ReciverId = messageModel.ReciverId,
+                    ReciverName = messageModel.ReciverName,
+                    SenderId = messageModel.SenderId,
+                    SenderName = messageModel.SenderName,
+                    IsReaded = messageModel.IsReaded,
+                    Text = messageModel.Text,
+                    LastUpdateTime = DateTime.Now,
+                };
+                bool IsSaved = await _dbRepo.SaveNotificationAsync(notifcation, token);
                 if (IsSaved)
                 {
                     await _hubContext.Clients.Client(messageModel.ReciverId).RecivedMessage(messageModel);
