@@ -1,8 +1,12 @@
-﻿using App.EmailHelper.EmailTemplates.Body;
+﻿using App.EmailHelper.EmailParameters.Body;
+using App.EmailHelper.EmailParameters.Footer;
+using App.EmailHelper.EmailParameters.Header;
+using App.EmailHelper.EmailTemplates.Body;
 using App.EmailHelper.EmailTemplates.Footer;
 using App.EmailHelper.EmailTemplates.Header;
 using App.EmailHelper.Shared.Enums;
 using App.EmailRender.Shared.Abstraction;
+using App.EmailRender.Shared.Strategy;
 
 namespace E_BangEmailWorker.Strategy
 {
@@ -15,31 +19,31 @@ namespace E_BangEmailWorker.Strategy
             _serviceProvider = serviceProvider;
         }
 
-        public Dictionary<EEmailFooterType, IEmailTemplate> GenerateEmailFooterStrategy()
+        public Dictionary<EEmailFooterType, EmailBuilderMetadata<IEmailTemplate, IEmailParameters>> GenerateEmailFooterStrategy()
         {
-            return new Dictionary<EEmailFooterType, IEmailTemplate>
+            return new Dictionary<EEmailFooterType, EmailBuilderMetadata<IEmailTemplate, IEmailParameters>>
             {
-                { EEmailFooterType.Defualt, _serviceProvider.GetRequiredService<DefaultFooterTemplate>() },
+                { EEmailFooterType.Defualt, new EmailBuilderMetadata<IEmailTemplate, IEmailParameters>(_serviceProvider.GetRequiredService<DefaultFooterTemplate>(), new DefaultFooterParameters()) },
                 { EEmailFooterType.Custom, null! }
             };
         }
 
-        public Dictionary<EEmailBodyType, IEmailTemplate> GenerateEmailBodyBuilderStrategy()
+        public Dictionary<EEmailBodyType, EmailBuilderMetadata<IEmailTemplate, IEmailParameters>> GenerateEmailBodyBuilderStrategy()
         {
-            return new Dictionary<EEmailBodyType, IEmailTemplate>
+            return new Dictionary<EEmailBodyType, EmailBuilderMetadata<IEmailTemplate, IEmailParameters>>
             {
-                { EEmailBodyType.ConfirmEmail, _serviceProvider.GetRequiredService<ConfirmEmailTemplate>() },
-                { EEmailBodyType.Registration, _serviceProvider.GetRequiredService<RegistrationAccountTemplate>() },
-                { EEmailBodyType.TwoWayToken, _serviceProvider.GetRequiredService<TwoWayTokenTemplate>() },
+                { EEmailBodyType.ConfirmEmail, new EmailBuilderMetadata<IEmailTemplate, IEmailParameters>(_serviceProvider.GetRequiredService<ConfirmEmailTemplate>(), new ConfimEmailParameters()) },
+                { EEmailBodyType.Registration, new EmailBuilderMetadata<IEmailTemplate, IEmailParameters>(_serviceProvider.GetRequiredService<RegistrationAccountTemplate>(), new RegistrationAccountParameters()) },
+                { EEmailBodyType.TwoWayToken, new EmailBuilderMetadata<IEmailTemplate, IEmailParameters>(_serviceProvider.GetRequiredService<TwoWayTokenTemplate>(), new TwoWayTokenParameters()) },
                 { EEmailBodyType.ChangePassword, null! },
             };
         }
 
-        public Dictionary<EEmailHeaderType, IEmailTemplate> GenerateEmailHeaderStrategy()
+        public Dictionary<EEmailHeaderType, EmailBuilderMetadata<IEmailTemplate, IEmailParameters>> GenerateEmailHeaderStrategy()
         {
-            return new Dictionary<EEmailHeaderType, IEmailTemplate>
+            return new Dictionary<EEmailHeaderType, EmailBuilderMetadata<IEmailTemplate, IEmailParameters>>
             {
-                { EEmailHeaderType.Default, _serviceProvider.GetRequiredService<DefaultHeaderTemplate>() },
+                { EEmailHeaderType.Default, new EmailBuilderMetadata<IEmailTemplate, IEmailParameters>(_serviceProvider.GetRequiredService<DefaultHeaderTemplate>(), new DefaultHeaderParameters()) },
                 { EEmailHeaderType.Custom, null! }
             };
         }
