@@ -7,7 +7,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <PackageId>App.EmailHelper.Shared</PackageId>
-    <Version>2.0.9</Version>
+    <Version>2.0.13</Version>
     <Authors>MARCZAK0000</Authors>
     <Description>Email Helper Shared</Description>
     <PackageTags>Email Helper Shared, Enums</PackageTags>
