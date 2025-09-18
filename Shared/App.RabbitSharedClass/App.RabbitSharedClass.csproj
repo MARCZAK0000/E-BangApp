@@ -7,12 +7,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <PackageId>App.RabbitSharedClass</PackageId>
-    <Version>2.0.10</Version>
+    <Version>2.0.12</Version>
     <Authors>MARCZAK0000</Authors>
     <Description>SharedClass</Description>
     <PackageTags>shared, rabbitmq, notifications</PackageTags>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="App.EmailHelper.Shared" Version="2.0.9" />
-  </ItemGroup>
 </Project>
