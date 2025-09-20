@@ -1,7 +1,7 @@
-﻿namespace E_BangNotificationService.Service
+﻿namespace Service
 {
     public interface IRabbitMQService
     {
-        Task CreateListenerQueueAsync(CancellationToken token);
+        Task<bool> ListenerQueueAsync(CancellationToken token);
     }
 }

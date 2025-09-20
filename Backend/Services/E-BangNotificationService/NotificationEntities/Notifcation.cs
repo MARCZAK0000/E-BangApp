@@ -1,4 +1,4 @@
-﻿namespace E_BangNotificationService.NotificationEntities
+﻿namespace NotificationEntities
 {
     public class Notifcation
     {

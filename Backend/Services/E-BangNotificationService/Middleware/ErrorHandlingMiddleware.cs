@@ -1,5 +1,4 @@
-﻿
-namespace E_BangNotificationService.Middleware
+﻿namespace Middleware
 {
     public class ErrorHandlingMiddleware : IMiddleware
     {

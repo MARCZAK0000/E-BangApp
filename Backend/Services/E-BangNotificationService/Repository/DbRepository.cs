@@ -1,7 +1,6 @@
-﻿using E_BangAppRabbitSharedClass.RabbitModel;
-using E_BangNotificationService.NotificationEntities;
+﻿using NotificationEntities;
 
-namespace E_BangNotificationService.Repository
+namespace Repository
 {
     public class DbRepository : IDbRepository
     {
@@ -14,9 +13,9 @@ namespace E_BangNotificationService.Repository
 
         public async Task<bool> SaveNotificationAsync(Notifcation notifcation, CancellationToken cancellationToken)
         {
-            
+
             await _notificationDbContext.Notifcations.AddAsync(notifcation, cancellationToken);
-            return await _notificationDbContext.SaveChangesAsync(cancellationToken) > 0 ;     
+            return await _notificationDbContext.SaveChangesAsync(cancellationToken) > 0;
         }
     }
 }

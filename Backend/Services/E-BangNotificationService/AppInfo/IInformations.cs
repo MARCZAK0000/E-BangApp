@@ -1,4 +1,4 @@
-﻿namespace E_BangNotificationService.AppInfo
+﻿namespace AppInfo
 {
     public interface IInformations
     {

@@ -1,19 +1,19 @@
-﻿using E_BangNotificationService.AppInfo;
-using E_BangNotificationService.Service;
+﻿using AppInfo;
+using Service;
 
-namespace E_BangNotificationService.BackgroundWorker
+namespace BackgroundWorker
 {
-    public class NotificationWorker : BackgroundService
+    public class MainWorker : BackgroundService
     {
         private readonly IInformations _informations;
 
-        private readonly ILogger<NotificationWorker> _logger;
+        private readonly ILogger<MainWorker> _logger;
 
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private IServiceScope? scope;
-        public NotificationWorker(IInformations informations,
-            ILogger<NotificationWorker> logger, IServiceScopeFactory serviceScopeFactory)
+        public MainWorker(IInformations informations,
+            ILogger<MainWorker> logger, IServiceScopeFactory serviceScopeFactory)
         {
             _informations = informations;
             _logger = logger;
@@ -41,7 +41,7 @@ namespace E_BangNotificationService.BackgroundWorker
             {
                 scope = _serviceScopeFactory.CreateScope();
                 IRabbitMQService rabbitMQService = scope.ServiceProvider.GetRequiredService<IRabbitMQService>();
-                await rabbitMQService.CreateListenerQueueAsync(stoppingToken);
+                await rabbitMQService.ListenerQueueAsync(stoppingToken);
 
                 while (!stoppingToken.IsCancellationRequested)
                 {

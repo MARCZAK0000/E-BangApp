@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace E_BangNotificationService.NotificationEntities
+namespace NotificationEntities
 {
     public class NotificationDbContext : DbContext
     {

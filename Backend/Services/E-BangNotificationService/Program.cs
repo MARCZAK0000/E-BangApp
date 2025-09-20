@@ -1,13 +1,14 @@
+using AppInfo;
+using BackgroundWorker;
 using E_BangAppRabbitBuilder.Options;
 using E_BangAppRabbitBuilder.ServiceExtensions;
-using E_BangNotificationService.AppInfo;
-using E_BangNotificationService.BackgroundWorker;
-using E_BangNotificationService.Middleware;
-using E_BangNotificationService.NotificationEntities;
-using E_BangNotificationService.Repository;
-using E_BangNotificationService.Service;
+using Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Middleware;
+using NotificationEntities;
+using Repository;
+using Service;
 using SignalRHub;
 
 
@@ -39,7 +40,8 @@ internal class Program
         builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
         builder.Services.AddRabbitService();
         builder.Services.AddScoped<IDbRepository, DbRepository>();
-        builder.Services.AddHostedService<NotificationWorker>();
+
+        builder.Services.AddQueues();
 
         #region Options Pattern
         if (isDocker)

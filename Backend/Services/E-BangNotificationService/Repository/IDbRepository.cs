@@ -1,5 +1,5 @@
-﻿using E_BangNotificationService.NotificationEntities;
-namespace E_BangNotificationService.Repository
+﻿using NotificationEntities;
+namespace Repository
 {
     public interface IDbRepository
     {
