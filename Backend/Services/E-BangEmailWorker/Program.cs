@@ -3,9 +3,9 @@ using App.EmailHelper.EmailTemplates.Body;
 using App.EmailHelper.EmailTemplates.Footer;
 using App.EmailHelper.EmailTemplates.Header;
 using App.EmailRender.Shared.Abstraction;
+using App.RabbitBuilder.Options;
+using App.RabbitBuilder.ServiceExtensions;
 using App.RenderEmail.Extensions;
-using E_BangAppRabbitBuilder.Options;
-using E_BangAppRabbitBuilder.ServiceExtensions;
 using E_BangEmailWorker;
 using E_BangEmailWorker.Database;
 using E_BangEmailWorker.OptionsPattern;
@@ -104,7 +104,7 @@ public class Program
                         options.SenderQueueName = new();
                     });
 
-                
+
             }
             else
             {

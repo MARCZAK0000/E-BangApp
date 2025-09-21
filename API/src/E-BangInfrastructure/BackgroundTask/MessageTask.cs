@@ -1,14 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-using E_BangApplication.Exceptions;
+﻿using App.RabbitBuilder.Options;
+using App.RabbitBuilder.Service.Sender;
 using E_BangDomain.BackgroundTask;
+using E_BangDomain.Dictionary;
 using E_BangDomain.ModelDtos.MessageSender;
 using Microsoft.Extensions.Logging;
-using RabbitMQ.Client;
-using System.Text;
-using E_BangAppRabbitBuilder.Service.Sender;
-using E_BangAppRabbitBuilder.Options;
-using E_BangDomain.Enums;
-using E_BangDomain.Dictionary;
 
 namespace E_BangInfrastructure.BackgroundTask
 {
@@ -34,11 +29,11 @@ namespace E_BangInfrastructure.BackgroundTask
         /// <returns></returns>
         public async Task SendToRabbitChannelAsync<T>(RabbitMessageBaseDto<T> parameters, CancellationToken token) where T : class
         {
-            string queueName = RabbitChannelDictionary.RabbitChannelName.Where(pr=>pr.Key == parameters.RabbitChannel)
-                .Select(pr=>pr.Value).FirstOrDefault() ?? throw new ArgumentNullException($"Queue with channel '{parameters.RabbitChannel}' not found in SenderQueues.");
+            string queueName = RabbitChannelDictionary.RabbitChannelName.Where(pr => pr.Key == parameters.RabbitChannel)
+                .Select(pr => pr.Value).FirstOrDefault() ?? throw new ArgumentNullException($"Queue with channel '{parameters.RabbitChannel}' not found in SenderQueues.");
             try
             {
-                _logger.LogInformation("Message Task: Add to Queue at {Date}, Message Type {type}, Message Queue: {queue}", 
+                _logger.LogInformation("Message Task: Add to Queue at {Date}, Message Type {type}, Message Queue: {queue}",
                     DateTime.Now, typeof(T).Name, _rabbitOptions.SenderQueues?.ToString());
                 await _rabbitSenderService.InitSenderRabbitQueueAsync(_rabbitOptions, parameters.Message, queueName, token);
             }
@@ -46,7 +41,7 @@ namespace E_BangInfrastructure.BackgroundTask
             {
                 _logger.LogError("Message Task: Error at {date}: {e}", DateTime.Now, e);
                 throw;
-            }   
+            }
         }
 
 

@@ -1,4 +1,4 @@
-﻿using E_BangAppRabbitBuilder.Exceptions;
+﻿using App.RabbitBuilder.Exceptions;
 using E_BangDomain.IQueueService;
 
 namespace E_BangAPI.BackgroundWorker

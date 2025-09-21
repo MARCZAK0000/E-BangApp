@@ -1,9 +1,9 @@
 ﻿using App.EmailBuilder.Service;
 using App.EmailHelper.Shared.Email;
+using App.RabbitBuilder.Options;
+using App.RabbitBuilder.Service.Listener;
 using App.RabbitSharedClass.Email;
 using App.RenderEmail.RenderEmail;
-using E_BangAppRabbitBuilder.Options;
-using E_BangAppRabbitBuilder.Service.Listener;
 using E_BangEmailWorker.Exceptions;
 using E_BangEmailWorker.Model;
 using E_BangEmailWorker.Repository;
@@ -59,7 +59,7 @@ namespace E_BangEmailWorker.Services
                 var headerDictionary = _strategyFactory.GenerateEmailHeaderStrategy();
                 var bodyDictionary = _strategyFactory.GenerateEmailBodyBuilderStrategy();
                 var footerDictionary = _strategyFactory.GenerateEmailFooterStrategy();
-                EmailComponentJson emailComponent = JsonSerializer.Deserialize<EmailComponentJson>(messageModel.EmailComponentsJson)??throw new Exception("XD");
+                EmailComponentJson emailComponent = JsonSerializer.Deserialize<EmailComponentJson>(messageModel.EmailComponentsJson) ?? throw new Exception("XD");
                 var headerResult = await _renderEmailBuilder.SetHeader(emailComponent.HeaderType, headerDictionary, JsonSerializer.SerializeToElement(emailComponent.HeaderParameters));
                 var bodyResult = await headerResult.SetBody(emailComponent.BodyType, bodyDictionary, JsonSerializer.SerializeToElement(emailComponent.BodyParameters));
                 var footerResult = await bodyResult.SetFooter(emailComponent.FooterType, footerDictionary, JsonSerializer.SerializeToElement(emailComponent.FooterParameters));

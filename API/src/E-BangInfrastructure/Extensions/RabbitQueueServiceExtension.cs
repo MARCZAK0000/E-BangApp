@@ -1,6 +1,6 @@
-﻿using E_BangApplication.QueueService;
-using E_BangAppRabbitBuilder.Options;
-using E_BangAppRabbitBuilder.ServiceExtensions;
+﻿using App.RabbitBuilder.Options;
+using App.RabbitBuilder.ServiceExtensions;
+using E_BangApplication.QueueService;
 using E_BangDomain.BackgroundTask;
 using E_BangDomain.IQueueService;
 using E_BangInfrastructure.BackgroundTask;
@@ -17,7 +17,7 @@ namespace E_BangInfrastructure.Extensions
         {
             services.AddSingleton<IMessageSenderHandlerQueue, MessageSenderHandlerQueue>();
             services.AddTransient<IMessageTask, MessageTask>();
-            services.AddRabbitService(cfg=>
+            services.AddRabbitService(cfg =>
             {
                 cfg.ServiceRetryCount = 5;
                 cfg.ServiceRetryDelaySeconds = 2;
@@ -36,7 +36,7 @@ namespace E_BangInfrastructure.Extensions
                         cfg.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
                         cfg.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
                         cfg.ListenerQueues = [];
-                        cfg.SenderQueues = JsonSerializer.Deserialize<List<QueueOptions>>(Environment.GetEnvironmentVariable("API_LISTENER_QUEUE_OPTIONS")!); 
+                        cfg.SenderQueues = JsonSerializer.Deserialize<List<QueueOptions>>(Environment.GetEnvironmentVariable("API_LISTENER_QUEUE_OPTIONS")!);
                     })
                     .ValidateDataAnnotations();
             }

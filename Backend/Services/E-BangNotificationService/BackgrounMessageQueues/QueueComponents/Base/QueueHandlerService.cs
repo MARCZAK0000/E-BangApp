@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Threading.Tasks;
 
 namespace BackgrounMessageQueues.QueueComponents.Base
 {
@@ -19,10 +18,22 @@ namespace BackgrounMessageQueues.QueueComponents.Base
         public virtual async Task<Func<CancellationToken, Task>> DequeueAsync(CancellationToken cancellationToken)
         {
             await _semaphore.WaitAsync(cancellationToken);
-
             _workitem.TryDequeue(out var result);
-
             return result!;
-        }       
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _semaphore?.Dispose();
+            }
+        }
     }
 }
