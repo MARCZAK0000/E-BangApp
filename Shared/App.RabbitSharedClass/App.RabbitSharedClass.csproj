@@ -7,7 +7,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <PackageId>App.RabbitSharedClass</PackageId>
-    <Version>2.0.12</Version>
+    <Version>2.0.14</Version>
     <Authors>MARCZAK0000</Authors>
     <Description>SharedClass</Description>
     <PackageTags>shared, rabbitmq, notifications</PackageTags>
