@@ -1,11 +1,13 @@
-﻿using NotificationEntities;
+﻿using Message;
+using NotificationEntities;
+using System.Text.Json;
 
 namespace Decorator
 {
     public interface INotificationDecorator
     {
-        Task<bool> HandleNotification<TParameters>(TParameters parameters, 
-            NotificationSettings userNotificationSettings, CancellationToken cancellationToken)
-            where TParameters : class ,new();
+        Task<bool> HandleNotification(RabbitMessageModel parameters,
+            NotificationSettings userNotificationSettings, CancellationToken cancellationToken);
+            
     }
 }

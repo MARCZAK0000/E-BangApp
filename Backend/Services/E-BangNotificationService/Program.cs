@@ -1,14 +1,12 @@
+using App.RabbitBuilder.Options;
+using App.RabbitBuilder.ServiceExtensions;
 using AppInfo;
-using BackgroundWorker;
-using E_BangAppRabbitBuilder.Options;
-using E_BangAppRabbitBuilder.ServiceExtensions;
 using Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Middleware;
 using NotificationEntities;
 using Repository;
-using Service;
 using SignalRHub;
 
 
@@ -37,16 +35,14 @@ internal class Program
             options.UseSqlServer(connectionString);
         });
         builder.Services.AddSingleton<IInformations, Informations>();
-        builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
         builder.Services.AddRabbitService();
         builder.Services.AddScoped<IDbRepository, DbRepository>();
-
         builder.Services.AddQueues();
 
         #region Options Pattern
         if (isDocker)
         {
-            builder.Services.AddOptions<RabbitOptions>()
+            builder.Services.AddOptions<RabbitOptionsExtended>()
                 .Configure(options =>
                 {
                     options.Host = Environment.GetEnvironmentVariable("RABBIT_HOST")!;
@@ -54,18 +50,18 @@ internal class Program
                     options.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
                     options.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
                     options.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;
-                    options.ListenerQueueName = Environment.GetEnvironmentVariable("RABBIT_NOTIFICATIONQUEUE")!;
-                    options.SenderQueueName = "";
+                    //options.ListenerQueueName = Environment.GetEnvironmentVariable("RABBIT_NOTIFICATIONQUEUE")!;
+                    //options.SenderQueueName = "";
                 });
         }
         else
         {
             builder.Services
-                .AddOptions<RabbitOptions>()
+                .AddOptions<RabbitOptionsExtended>()
                 .ValidateOnStart()
                 .BindConfiguration("RabbitOptions");
         }
-        builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitOptions>>().Value);
+        builder.Services.AddSingleton(pr => pr.GetRequiredService<IOptions<RabbitOptionsExtended>>().Value);
         #endregion
         var app = builder.Build();
         using var scope = app.Services.CreateScope();

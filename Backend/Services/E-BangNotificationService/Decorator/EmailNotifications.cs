@@ -3,8 +3,10 @@ using App.RabbitBuilder.Options;
 using BackgroundMessage;
 using BackgrounMessageQueues;
 using FactoryPattern;
+using Message;
 using NotificationEntities;
 using StrategyPattern;
+using System.Text.Json;
 
 namespace Decorator
 {
@@ -32,8 +34,7 @@ namespace Decorator
             _rabbitOptionsExtended = rabbitOptionsExtended;
         }
 
-        public async Task<bool> HandleNotification<TParameters>(TParameters parameters, NotificationSettings notificationSettings,CancellationToken cancellationToken)
-            where TParameters : class, new()
+        public async Task<bool> HandleNotification(RabbitMessageModel parameters, NotificationSettings notificationSettings,CancellationToken cancellationToken)
         {
             await _next.HandleNotification(parameters, notificationSettings, cancellationToken);
             if ( notificationSettings.IsEmailNotificationEnabled)
@@ -53,6 +54,7 @@ namespace Decorator
                     _logger.LogError("Email queue service not found.");
                     throw new InvalidOperationException("Email queue service not found.");
                 }
+
                 queueHandlerTask.QueueBackgroundWorkItem(async (cancellationToken)=>
                 {
                     await _messageTask.SendToRabitQueue(parameters, queueOptions, cancellationToken);

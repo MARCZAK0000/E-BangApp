@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Message;
+using Microsoft.AspNetCore.SignalR;
 using NotificationEntities;
 using SignalRHub;
 using SignalRTypedHub;
+using System.Text.Json;
 
 namespace Decorator
 {
@@ -19,7 +21,7 @@ namespace Decorator
             _notificationDbContext = notificationDbContext;
         }
 
-        public Task<bool> HandleNotification<TParameters>(TParameters parameters, NotificationSettings userNotificationSettings, CancellationToken cancellationToken) where TParameters : class, new()
+        public Task<bool> HandleNotification(RabbitMessageModel parameters, NotificationSettings userNotificationSettings, CancellationToken cancellationToken)
         {
             if (userNotificationSettings.IsPushNotificationEnabled)
             {

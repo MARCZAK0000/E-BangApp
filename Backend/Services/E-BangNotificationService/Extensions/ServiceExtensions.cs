@@ -24,9 +24,9 @@ namespace Extensions
 
             /// Register Queue Handler Services as Singelton
             /// 
-            services.AddScoped<EmailQueueHandlerService>();
-            services.AddScoped<SMSQueueHandlerService>();
-            services.AddScoped<NotificationQueueHandlerService>();
+            services.AddSingleton<EmailQueueHandlerService>();
+            services.AddSingleton<SMSQueueHandlerService>();
+            services.AddSingleton<NotificationQueueHandlerService>();
 
             services.AddScoped<IQueueHandlerService, EmailQueueHandlerService>();
             services.AddScoped<IQueueHandlerService, SMSQueueHandlerService>();
@@ -34,7 +34,7 @@ namespace Extensions
 
             /// Register Factory and Strategy Pattern Services
             services.AddSingleton<QueueHandlerFactory>();
-            services.AddScoped<IQueueHandlerStrategy, QueueHandlerStrategy>();
+            services.AddSingleton<IQueueHandlerStrategy, QueueHandlerStrategy>();
 
 
             services.AddTransient<IMessageTask, MessageTask>();

@@ -1,4 +1,6 @@
-﻿using NotificationEntities;
+﻿using Message;
+using NotificationEntities;
+using System.Text.Json;
 
 namespace Decorator
 {
@@ -13,7 +15,7 @@ namespace Decorator
             _logger = logger;
             _next = next;
         }
-        public async Task<bool> HandleNotification<TParameters>(TParameters parameters, NotificationSettings userNotificationSettings, CancellationToken cancellationToken) where TParameters : class, new()
+        public async Task<bool> HandleNotification(RabbitMessageModel parameters, NotificationSettings userNotificationSettings, CancellationToken cancellationToken)
         {
             await _next.HandleNotification(parameters, userNotificationSettings, cancellationToken);
             if (userNotificationSettings.IsSmsNotificationEnabled)

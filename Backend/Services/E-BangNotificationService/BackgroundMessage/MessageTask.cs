@@ -1,32 +1,30 @@
 ﻿using App.RabbitBuilder.Options;
-using Service;
+using App.RabbitBuilder.Service.Sender;
 
 namespace BackgroundMessage
 {
     public class MessageTask : IMessageTask
     {
-        private readonly ILogger<MessageTask> _logger;
-
         private readonly RabbitOptionsExtended _rabbitOptionsExtended;
 
-        private readonly IRabbitMQService _rabbitMQService;
+        private readonly IRabbitSenderService _rabbitMQService;
 
-        public MessageTask(ILogger<MessageTask> logger, RabbitOptionsExtended rabbitOptionsExtended, IRabbitMQService rabbitMQService)
+        public MessageTask(RabbitOptionsExtended rabbitOptionsExtended, IRabbitSenderService rabbitMQService)
         {
-            _logger = logger;
             _rabbitOptionsExtended = rabbitOptionsExtended;
             _rabbitMQService = rabbitMQService;
         }
 
-        public async Task<bool> SendToRabitQueue<TParameters>(TParameters parameters, QueueOptions RabbitQueueName, CancellationToken token)
+        public Task SendToRabitQueue<TParameters>(TParameters parameters, QueueOptions RabbitQueueName, CancellationToken token)
+            where TParameters : class
         {
-            throw new NotImplementedException();
-            //await _rabbitMQService.ListenerQueueAsync(_rabbitOptionsExtended, RabbitQueueName, parameters, token);
+            return _rabbitMQService.InitSenderRabbitQueueAsync(_rabbitOptionsExtended, parameters, RabbitQueueName.QueueName, token);
         }
     }
 
     public interface IMessageTask
     {
-        Task<bool> SendToRabitQueue<TParameters>(TParameters parameters, QueueOptions rabbitQueueName, CancellationToken token);
+        Task SendToRabitQueue<TParameters>(TParameters parameters, QueueOptions rabbitQueueName, CancellationToken token)
+            where TParameters : class;
     }
 }
