@@ -1,8 +1,8 @@
 ﻿using App.RabbitBuilder.Options;
 using App.RabbitBuilder.Service.Sender;
+using App.RabbitSharedClass.UniversalModel;
 using E_BangDomain.BackgroundTask;
 using E_BangDomain.Dictionary;
-using E_BangDomain.ModelDtos.MessageSender;
 using Microsoft.Extensions.Logging;
 
 namespace E_BangInfrastructure.BackgroundTask
@@ -27,10 +27,10 @@ namespace E_BangInfrastructure.BackgroundTask
         /// <param name="parameters">Message Parameters</param>
         /// <param name="token">Cancelation Token</param>
         /// <returns></returns>
-        public async Task SendToRabbitChannelAsync<T>(RabbitMessageBaseDto<T> parameters, CancellationToken token) where T : class
+        public async Task SendToRabbitChannelAsync<T>(RabbitMessageModel<T> parameters, CancellationToken token) where T : class
         {
-            string queueName = RabbitChannelDictionary.RabbitChannelName.Where(pr => pr.Key == parameters.RabbitChannel)
-                .Select(pr => pr.Value).FirstOrDefault() ?? throw new ArgumentNullException($"Queue with channel '{parameters.RabbitChannel}' not found in SenderQueues.");
+            string queueName = RabbitChannelDictionary.RabbitChannelName.Where(pr => pr.Key == parameters.Channel)
+                .Select(pr => pr.Value).FirstOrDefault() ?? throw new ArgumentNullException($"Queue with channel '{parameters.Channel}' not found in SenderQueues.");
             try
             {
                 _logger.LogInformation("Message Task: Add to Queue at {Date}, Message Type {type}, Message Queue: {queue}",
@@ -39,7 +39,7 @@ namespace E_BangInfrastructure.BackgroundTask
             }
             catch (Exception e)
             {
-                _logger.LogError("Message Task: Error at {date}: {e}", DateTime.Now, e);
+                _logger.LogError("Message Task: Error at {date}: {e} - {stackTrace}", DateTime.Now, e.Message, e.StackTrace);
                 throw;
             }
         }

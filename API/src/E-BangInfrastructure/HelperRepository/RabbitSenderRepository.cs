@@ -1,7 +1,7 @@
-﻿using E_BangDomain.BackgroundTask;
+﻿using App.RabbitSharedClass.UniversalModel;
+using E_BangDomain.BackgroundTask;
 using E_BangDomain.HelperRepository;
 using E_BangDomain.IQueueService;
-using E_BangDomain.ModelDtos.MessageSender;
 
 namespace E_BangInfrastructure.HelperRepository
 {
@@ -16,7 +16,7 @@ namespace E_BangInfrastructure.HelperRepository
             _queue = queue;
         }
 
-        public Task<bool> AddMessageToQueue<T>(RabbitMessageBaseDto<T> parameters, CancellationToken token) where T : class
+        public Task<bool> AddMessageToQueue<T>(RabbitMessageModel<T> parameters, CancellationToken token) where T : class
         {
             _queue.QueueBackgroundWorkItem(async token =>
             {

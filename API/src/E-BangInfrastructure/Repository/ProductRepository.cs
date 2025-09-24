@@ -2,14 +2,12 @@
 using E_BangDomain.Entities;
 using E_BangDomain.Extensions;
 using E_BangDomain.HelperRepository;
-using E_BangDomain.ModelDtos.MessageSender;
 using E_BangDomain.ModelDtos.Pagination;
 using E_BangDomain.Pagination;
 using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.Product;
 using E_BangInfrastructure.Database;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace E_BangInfrastructure.Repository
 {
@@ -35,7 +33,7 @@ namespace E_BangInfrastructure.Repository
                 ShopID = createProductDto.ShopId,
             }, cancellationToken: cancellationToken);
 
-            return await _projectDbContext.SaveChangesAsync(cancellationToken)>0;
+            return await _projectDbContext.SaveChangesAsync(cancellationToken) > 0;
         }
         public async Task<bool> CreateProductPriceAndCountInformationsAsync(string productId, decimal price, int count, CancellationToken cancellationToken)
         {
@@ -80,11 +78,11 @@ namespace E_BangInfrastructure.Repository
             };
             messageModel.Data.Add(messageData);
 
-            await _rabbitSenderRepository.AddMessageToQueue(new RabbitMessageBaseDto<AzureMessageModel>
-            {
-                Message = messageModel,
-                RabbitChannel = E_BangDomain.Enums.ERabbitChannel.AzureChannel
-            }, cancellationToken);
+            //_rabbitSenderRepository.AddMessageToQueue(new RabbitMessageBaseDto<AzureMessageModel>
+            //{
+            //    Message = messageModel,
+            //    RabbitChannel = E_BangDomain.Enums.ERabbitChannel.AzureChannel
+            //}, cancellationToken);
 
             return await _projectDbContext.SaveChangesAsync(cancellationToken) > 0;
         }

@@ -1,4 +1,4 @@
-﻿using E_BangDomain.Enums;
+﻿using App.RabbitSharedClass.Enum;
 
 namespace E_BangDomain.Dictionary
 {

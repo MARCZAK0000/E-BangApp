@@ -3,9 +3,10 @@ using App.EmailHelper.EmailParameters.Footer;
 using App.EmailHelper.EmailParameters.Header;
 using App.EmailHelper.Shared.Email;
 using App.EmailHelper.Shared.Enums;
-using App.RabbitSharedClass.Email;
+using App.RabbitSharedClass.Enum;
+using App.RabbitSharedClass.Notifications;
+using App.RabbitSharedClass.UniversalModel;
 using E_BangDomain.HelperRepository;
-using E_BangDomain.ModelDtos.MessageSender;
 using System.Text.Json;
 namespace E_BangInfrastructure.HelperRepository
 {
@@ -142,13 +143,14 @@ namespace E_BangInfrastructure.HelperRepository
         }
         private Task<bool> AddToQueue(JsonElement message)
         {
-            var rabbitMessageDto = new RabbitMessageBaseDto<EmailComponentMessage>()
+            var rabbitMessageDto = new RabbitMessageModel<NotificationMessageModel>()
             {
-                Message = new EmailComponentMessage
+                Message = new NotificationMessageModel()
                 {
-                    EmailComponentsJson = message
+                    Message = message,
+                    ForceEmail = true
                 },
-                RabbitChannel = E_BangDomain.Enums.ERabbitChannel.EmailChannel
+                Channel = ERabbitChannel.NotificationChannel
             };
             return _rabbitSenderRepository.AddMessageToQueue(rabbitMessageDto, CancellationToken.None);
         }
