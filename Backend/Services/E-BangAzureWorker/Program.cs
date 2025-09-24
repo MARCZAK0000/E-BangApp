@@ -97,8 +97,8 @@ public class Program
                         options.UserName = Environment.GetEnvironmentVariable("RABBIT_USERNAME")!;
                         options.Password = Environment.GetEnvironmentVariable("RABBIT_PASSWORD")!;
                         options.VirtualHost = Environment.GetEnvironmentVariable("RABBIT_VIRTUALHOST")!;
-                        options.ListenerQueueName = Environment.GetEnvironmentVariable("RABBIT_AZUREQUEUE")!;
-                        options.SenderQueueName = Environment.GetEnvironmentVariable("RABBIT_NOTIFICATIONQUEUE")!; ;
+                        //options.ListenerQueueName = Environment.GetEnvironmentVariable("RABBIT_AZUREQUEUE")!;
+                        //options.SenderQueueName = Environment.GetEnvironmentVariable("RABBIT_NOTIFICATIONQUEUE")!; ;
                     });
             }
             else
