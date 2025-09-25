@@ -28,7 +28,7 @@ namespace Decorator
                 //_hubContext.Clients.User(userNotificationSettings.UserId.ToString())
                 //    .ReceiveNotification("You have a new notification!");
             }
-            throw new NotImplementedException();
+            return Task.FromResult(true);
         }
     }
 }

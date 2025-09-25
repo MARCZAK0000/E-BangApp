@@ -1,7 +1,7 @@
 ﻿using App.RabbitBuilder.Exceptions;
 using App.RabbitBuilder.Options;
 using App.RabbitBuilder.Service.Listener;
-using App.RabbitSharedClass.UniModel;
+using App.RabbitSharedClass.Notifications;
 using AppInfo;
 using Decorator;
 using Message;
@@ -125,7 +125,7 @@ namespace BackgroundWorker
 
         private Task InitListener(CancellationToken stoppingToken)
         {
-            return _rabbitListenerService.InitListenerRabbitQueueAsync(_rabbitOptionsExtended, "Notification", async (UniMessageModel uni) =>
+            return _rabbitListenerService.InitListenerRabbitQueueAsync(_rabbitOptionsExtended, "Notification", async (NotificationMessageModel uni) =>
             {
                 RabbitMessageModel message = new RabbitMessageModel { Message = uni.Message };
                 if (uni.ForceEmail || uni.ForceNotification || uni.ForceSms)
@@ -141,6 +141,7 @@ namespace BackgroundWorker
                     };
 
                     await HandleDecorator(message, dummyNotificationSettings, stoppingToken);
+                    return;
                 }
                 NotificationSettings? userNotificationSettings = await NotificationDbContext!.NotificationSettings.Where(pr => pr.AccountId == uni.AccountId).FirstOrDefaultAsync(stoppingToken);
                 if (userNotificationSettings is null)

@@ -18,7 +18,7 @@ namespace BackgroundWorker
         }
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("{Date}: SmsWorker Service is starting.", DateTime.Now);
+            _logger.LogInformation("{Date}: EmailWorker Service is starting.", DateTime.Now);
             return base.StartAsync(cancellationToken);
         }
         public override Task StopAsync(CancellationToken cancellationToken)

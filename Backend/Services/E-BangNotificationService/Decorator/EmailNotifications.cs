@@ -1,5 +1,6 @@
 ﻿
 using App.RabbitBuilder.Options;
+using App.RabbitSharedClass.Enum;
 using BackgroundMessage;
 using BackgrounMessageQueues;
 using FactoryPattern;
@@ -42,7 +43,7 @@ namespace Decorator
                 _logger.LogInformation("Email Notification is enabled. Processing email notification.");
                 _logger.LogInformation("Sending email notification...");
                 QueueOptions? queueOptions = _rabbitOptionsExtended.SenderQueues?.
-                    FirstOrDefault(q => q.Name.Contains("email", StringComparison.CurrentCultureIgnoreCase));
+                    FirstOrDefault(q => q.QueueName.Contains(Enum.GetName(ERabbitChannel.EmailChannel)!, StringComparison.CurrentCultureIgnoreCase));
                 if (queueOptions == null)
                 {
                     _logger.LogError("Email queue configuration not found.");

@@ -18,7 +18,7 @@ namespace BackgroundMessage
         public Task SendToRabitQueue<TParameters>(TParameters parameters, QueueOptions RabbitQueueName, CancellationToken token)
             where TParameters : class
         {
-            return _rabbitMQService.InitSenderRabbitQueueAsync(_rabbitOptionsExtended, parameters, RabbitQueueName.QueueName, token);
+            return _rabbitMQService.InitSenderRabbitQueueAsync(_rabbitOptionsExtended, parameters, RabbitQueueName.Name, token);
         }
     }
 
