@@ -1,7 +1,7 @@
+using App.RabbitSharedClass.Enum;
 using Azure.Storage.Blobs;
 using E_BangAppRabbitBuilder.Options;
 using E_BangAppRabbitBuilder.ServiceExtensions;
-using E_BangAppRabbitSharedClass.AzureRabbitModel;
 using E_BangAzureWorker;
 using E_BangAzureWorker.AzureBaseRepo;
 using E_BangAzureWorker.AzureStrategy;
@@ -49,8 +49,8 @@ public class Program
             builder.Services.AddScoped<IRabbitMQService, RabbitMQService>();
             builder.Services.AddScoped<IRabbitRepository, RabbitRepository>();
             builder.Services.AddRabbitService();
-            string blobStorageConnection = isDocker? 
-                Environment.GetEnvironmentVariable("BLOB_CONNECTION_STRING")!:
+            string blobStorageConnection = isDocker ?
+                Environment.GetEnvironmentVariable("BLOB_CONNECTION_STRING")! :
                 builder.Configuration.GetConnectionString("BlobStorageConnectionString")!;
             builder.Services.AddSingleton(
                 pr => new BlobServiceClient
@@ -59,19 +59,19 @@ public class Program
 
             builder.Services.AddDbContext<ServiceDbContext>(x =>
             {
-                string connectionString = isDocker? Environment.GetEnvironmentVariable("AZURE_CONNECTION_STRING")!:
+                string connectionString = isDocker ? Environment.GetEnvironmentVariable("AZURE_CONNECTION_STRING")! :
                     builder.Configuration.GetConnectionString("DbConnectionString")!; ;
                 x.UseSqlServer(builder.Configuration.GetConnectionString(connectionString));
             });
             builder.Services.AddScoped<IAzureStrategy, AzureStrategy>();
             builder.Services.AddScoped<AzureAddFileRepository>();
             builder.Services.AddScoped<AzureRemoveFileRepository>();
-            builder.Services.AddScoped<Func<AzureStrategyEnum, IAzureBase>>(sp => key =>
+            builder.Services.AddScoped<Func<EAzure, IAzureBase>>(sp => key =>
             {
                 return key switch
                 {
-                    AzureStrategyEnum.Add => sp.GetRequiredService<AzureAddFileRepository>(),
-                    AzureStrategyEnum.Remove => sp.GetRequiredService<AzureRemoveFileRepository>(),
+                    EAzure.Add => sp.GetRequiredService<AzureAddFileRepository>(),
+                    EAzure.Remove => sp.GetRequiredService<AzureRemoveFileRepository>(),
                     _ => throw new ArgumentException("Invalide Service"),
                 };
             });

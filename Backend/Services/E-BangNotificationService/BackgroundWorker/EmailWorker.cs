@@ -39,10 +39,26 @@ namespace BackgroundWorker
                         var workItem = await _queueHandlerService.DequeueAsync(stoppingToken);
                         await workItem(stoppingToken);
                     }
-                    catch (OperationCanceledException)
+                    catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
                     {
-                        break;
+                        // Obsługa anulowania operacji, gdy usługa jest zatrzymywana
                     }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError("An error occurred while processing a work item in EmailWorker at {datetime}: {ex}, {ex.endpoint}", DateTime.Now, ex.Message, ex.Source);
+                        if (System.Diagnostics.Debugger.IsAttached)
+                        {
+                            System.Diagnostics.Debugger.Break();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred in EmailWorker at {datetime}: {ex}, {ex.endpoint}", DateTime.Now, ex.Message, ex.Source);
+                if (System.Diagnostics.Debugger.IsAttached)
+                {
+                    System.Diagnostics.Debugger.Break();
                 }
             }
             finally

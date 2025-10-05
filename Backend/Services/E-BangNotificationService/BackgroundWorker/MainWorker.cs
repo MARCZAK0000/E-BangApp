@@ -2,9 +2,9 @@
 using App.RabbitBuilder.Options;
 using App.RabbitBuilder.Service.Listener;
 using App.RabbitSharedClass.Notifications;
+using App.RabbitSharedClass.UniversalModel;
 using AppInfo;
 using Decorator;
-using Message;
 using Microsoft.EntityFrameworkCore;
 using NotificationEntities;
 using NotificationExceptions;
@@ -127,7 +127,11 @@ namespace BackgroundWorker
         {
             return _rabbitListenerService.InitListenerRabbitQueueAsync(_rabbitOptionsExtended, "Notification", async (NotificationMessageModel uni) =>
             {
-                RabbitMessageModel message = new RabbitMessageModel { Message = uni.Message };
+                RabbitMessageModel message = new()
+                {
+                    Message = uni.Message,
+                };
+
                 if (uni.ForceEmail || uni.ForceNotification || uni.ForceSms)
                 {
                     /// Create a dummy NotificationSettings object based on the flags in UniMessageModel

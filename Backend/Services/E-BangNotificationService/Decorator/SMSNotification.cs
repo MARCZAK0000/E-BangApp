@@ -1,6 +1,5 @@
-﻿using Message;
+﻿using App.RabbitSharedClass.UniversalModel;
 using NotificationEntities;
-using System.Text.Json;
 
 namespace Decorator
 {

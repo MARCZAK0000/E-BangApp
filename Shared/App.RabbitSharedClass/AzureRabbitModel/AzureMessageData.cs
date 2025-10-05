@@ -1,4 +1,4 @@
-﻿namespace E_BangAppRabbitSharedClass.AzureRabbitModel
+﻿namespace App.RabbitSharedClass.AzureRabbitModel
 {
     public class AzureMessageData
     {

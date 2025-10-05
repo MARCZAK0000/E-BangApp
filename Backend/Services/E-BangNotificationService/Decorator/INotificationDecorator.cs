@@ -1,6 +1,5 @@
-﻿using Message;
+﻿using App.RabbitSharedClass.UniversalModel;
 using NotificationEntities;
-using System.Text.Json;
 
 namespace Decorator
 {
@@ -8,6 +7,6 @@ namespace Decorator
     {
         Task<bool> HandleNotification(RabbitMessageModel parameters,
             NotificationSettings userNotificationSettings, CancellationToken cancellationToken);
-            
+
     }
 }

@@ -1,5 +1,6 @@
-﻿
-namespace E_BangAppRabbitSharedClass.AzureRabbitModel
+﻿using App.RabbitSharedClass.Enum;
+
+namespace App.RabbitSharedClass.AzureRabbitModel
 {
     public class AzureMessageModel
     {
@@ -7,6 +8,6 @@ namespace E_BangAppRabbitSharedClass.AzureRabbitModel
         public int ContainerID {  get; set; }
         public string? ProductID { get; set; }
         public List<AzureMessageData> Data { get; set; }
-        public AzureStrategyEnum AzureStrategyEnum { get; set; }
+        public EAzure AzureStrategyEnum { get; set; }
     }
 }

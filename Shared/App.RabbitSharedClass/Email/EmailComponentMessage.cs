@@ -4,6 +4,6 @@ namespace App.RabbitSharedClass.Email
 {
     public class EmailComponentMessage
     {
-        public JsonElement EmailComponentsJson { get; set; }
+        public JsonElement EmailMessage { get; set; }
     }
 }

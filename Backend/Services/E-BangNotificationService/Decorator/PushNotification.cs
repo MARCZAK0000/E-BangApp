@@ -1,9 +1,8 @@
-﻿using Message;
+﻿using App.RabbitSharedClass.UniversalModel;
 using Microsoft.AspNetCore.SignalR;
 using NotificationEntities;
 using SignalRHub;
 using SignalRTypedHub;
-using System.Text.Json;
 
 namespace Decorator
 {
@@ -11,7 +10,7 @@ namespace Decorator
     {
         private readonly ILogger<PushNotification> _logger;
 
-        private readonly IHubContext<NotificationHub,  INotificationClient> _hubContext;
+        private readonly IHubContext<NotificationHub, INotificationClient> _hubContext;
 
         private readonly NotificationDbContext _notificationDbContext;
         public PushNotification(ILogger<PushNotification> logger, IHubContext<NotificationHub, INotificationClient> hubContext, NotificationDbContext notificationDbContext)

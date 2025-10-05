@@ -4,6 +4,6 @@ namespace App.RabbitSharedClass.Notifications
 {
     public class PushNotificationMessageModel
     {
-        public JsonElement NotificationMesseage { get; set; }
+        public JsonElement PushMessage { get; set; }
     }
 }
