@@ -46,6 +46,7 @@ public class Program
             builder.Services.AddScoped<IDatabaseRepository, DatabaseRepository>();
             builder.Services.AddScoped<IMessageRepository, MessageRepository>();
             builder.Services.AddScoped<IRabbitQueueService, RabbitQueueService>();
+            builder.Services.AddHostedService<CleanerWorker>();
             builder.Services.AddRenderEmailService();
             builder.Services.AddEmailSenderService(cfg =>
             {

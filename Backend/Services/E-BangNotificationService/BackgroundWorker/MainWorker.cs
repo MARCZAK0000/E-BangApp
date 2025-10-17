@@ -125,7 +125,7 @@ namespace BackgroundWorker
 
         private Task InitListener(CancellationToken stoppingToken)
         {
-            return _rabbitListenerService.InitListenerRabbitQueueAsync(_rabbitOptionsExtended, "Notification", async (NotificationMessageModel uni) =>
+            return _rabbitListenerService.InitListenerRabbitQueueAsync(_rabbitOptionsExtended, _rabbitOptionsExtended.ListenerQueues.Where(pr=>pr.Name == "Notification").FirstOrDefault().Name , async (NotificationMessageModel uni) =>
             {
                 RabbitMessageModel message = new()
                 {
