@@ -1,6 +1,4 @@
-﻿using E_BangAppRabbitSharedClass.AzureRabbitModel;
-using E_BangDomain.Entities;
-using E_BangDomain.Extensions;
+﻿using E_BangDomain.Entities;
 using E_BangDomain.HelperRepository;
 using E_BangDomain.ModelDtos.Pagination;
 using E_BangDomain.Pagination;
@@ -62,29 +60,30 @@ namespace E_BangInfrastructure.Repository
 
         public async Task<bool> InsertProductFileAsync(Product product, InsertProductFileDto updateProductImageDto, CancellationToken cancellationToken)
         {
-            product.ProductInformations ??= [];
-            AzureMessageModel messageModel = new AzureMessageModel()
-            {
-                ProductID = product.ProductId,
-                AzureStrategyEnum = AzureStrategyEnum.Add,
-                ContainerID = 2,
-                Data = []
-            };
-            AzureMessageData messageData = new()
-            {
-                Data = await updateProductImageDto.File.GetBytesAsync(),
-                DataName = updateProductImageDto.File.FileName,
-                DataType = Path.GetExtension(updateProductImageDto.File.FileName)
-            };
-            messageModel.Data.Add(messageData);
-
-            //_rabbitSenderRepository.AddMessageToQueue(new RabbitMessageBaseDto<AzureMessageModel>
+            //product.ProductInformations ??= [];
+            //AzureMessageModel messageModel = new AzureMessageModel()
             //{
-            //    Message = messageModel,
-            //    RabbitChannel = E_BangDomain.Enums.ERabbitChannel.AzureChannel
-            //}, cancellationToken);
+            //    ProductID = product.ProductId,
+            //    AzureStrategyEnum = AzureStrategyEnum.Add,
+            //    ContainerID = 2,
+            //    Data = []
+            //};
+            //AzureMessageData messageData = new()
+            //{
+            //    Data = await updateProductImageDto.File.GetBytesAsync(),
+            //    DataName = updateProductImageDto.File.FileName,
+            //    DataType = Path.GetExtension(updateProductImageDto.File.FileName)
+            //};
+            //messageModel.Data.Add(messageData);
 
-            return await _projectDbContext.SaveChangesAsync(cancellationToken) > 0;
+            ////_rabbitSenderRepository.AddMessageToQueue(new RabbitMessageBaseDto<AzureMessageModel>
+            ////{
+            ////    Message = messageModel,
+            ////    RabbitChannel = E_BangDomain.Enums.ERabbitChannel.AzureChannel
+            ////}, cancellationToken);
+
+            //return await _projectDbContext.SaveChangesAsync(cancellationToken) > 0;
+            throw new NotImplementedException();
         }
 
 

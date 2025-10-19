@@ -31,7 +31,7 @@ internal class Program
         {
             string connectionString = isDocker ?
                 Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")! :
-                builder.Configuration.GetConnectionString("DbConnectionsString")!;
+                builder.Configuration.GetConnectionString("DbConnectionString")!;
             options.UseSqlServer(connectionString);
         });
         builder.Services.AddSingleton<IInformations, Informations>();

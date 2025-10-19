@@ -1,3 +1,5 @@
+using E_BangEmailWorker.Database;
+
 namespace E_BangEmailWorker.OptionsPattern
 {
     public class EmailConnectionOptions
@@ -12,7 +14,7 @@ namespace E_BangEmailWorker.OptionsPattern
         public override bool Equals(object? obj)
         {
 
-            if (obj is not EmailSettings values) return false;
+            if (obj is not EmailSetting values) return false;
             return values.EmailName == EmailName
                 && values.Port == Port
                     && values.SmptHost == SmptHost

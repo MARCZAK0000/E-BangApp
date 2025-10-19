@@ -8,6 +8,7 @@ using BackgrounMessageQueues;
 using FactoryPattern;
 using NotificationEntities;
 using StrategyPattern;
+using System.Text.Json;
 
 namespace Decorator
 {
@@ -55,10 +56,14 @@ namespace Decorator
                     _logger.LogError("Email queue service not found.");
                     throw new InvalidOperationException("Email queue service not found.");
                 }
-                EmailComponentMessage message = parameters.ToEmail();
+                EmailComponentMessage emailMessage = parameters.ToEmail();
+                RabbitMessageModel rabbit = new()
+                {
+                    Message = JsonSerializer.SerializeToElement(emailMessage)
+                };
                 queueHandlerTask.QueueBackgroundWorkItem(async (cancellationToken) =>
                 {
-                    await _messageTask.SendToRabitQueue(message, queueOptions, cancellationToken);
+                    await _messageTask.SendToRabitQueue(rabbit, queueOptions, cancellationToken);
                 });
                 _logger.LogInformation("Email notification processed and message enqueued.");
             }

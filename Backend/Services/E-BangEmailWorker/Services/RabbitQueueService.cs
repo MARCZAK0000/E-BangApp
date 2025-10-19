@@ -3,6 +3,7 @@ using App.EmailHelper.Shared.Email;
 using App.RabbitBuilder.Options;
 using App.RabbitBuilder.Service.Listener;
 using App.RabbitSharedClass.Email;
+using App.RabbitSharedClass.UniversalModel;
 using App.RenderEmail.RenderEmail;
 using E_BangEmailWorker.Exceptions;
 using E_BangEmailWorker.Model;
@@ -53,13 +54,25 @@ namespace E_BangEmailWorker.Services
         public async Task HandleRabbitQueueAsync(CancellationToken token)
         {
             _logger.LogInformation("{Date} - Email Rabbit Queue: Rabbit Options: {userName}, {password}, {host}", DateTime.Now, _rabbitOptions.UserName, _rabbitOptions.Password, _rabbitOptions.Host);
-            await _rabbitListenerService.InitListenerRabbitQueueAsync(rabbitOptions: _rabbitOptions, async (EmailComponentMessage messageModel) =>
+            await _rabbitListenerService.InitListenerQueueAsync(rabbitOptions: _rabbitOptions, async (RabbitMessageModel messageModel) =>
             {
 
                 var headerDictionary = _strategyFactory.GenerateEmailHeaderStrategy();
                 var bodyDictionary = _strategyFactory.GenerateEmailBodyBuilderStrategy();
                 var footerDictionary = _strategyFactory.GenerateEmailFooterStrategy();
-                EmailComponentJson emailComponent = JsonSerializer.Deserialize<EmailComponentJson>(messageModel.EmailComponentsJson) ?? throw new Exception("XD");
+                EmailComponentMessage? message = JsonSerializer.Deserialize<EmailComponentMessage>(messageModel.Message);
+                if(message == null)
+                {
+                    _logger.LogError("{Date} - Email Rabbit Queue: Message is null: {messageModel}", DateTime.Now, messageModel);
+                    throw new ArgumentNullException("Email Message Problem - Message is null");
+                }
+                EmailComponentJson? emailComponent = JsonSerializer.Deserialize<EmailComponentJson>(message.EmailMessage);
+                if (emailComponent == null)
+                {
+                    _logger.LogError("{Date} - Email Rabbit Queue: Message is null: {messageModel}", DateTime.Now, messageModel);
+                    throw new ArgumentNullException("Email Message Problem - EmailComponent is null");
+                }
+
                 var headerResult = await _renderEmailBuilder.SetHeader(emailComponent.HeaderType, headerDictionary, JsonSerializer.SerializeToElement(emailComponent.HeaderParameters));
                 var bodyResult = await headerResult.SetBody(emailComponent.BodyType, bodyDictionary, JsonSerializer.SerializeToElement(emailComponent.BodyParameters));
                 var footerResult = await bodyResult.SetFooter(emailComponent.FooterType, footerDictionary, JsonSerializer.SerializeToElement(emailComponent.FooterParameters));

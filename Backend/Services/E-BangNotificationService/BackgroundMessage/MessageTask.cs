@@ -1,5 +1,6 @@
 ﻿using App.RabbitBuilder.Options;
 using App.RabbitBuilder.Service.Sender;
+using App.RabbitSharedClass.UniversalModel;
 
 namespace BackgroundMessage
 {
@@ -15,16 +16,14 @@ namespace BackgroundMessage
             _rabbitMQService = rabbitMQService;
         }
 
-        public Task SendToRabitQueue<TParameters>(TParameters parameters, QueueOptions RabbitQueueName, CancellationToken token)
-            where TParameters : class, new()
+        public Task SendToRabitQueue(RabbitMessageModel parameters, QueueOptions RabbitQueueName, CancellationToken token)
         {
-            return _rabbitMQService.InitSenderRabbitQueueAsync(_rabbitOptionsExtended, parameters, RabbitQueueName.Name, token);
+            return _rabbitMQService.AddMessageToQueueAsync(_rabbitOptionsExtended, parameters, RabbitQueueName.Name, token);
         }
     }
 
     public interface IMessageTask
     {
-        Task SendToRabitQueue<TParameters>(TParameters parameters, QueueOptions rabbitQueueName, CancellationToken token)
-            where TParameters : class, new();
+        Task SendToRabitQueue(RabbitMessageModel parameters, QueueOptions rabbitQueueName, CancellationToken token);
     }
 }

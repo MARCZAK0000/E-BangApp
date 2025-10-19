@@ -8,6 +8,7 @@ using Decorator;
 using Microsoft.EntityFrameworkCore;
 using NotificationEntities;
 using NotificationExceptions;
+using System.Text.Json;
 
 namespace BackgroundWorker
 {
@@ -125,32 +126,33 @@ namespace BackgroundWorker
 
         private Task InitListener(CancellationToken stoppingToken)
         {
-            return _rabbitListenerService.InitListenerRabbitQueueAsync(_rabbitOptionsExtended, _rabbitOptionsExtended.ListenerQueues.Where(pr=>pr.Name == "Notification").FirstOrDefault().Name , async (NotificationMessageModel uni) =>
+            return _rabbitListenerService.InitListenerQueueAsync(_rabbitOptionsExtended, _rabbitOptionsExtended.ListenerQueues.Where(pr=>pr.Name == "Notification").FirstOrDefault().Name , async (RabbitMessageModel rabbit) =>
             {
+                NotificationMessageModel notificationMessageModel = JsonSerializer.Deserialize<NotificationMessageModel>(rabbit.Message) ?? throw new Exception("Failed to deserialize message");
                 RabbitMessageModel message = new()
                 {
-                    Message = uni.Message,
+                    Message = notificationMessageModel.Message,
                 };
 
-                if (uni.ForceEmail || uni.ForceNotification || uni.ForceSms)
+                if (notificationMessageModel.ForceEmail || notificationMessageModel.ForceNotification || notificationMessageModel.ForceSms)
                 {
                     /// Create a dummy NotificationSettings object based on the flags in UniMessageModel
                     NotificationSettings dummyNotificationSettings = new NotificationSettings
                     {
-                        IsEmailNotificationEnabled = uni.ForceEmail,
-                        IsPushNotificationEnabled = uni.ForceNotification,
-                        IsSmsNotificationEnabled = uni.ForceSms,
-                        AccountId = uni.AccountId,
+                        IsEmailNotificationEnabled = notificationMessageModel.ForceEmail,
+                        IsPushNotificationEnabled = notificationMessageModel.ForceNotification,
+                        IsSmsNotificationEnabled = notificationMessageModel.ForceSms,
+                        AccountId = notificationMessageModel.AccountId,
                         LastUpdated = DateTime.Now
                     };
 
                     await HandleDecorator(message, dummyNotificationSettings, stoppingToken);
                     return;
                 }
-                NotificationSettings? userNotificationSettings = await NotificationDbContext!.NotificationSettings.Where(pr => pr.AccountId == uni.AccountId).FirstOrDefaultAsync(stoppingToken);
+                NotificationSettings? userNotificationSettings = await NotificationDbContext!.NotificationSettings.Where(pr => pr.AccountId == notificationMessageModel.AccountId).FirstOrDefaultAsync(stoppingToken);
                 if (userNotificationSettings is null)
                 {
-                    throw new NotificationSettingArgumentNullException("User notification settings not found for accountId: " + uni.AccountId);
+                    throw new NotificationSettingArgumentNullException("User notification settings not found for accountId: " + notificationMessageModel.AccountId);
                 }
                 await HandleDecorator(message, userNotificationSettings, stoppingToken);
             }, stoppingToken);

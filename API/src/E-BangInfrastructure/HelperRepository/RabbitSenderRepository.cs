@@ -16,7 +16,7 @@ namespace E_BangInfrastructure.HelperRepository
             _queue = queue;
         }
 
-        public Task<bool> AddMessageToQueue<T>(RabbitMessageModel<T> parameters, CancellationToken token) where T : class
+        public Task<bool> AddMessageToQueue(RabbitMessageModel parameters, CancellationToken token)
         {
             _queue.QueueBackgroundWorkItem(async token =>
             {

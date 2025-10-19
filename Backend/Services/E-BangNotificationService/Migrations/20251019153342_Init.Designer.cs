@@ -12,8 +12,8 @@ using NotificationEntities;
 namespace EBangNotificationService.Migrations
 {
     [DbContext(typeof(NotificationDbContext))]
-    [Migration("20250923153050_INIT")]
-    partial class INIT
+    [Migration("20251019153342_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

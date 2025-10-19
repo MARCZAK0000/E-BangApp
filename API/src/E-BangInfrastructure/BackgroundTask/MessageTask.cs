@@ -4,6 +4,8 @@ using App.RabbitSharedClass.UniversalModel;
 using E_BangDomain.BackgroundTask;
 using E_BangDomain.Dictionary;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace E_BangInfrastructure.BackgroundTask
 {
@@ -27,15 +29,20 @@ namespace E_BangInfrastructure.BackgroundTask
         /// <param name="parameters">Message Parameters</param>
         /// <param name="token">Cancelation Token</param>
         /// <returns></returns>
-        public async Task SendToRabbitChannelAsync<T>(RabbitMessageModel<T> parameters, CancellationToken token) where T : class
+        public async Task SendToRabbitChannelAsync(RabbitMessageModel parameters, CancellationToken token)
         {
             string queueName = RabbitChannelDictionary.RabbitChannelName.Where(pr => pr.Key == parameters.Channel)
                 .Select(pr => pr.Value).FirstOrDefault() ?? throw new ArgumentNullException($"Queue with channel '{parameters.Channel}' not found in SenderQueues.");
             try
             {
-                _logger.LogInformation("Message Task: Add to Queue at {Date}, Message Type {type}, Message Queue: {queue}",
-                    DateTime.Now, typeof(T).Name, _rabbitOptions.SenderQueues?.ToString());
-                await _rabbitSenderService.InitSenderRabbitQueueAsync(_rabbitOptions, parameters.Message, queueName, token);
+                _logger.LogInformation("Message Task: Add to Queue at {Date}, Message Queue: {queue}",
+                    DateTime.Now,  _rabbitOptions.SenderQueues?.ToString());
+                string messageBody = JsonSerializer.Serialize(parameters.Message);
+                if(string.IsNullOrEmpty(messageBody))
+                {
+                    throw new ArgumentNullException("Message Body is null or empty");
+                }
+                await _rabbitSenderService.AddMessageToQueueAsync(_rabbitOptions, parameters, queueName, token);
             }
             catch (Exception e)
             {

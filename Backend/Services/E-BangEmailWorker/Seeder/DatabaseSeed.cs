@@ -40,7 +40,7 @@ namespace E_BangEmailWorker.Seeder
             {
                 if (!await serviceDbContext.EmailSettings.AnyAsync())
                 {
-                    await serviceDbContext.EmailSettings.AddAsync(new EmailSettings()
+                    await serviceDbContext.EmailSettings.AddAsync(new EmailSetting()
                     {
                         EmailName = _connectionOptions.EmailName,
                         Password = _passwordHasher.GeneratePasswordHash(_connectionOptions.Password, _connectionOptions.Salt),
