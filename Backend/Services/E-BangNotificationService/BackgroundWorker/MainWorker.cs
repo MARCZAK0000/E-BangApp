@@ -4,6 +4,7 @@ using App.RabbitBuilder.Service.Listener;
 using App.RabbitSharedClass.Notifications;
 using App.RabbitSharedClass.UniversalModel;
 using AppInfo;
+using CustomLogger.Abstraction;
 using Decorator;
 using Microsoft.EntityFrameworkCore;
 using NotificationEntities;
@@ -16,7 +17,7 @@ namespace BackgroundWorker
     {
         private readonly IInformations _informations;
 
-        private readonly ILogger<MainWorker> _logger;
+        private readonly ICustomLogger<MainWorker> _logger;
 
         private readonly IRabbitListenerService _rabbitListenerService;
 
@@ -35,7 +36,7 @@ namespace BackgroundWorker
         private INotificationDecorator? NotificationDecorator;
 
         public MainWorker(IInformations informations,
-            ILogger<MainWorker> logger,
+            ICustomLogger<MainWorker> logger,
             IRabbitListenerService rabbitListenerService,
             RabbitOptionsExtended rabbitOptionsExtended, IServiceScopeFactory serviceScopeFactory)
         {
@@ -50,7 +51,7 @@ namespace BackgroundWorker
         {
             _informations.InitTime = DateTime.Now;
             _informations.IsWorking = true;
-            _logger.LogInformation("{Date}: Init Connection", DateTime.Now);
+            _logger.LogInformation("Init Connection");
             return base.StartAsync(cancellationToken);
         }
         public override async Task StopAsync(CancellationToken cancellationToken)
@@ -69,7 +70,7 @@ namespace BackgroundWorker
             }
             _informations.IsWorking = false;
             _informations.ClosedTime = DateTime.Now;
-            _logger.LogInformation("{Date}: Close Connection", DateTime.Now);
+            _logger.LogWarning("Close Connection");
             await base.StopAsync(cancellationToken);
         }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -94,17 +95,17 @@ namespace BackgroundWorker
 
                     catch (OperationCanceledException)
                     {
-                        _logger.LogInformation("Operation was canceled, stopping the service.");
+                        _logger.LogCritical("Operation was canceled, stopping the service.");
                         throw;
                     }
                     catch (TooManyRetriesException err)
                     {
-                        _logger.LogError(err, "Too many retries, stopping the service.");
+                        _logger.LogCritical("Too many retries, stopping the service.", err);
                         throw;
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Error in listener");
+                        _logger.LogError("Error in listener",ex);
                         throw;
                     }
                 }, stoppingToken);
@@ -112,12 +113,12 @@ namespace BackgroundWorker
             }
             catch (ServiceNullReferenceException err)
             {
-                _logger.LogError(err, "ServiceNullReferenceException: {message} - {trace}", err.Message, err.StackTrace);
+                _logger.LogError("No service",err);
                 throw;
             }
             catch (Exception err)
             {
-                _logger.LogError(err, "Error when executing the service: {message} - {trace}", err.Message, err.StackTrace);
+                _logger.LogError("Error", err);
                 throw;
             }
 

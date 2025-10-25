@@ -1,4 +1,5 @@
 ﻿using BackgrounMessageQueues;
+using CustomLogger.Abstraction;
 using FactoryPattern;
 using StrategyPattern;
 
@@ -6,25 +7,25 @@ namespace BackgroundWorker
 {
     public class EmailWorker : BackgroundService
     {
-        private readonly ILogger<SmsWorker> _logger;
+        private readonly ICustomLogger<SmsWorker> _logger;
 
         private readonly IQueueHandlerStrategy _queueHandlerStrategy;
 
         private IQueueHandlerService? _queueHandlerService;
-        public EmailWorker(ILogger<SmsWorker> logger, IQueueHandlerStrategy queueHandlerStrategy)
+        public EmailWorker(ICustomLogger<SmsWorker> logger, IQueueHandlerStrategy queueHandlerStrategy)
         {
             _logger = logger;
             _queueHandlerStrategy = queueHandlerStrategy;
         }
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("{Date}: EmailWorker Service is starting.", DateTime.Now);
+            _logger.LogInformation("EmailWorker Service is starting.", DateTime.Now);
             return base.StartAsync(cancellationToken);
         }
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("{Date}: EmailWorker Service is stopping.", DateTime.Now);
-            return base.StopAsync(cancellationToken); // To zatrzyma ExecuteAsync przez CancellationToken
+            _logger.LogInformation("EmailWorker Service is stopping.", DateTime.Now);
+            return base.StopAsync(cancellationToken); 
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -45,7 +46,7 @@ namespace BackgroundWorker
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError("An error occurred while processing a work item in EmailWorker at {datetime}: {ex}, {ex.endpoint}", DateTime.Now, ex.Message, ex.Source);
+                        _logger.LogError("An error occurred while processing a work item in EmailWorker at {datetime}: {ex}, {ex.endpoint}", DateTime.Now, ex.Message);
                         if (System.Diagnostics.Debugger.IsAttached)
                         {
                             System.Diagnostics.Debugger.Break();
