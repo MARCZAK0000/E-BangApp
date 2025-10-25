@@ -1,5 +1,6 @@
 ﻿using E_BangDomain.Entities;
 using E_BangInfrastructure.Database;
+using E_BangInfrastructure.NotificationsEntity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,15 @@ namespace E_BangInfrastructure.Extensions
                 configuration.GetConnectionString
                     (Environment.GetEnvironmentVariable("PROJECT_DB_CONTEXT")!):
                 configuration.GetConnectionString("DbConnectionString"));
+            });
+
+
+            services.AddDbContext<NotificationDbContext>(options =>
+            {
+                string connectionString = isDocker ?
+                    Environment.GetEnvironmentVariable("EMAIL_CONNECTION_STRING")! :
+                    configuration.GetConnectionString("NotificationConnectionString")!;
+                options.UseSqlServer(connectionString);
             });
 
             services.AddScoped<Seeder>();   
