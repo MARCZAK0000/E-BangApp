@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace E_BangInfrastructure.NotificationsEntity;
+﻿namespace E_BangDomain.NotificationEntity;
 
 public partial class NotificationSetting
 {

@@ -29,7 +29,7 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError("An error occurred in SmsWorker at {datetime}: {ex}, {ex.endpoint}", DateTime.Now, ex.Message, ex.Source);
+                _logger.LogError(ex, "An error occurred in SmsWorker");
                 if (System.Diagnostics.Debugger.IsAttached)
                 {
                     System.Diagnostics.Debugger.Break();

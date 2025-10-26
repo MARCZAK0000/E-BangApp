@@ -1,4 +1,5 @@
-﻿using E_BangApplication.Authentication;
+﻿using CustomLogger.Abstraction;
+using E_BangApplication.Authentication;
 using E_BangDomain.Entities;
 using E_BangDomain.Enums;
 using E_BangDomain.MaybePattern;
@@ -11,12 +12,12 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
 {
     public class RemoveShopCommandHandler : IRequestHandler<RemoveShopCommand, RemoveShopResponseDto>
     {
-        private readonly ILogger<UpdateBranchCommandHandler> _logger;
+        private readonly ICustomLogger<UpdateBranchCommandHandler> _logger;
         private readonly IShopRepository _shopRepository;
         private readonly IUserContext _userContext;
         private readonly IActionRepository _actionRepository;
 
-        public RemoveShopCommandHandler(ILogger<UpdateBranchCommandHandler> logger, 
+        public RemoveShopCommandHandler(ICustomLogger<UpdateBranchCommandHandler> logger, 
             IShopRepository shopRepository, IUserContext userContext, 
             IActionRepository actionRepository)
         {
@@ -36,20 +37,15 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             bool hasPermission = _actionRepository.HasPermission(keyValuePairs, EAction.Delete);
             if (!hasPermission)
             {
-                _logger.LogError("{Handler} - {Date}: User has no permission to {ActionName}",
-                    nameof(RemoveShopResponseDto),
-                    DateTime.Now,
-                    Enum.GetName(EAction.Delete));
+                string actionName = Enum.GetName(EAction.Delete) ?? "Delete";
+                _logger.LogError("User has no permission to {ActionName}", actionName);
                 return response;
             }
 
             Maybe<Shop> maybeShop = await _shopRepository.GetShopByIDAsync(request.ShopID, token);
             if (!maybeShop.HasValue)
             {
-                _logger.LogInformation("{Handler} - {Date}: Shop with ID {ShopID} not found",
-                    nameof(RemoveShopCommandHandler),
-                    DateTime.Now,
-                    request.ShopID);
+                _logger.LogWarning("Shop with ID {ShopID} not found", request.ShopID);
                 return response;
             }
 
@@ -62,10 +58,7 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
                 bool removedBranches = await _shopRepository.RemoveAllShopBranchesAsync(request.ShopID, token);
                 if (!removedBranches)
                 {
-                    _logger.LogError("{Handler} - {Date}: Failed to remove branches for shop ID {ShopID}",
-                        nameof(RemoveShopCommandHandler),
-                        DateTime.Now,
-                        request.ShopID);
+                    _logger.LogError("Failed to remove branches for shop ID {ShopID}", request.ShopID);
                     return response;
                 }
             }
@@ -73,18 +66,11 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             bool isRemoved = await _shopRepository.RemoveShopAsync(request.ShopID, token);
             if (isRemoved)
             {
-                _logger.LogError("{Handler} - {Date}: Shop has been removed with ID {ShopID}",
-                   nameof(RemoveShopCommandHandler),
-                   DateTime.Now,
-                   request.ShopID);
+                _logger.LogTrace("Shop has been removed with ID {ShopID}", request.ShopID);
             }
             else
             {
-                _logger.LogError("{Handler} - {Date}: Failed to remove shop with ID {ShopID}",
-                    nameof(RemoveShopCommandHandler),
-                    DateTime.Now,
-                    request.ShopID);
-
+                _logger.LogError("Failed to remove shop with ID {ShopID}", request.ShopID);
             }
             response.IsSuccess = isRemoved;
             return response; 

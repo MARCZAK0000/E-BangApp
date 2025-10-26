@@ -1,4 +1,5 @@
-﻿using E_BangDomain.Entities;
+﻿using CustomLogger.Abstraction;
+using E_BangDomain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,11 +9,11 @@ namespace E_BangInfrastructure.Database
 {
     public class Seeder
     {
-        private readonly ILogger<Seeder> _logger;
+        private readonly ICustomLogger<Seeder> _logger;
 
         private readonly ProjectDbContext _context;
 
-        public Seeder(ProjectDbContext context, ILogger<Seeder> logger)
+        public Seeder(ProjectDbContext context, ICustomLogger<Seeder> logger)
         {
             _context = context;
             _logger = logger;
@@ -20,10 +21,10 @@ namespace E_BangInfrastructure.Database
 
         public async Task SeedDb()
         {
-            _logger.LogInformation("{nameof} at {date} : Connect To Database", nameof(Seeder), DateTime.Now);
+            _logger.LogInformation("Connect To Database: {name}", _context.Database.ProviderName??"Unknown");
             if (_context.Database.CanConnect())
             {
-                _logger.LogInformation("{nameof} at {date} : Seeding Database", nameof(Seeder), DateTime.Now);
+                _logger.LogInformation("Seeding Database");
                 _context.Database.EnsureCreated();
                 // Add seed data here if necessary
                 if (!_context.Roles.Any())

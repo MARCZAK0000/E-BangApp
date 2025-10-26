@@ -1,4 +1,5 @@
-﻿using E_BangApplication.Exceptions;
+﻿using CustomLogger.Abstraction;
+using E_BangApplication.Exceptions;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
@@ -7,9 +8,9 @@ using System.Net;
 using System.Text.Json;
 namespace E_BangAPI.Middleware
 {
-    public class ErrorHandlerMiddleware(ILogger<ErrorHandlerMiddleware> logger) : IMiddleware
+    public class ErrorHandlerMiddleware(ICustomLogger<ErrorHandlerMiddleware> logger) : IMiddleware
     {
-        private readonly ILogger<ErrorHandlerMiddleware> _logger = logger;
+        private readonly ICustomLogger<ErrorHandlerMiddleware> _logger = logger;
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {

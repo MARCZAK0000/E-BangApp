@@ -1,4 +1,5 @@
-﻿using E_BangApplication.Authentication;
+﻿using CustomLogger.Abstraction;
+using E_BangApplication.Authentication;
 using E_BangDomain.Comparer;
 using E_BangDomain.Entities;
 using E_BangDomain.Enums;
@@ -13,12 +14,12 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
 {
     public class CreateShopBranchesCommandHandler : IRequestHandler<CreateShopBranchesCommand, CreateBranchesResponseDto>
     {
-        private readonly ILogger<CreateShopBranchesCommandHandler> _logger;
+        private readonly ICustomLogger<CreateShopBranchesCommandHandler> _logger;
         private readonly IShopRepository _shopRepository;
         private readonly IUserContext _userContext;
         private readonly IActionRepository _actionRepository;
 
-        public CreateShopBranchesCommandHandler(ILogger<CreateShopBranchesCommandHandler> logger,
+        public CreateShopBranchesCommandHandler(ICustomLogger<CreateShopBranchesCommandHandler> logger,
             IShopRepository shopRepository, IUserContext userContext,
             IActionRepository actionRepository)
         {
@@ -39,10 +40,9 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             bool hasPermission = _actionRepository.HasPermission(keyValuePairs, EAction.Create);
             if (!hasPermission)
             {
-                _logger.LogError("{Handler} - {date}: User has no permission to {actionName}", 
-                    nameof(CreateShopBranchesCommandHandler), 
-                    DateTime.Now,
-                    Enum.GetName(typeof(EAction), EAction.Create));
+                string actionName = Enum.GetName(EAction.Create) ?? "Create";
+                _logger.LogError("User has no permission to {actionName}", 
+                   actionName);
                 return response;
             }
 
@@ -70,18 +70,18 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             if(uniqueBranches.Count <= 0)
             {
                 response.Message = "Branches Already Exists";
-                _logger.LogInformation("{Handler} - {date}: User has not added branches to ShopID: {shopID} - branches already exists"
-                    , nameof(CreateShopBranchesCommandHandler), DateTime.Now, request.ShopId);
+                _logger.LogInformation("User has not added branches to ShopID: {shopID} - branches already exists"
+                    , request.ShopId);
                 return response;
             }
 
             bool HasAdded = await _shopRepository.CreateShopBranchAsync(uniqueBranches, token);
             if (HasAdded)
-                _logger.LogInformation("{Handler} - {date}: User has added {count} branches to ShopID: {shopID}",
-                    nameof(CreateShopBranchesCommandHandler), DateTime.Now, branches.Count, request.ShopId);
+                _logger.LogInformation("User has added {count} branches to ShopID: {shopID}",
+                    branches.Count, request.ShopId);
             else
-                _logger.LogInformation("{Handler} - {date}: User has not added branches to ShopID: {shopID}",
-                   nameof(CreateShopBranchesCommandHandler), DateTime.Now, request.ShopId);
+                _logger.LogInformation("User has not added branches to ShopID: {shopID}",
+                   request.ShopId);
 
             response.IsSuccess = HasAdded;
             return response;

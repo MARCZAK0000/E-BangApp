@@ -6,6 +6,8 @@ using App.EmailRender.Shared.Abstraction;
 using App.RabbitBuilder.Options;
 using App.RabbitBuilder.ServiceExtensions;
 using App.RenderEmail.Extensions;
+using CustomLogger.Extension;
+using CustomLogger.Model;
 using E_BangEmailWorker;
 using E_BangEmailWorker.Database;
 using E_BangEmailWorker.OptionsPattern;
@@ -21,13 +23,7 @@ public class Program
 {
     private static async Task Main(string[] args)
     {
-        using var loggerFactory = LoggerFactory.Create(build =>
-        {
-            build
-                .ClearProviders()
-                .AddConsole()
-                .SetMinimumLevel(LogLevel.Information);
-        });
+        using var loggerFactory = new CustomLoggerFactory();
         var logger = loggerFactory.CreateLogger<Program>();
         try
         {
@@ -47,6 +43,7 @@ public class Program
             builder.Services.AddScoped<IMessageRepository, MessageRepository>();
             builder.Services.AddScoped<IRabbitQueueService, RabbitQueueService>();
             builder.Services.AddHostedService<CleanerWorker>();
+            builder.Services.AddCustomLogger();
             builder.Services.AddRenderEmailService();
             builder.Services.AddEmailSenderService(cfg =>
             {
@@ -92,7 +89,7 @@ public class Program
             #region OptionsPattern
             if (isDocker)
             {
-                logger.LogInformation("{Date}: Take info from ENV, Rabbit Options: {rabbit}", DateTime.Now, Environment.GetEnvironmentVariable("RABBIT_HOST"));
+                logger.LogInformation("Take info from ENV, Rabbit Options: {rabbit}", Environment.GetEnvironmentVariable("RABBIT_HOST"));
                 builder.Services.AddOptions<RabbitOptions>()
                     .Configure(options =>
                     {
@@ -133,7 +130,7 @@ public class Program
         }
         catch (Exception err)
         {
-            logger.LogError("Error ocured at {Date}: {ex}", DateTime.Now, err.Message);
+            logger.LogError(err, "Error ocured, {msg}",err.Message);
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 System.Diagnostics.Debugger.Break();

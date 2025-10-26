@@ -33,6 +33,7 @@ namespace E_BangInfrastructure.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IActionRepository, ActionRepository>();
+            services.AddScoped<INotifcationRepository, NotificationRepository>();
 
             services.AddScoped<AddToCacheStrategy>();
             services.AddScoped<RemoveFromCacheStrategy>();  

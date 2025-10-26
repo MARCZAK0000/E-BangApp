@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using E_BangDomain.NotificationEntity;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_BangInfrastructure.NotificationsEntity;

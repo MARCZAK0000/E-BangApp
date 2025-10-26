@@ -17,7 +17,7 @@
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError("{Date}: {ex}", DateTime.Now, ex.Message);
+				_logger.LogError(ex, "Error in middleware");
 			}
         }
     }

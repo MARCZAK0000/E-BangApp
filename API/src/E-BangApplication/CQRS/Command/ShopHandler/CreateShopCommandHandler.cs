@@ -1,4 +1,5 @@
-﻿using E_BangApplication.Authentication;
+﻿using CustomLogger.Abstraction;
+using E_BangApplication.Authentication;
 using E_BangDomain.Entities;
 using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.Shop;
@@ -15,10 +16,10 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
     {
         private readonly IShopRepository _shopRepository;
         private readonly IRoleRepository _roleRepository;
-        private readonly ILogger<CreateShopCommand> _logger;
+        private readonly ICustomLogger<CreateShopCommand> _logger;
         private readonly IUserContext _userContext;
         public CreateShopCommandHandler(IShopRepository shopRepository, IRoleRepository roleRepository,
-            ILogger<CreateShopCommand> logger, IUserContext userContext)
+            ICustomLogger<CreateShopCommand> logger, IUserContext userContext)
         {
             _shopRepository = shopRepository;
             _roleRepository = roleRepository;
@@ -60,8 +61,7 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             response.IsSuccess = isUpdatedRole;
             if(response.IsSuccess)
             {
-                _logger.LogInformation("{Instance}: {Date} - Shop has been created",
-                    nameof(CreateShopCommandHandler), DateTime.Now);
+                _logger.LogTrace("Shop has been created");
             }
             return response;
         }

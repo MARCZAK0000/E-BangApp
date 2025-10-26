@@ -51,7 +51,7 @@ namespace E_BangEmailWorker.Seeder
                     await serviceDbContext.SaveChangesAsync();
                 }
             }
-            _logger.LogCritical("DbConfiguration Initalized");
+            _logger.LogDebug("DbConfiguration Initalized");
         }
         public async Task<bool> CheckConfigurationValues()
         {
@@ -76,9 +76,9 @@ namespace E_BangEmailWorker.Seeder
                 configuration.Password = _passwordHasher.GeneratePasswordHash(_connectionOptions.Password, _connectionOptions.Salt);
                 configuration.LastUpdateTime = DateTime.Now;
                 await serviceDbContext.SaveChangesAsync();
-                _logger.LogWarning("DbConfiguration: Password changed");
+                _logger.LogDebug("DbConfiguration: Password changed");
             }
-            _logger.LogInformation("DbConfiguration: Configuration correct");
+            _logger.LogDebug("DbConfiguration: Configuration correct");
             return true;
         }
     }

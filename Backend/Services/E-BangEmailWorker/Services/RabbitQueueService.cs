@@ -5,6 +5,7 @@ using App.RabbitBuilder.Service.Listener;
 using App.RabbitSharedClass.Email;
 using App.RabbitSharedClass.UniversalModel;
 using App.RenderEmail.RenderEmail;
+using CustomLogger.Abstraction;
 using E_BangEmailWorker.Exceptions;
 using E_BangEmailWorker.Model;
 using E_BangEmailWorker.Repository;
@@ -24,7 +25,7 @@ namespace E_BangEmailWorker.Services
 
         private readonly RenderEmailBuilder _renderEmailBuilder;
 
-        private readonly ILogger<RabbitQueueService> _logger;
+        private readonly ICustomLogger<RabbitQueueService> _logger;
 
         private readonly IRabbitListenerService _rabbitListenerService;
 
@@ -34,7 +35,7 @@ namespace E_BangEmailWorker.Services
         public RabbitQueueService(
             IDatabaseRepository databaseRepository,
             RabbitOptions rabbitOptions,
-            ILogger<RabbitQueueService> logger,
+            ICustomLogger<RabbitQueueService> logger,
             RenderEmailBuilder renderEmailBuilder,
             IMessageRepository messageRepository,
             IEmailSenderService emailSenderService,
@@ -53,7 +54,7 @@ namespace E_BangEmailWorker.Services
         }
         public async Task HandleRabbitQueueAsync(CancellationToken token)
         {
-            _logger.LogInformation("{Date} - Email Rabbit Queue: Rabbit Options: {userName}, {password}, {host}", DateTime.Now, _rabbitOptions.UserName, _rabbitOptions.Password, _rabbitOptions.Host);
+            _logger.LogInformation("Email Rabbit Queue: Rabbit Options: {0}, {1}, {2}", _rabbitOptions.UserName, _rabbitOptions.Password, _rabbitOptions.Host);
             await _rabbitListenerService.InitListenerQueueAsync(rabbitOptions: _rabbitOptions, async (RabbitMessageModel messageModel) =>
             {
 
@@ -63,13 +64,13 @@ namespace E_BangEmailWorker.Services
                 EmailComponentMessage? message = JsonSerializer.Deserialize<EmailComponentMessage>(messageModel.Message);
                 if(message == null)
                 {
-                    _logger.LogError("{Date} - Email Rabbit Queue: Message is null: {messageModel}", DateTime.Now, messageModel);
+                    _logger.LogError("Email Rabbit Queue: Message is null: {0}", messageModel);
                     throw new ArgumentNullException("Email Message Problem - Message is null");
                 }
                 EmailComponentJson? emailComponent = JsonSerializer.Deserialize<EmailComponentJson>(message.EmailMessage);
                 if (emailComponent == null)
                 {
-                    _logger.LogError("{Date} - Email Rabbit Queue: Message is null: {messageModel}", DateTime.Now, messageModel);
+                    _logger.LogError("Email Rabbit Queue: Message is null: {0}", messageModel);
                     throw new ArgumentNullException("Email Message Problem - EmailComponent is null");
                 }
 
@@ -79,15 +80,15 @@ namespace E_BangEmailWorker.Services
                 EmailMessage emailRawHTML = footerResult.Build();
 
                 MimeMessage mimeMessage = _messageRepository.BuildMessage(new SendMailDto(emailComponent.AddressTo, emailRawHTML.Message, emailComponent.Subject), token);
-                _logger.LogInformation("{Date} - Email Rabbit Queue: Saving email info: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", DateTime.Now, mimeMessage.From, mimeMessage.To);
+                _logger.LogInformation("Email Rabbit Queue: Saving email info: FROM -> {0} TO-> {1}", mimeMessage.From, mimeMessage.To);
                 bool isSend = await _emailSenderService.SendEmailAsync(mimeMessage, token);
                 await _databaseRepository.SaveEmailInfo(emailComponent.AddressTo, isSend, token);
                 if (!isSend)
                 {
-                    _logger.LogError("{Date} - Email Rabbit Queue: There is a problem with email message: {messageModel}", DateTime.Now, messageModel);
+                    _logger.LogError("Email Rabbit Queue: There is a problem with email message: {0}", messageModel);
                     throw new MesseageNotSendException("Email Message Problem");
                 }
-                _logger.LogInformation("{Date} - Email Rabbit Queue: Sending email: FROM -> {mimeMessage.From} TO-> {mimeMessage.To}", DateTime.Now, mimeMessage.From, mimeMessage.To);
+                _logger.LogInformation("Email Rabbit Queue: Sending email: FROM -> {0} TO-> {1}", mimeMessage.From, mimeMessage.To);
             }, token);
         }
     }

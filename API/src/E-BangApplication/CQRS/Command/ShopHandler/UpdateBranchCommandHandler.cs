@@ -1,4 +1,5 @@
-﻿using E_BangApplication.Authentication;
+﻿using CustomLogger.Abstraction;
+using E_BangApplication.Authentication;
 using E_BangDomain.Comparer;
 using E_BangDomain.Entities;
 using E_BangDomain.Enums;
@@ -13,12 +14,12 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
 {
     public class UpdateBranchCommandHandler : IRequestHandler<UpdateBranchCommand, UpdateBranchesResponseDto>
     {
-        private readonly ILogger<UpdateBranchCommandHandler> _logger;
+        private readonly ICustomLogger<UpdateBranchCommandHandler> _logger;
         private readonly IShopRepository _shopRepository;
         private readonly IUserContext _userContext;
         private readonly IActionRepository _actionRepository;
 
-        public UpdateBranchCommandHandler(ILogger<UpdateBranchCommandHandler> logger, 
+        public UpdateBranchCommandHandler(ICustomLogger<UpdateBranchCommandHandler> logger, 
             IShopRepository shopRepository, IUserContext userContext, 
             IActionRepository actionRepository)
         {
@@ -39,20 +40,15 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             bool hasPermission = _actionRepository.HasPermission(keyValuePairs, EAction.Update);
             if (!hasPermission)
             {
-                _logger.LogError("{Handler} - {Date}: User has no permission to {ActionName}",
-                    nameof(UpdateBranchCommandHandler),
-                    DateTime.Now,
-                    Enum.GetName(typeof(EAction), EAction.Update));
+                string actionName = EAction.Update.ToString();
+                _logger.LogError("User has no permission to {ActionName}", actionName);
                 return response;
             }
 
             Maybe<ShopBranchesInformations> maybeShopBranch = await _shopRepository.GetShopBranchByIdAsync(request.BranchId, token);
             if(!maybeShopBranch.HasValue || maybeShopBranch.Value is null)
             {
-                _logger.LogError("{Handler} - {Date}: Shop branch with ID {BranchId} not found",
-                    nameof(UpdateBranchCommandHandler),
-                    DateTime.Now,
-                    request.BranchId);
+                _logger.LogWarning("Shop branch with ID {BranchId} not found", request.BranchId);
                 response.IsSuccess = false;
                 return response;
             }
@@ -67,13 +63,10 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             // Validate if the main shop is already set
             List<ShopBranchesInformations> shopBranches = await _shopRepository.GetShopBranchesByShopIdAsync(request.ShopID, token);
 
-            bool hasDuplicate = shopBranches.Except([maybeShopBranch.Value], new ShopBranchesComparer()).Count() != shopBranches.Count;
+            bool hasDuplicate = shopBranches.Except(new[] { maybeShopBranch.Value }, new ShopBranchesComparer()).Count() != shopBranches.Count;
             if(hasDuplicate)
             {
-                _logger.LogError("{Handler} - {Date}: Duplicate branch information found for shop ID {ShopId}",
-                    nameof(UpdateBranchCommandHandler),
-                    DateTime.Now,
-                    request.ShopID);
+                _logger.LogError("Duplicate branch information found for shop ID {ShopId}", request.ShopID);
                 response.IsSuccess = false;
                 return response;
             }
@@ -89,15 +82,9 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
 
             bool hasUpdate = await _shopRepository.UpdateShopBranchAsync(maybeShopBranch.Value, token);
             if (hasUpdate)
-                _logger.LogInformation("{Handler} - {Date}: Shop branch with ID {BranchId} updated successfully",
-                    nameof(UpdateBranchCommandHandler),
-                    DateTime.Now,
-                    request.BranchId);
+                _logger.LogTrace("Shop branch with ID {BranchId} updated successfully", request.BranchId);
             else
-                _logger.LogError("{Handler} - {Date}: Failed to update shop branch with ID {BranchId}",
-                    nameof(UpdateBranchCommandHandler),
-                    DateTime.Now,
-                    request.BranchId);
+                _logger.LogError("Failed to update shop branch with ID {BranchId}", request.BranchId);
 
             response.IsSuccess = hasUpdate;
             return response;

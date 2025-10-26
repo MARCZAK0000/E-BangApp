@@ -1,4 +1,5 @@
 ﻿
+using CustomLogger.Abstraction;
 using E_BangEmailWorker.Database;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,10 @@ namespace E_BangEmailWorker
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private IServiceScope? _scope; 
-        private readonly ILogger<CleanerWorker> _logger;    
+        private readonly ICustomLogger<CleanerWorker> _logger;    
 
         public CleanerWorker(IServiceScopeFactory serviceScopeFactory,
-            ILogger<CleanerWorker> logger)
+            ICustomLogger<CleanerWorker> logger)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _logger = logger;
@@ -41,35 +42,30 @@ namespace E_BangEmailWorker
                     int result = dbContext.Database.ExecuteSqlRaw("EXEC Maintenance.RemoveOldEmails @Date, @UpdatedRows OUTPUT, @ResultMessage OUTPUT", [date, rowCount, resultMessage]);
                     if(result == 0)
                     {
-                        _logger.LogWarning("Cleaner Worker - {Date} - Stored Procedure execution failed.", DateTime.Now);
+                        _logger.LogError("Stored Procedure execution failed.");
                     }
                     else
                     {
-                        if (rowCount.Value != null && resultMessage.Value != null)
+                        if (rowCount.Value != null && resultMessage.Value != null &&
+                            rowCount.Value != DBNull.Value && resultMessage.Value != DBNull.Value)
                         {
-                            if(rowCount.Value != DBNull.Value && resultMessage.Value != DBNull.Value)
-                            {
-                                int deletedRows = (int)rowCount.Value;
-                                _logger.LogInformation("Cleaner Worker - {Date} - Deleted {DeletedRows} old emails. \r\n{resultMessage}", DateTime.Now, deletedRows, resultMessage.Value.ToString());
-                            }
-                            else
-                            {
-                                throw new InvalidCastException("Invalid cast from DbNull to INT - Check procedure OUTPUTs");
-                            }
+                            int deletedRows = (int)rowCount.Value;
+                            string? resultMsg = resultMessage.Value.ToString();
+                            _logger.LogInformation("Deleted {0} old emails. \r\n{1}", deletedRows, resultMsg ?? string.Empty);
                         }
                         else
                         {
-                            _logger.LogWarning("Cleaner Worker - {Date} - OUTPUTs are null, Check Procedure!!", DateTime.Now);
+                            _logger.LogCritical("OUTPUTs are null, Check Procedure!!");
                         }
                     }
                 }
                 catch (InvalidCastException ex)
                 {
-                    _logger.LogError(ex, "Cleaner worker - {Date} - Invalid cast", DateTime.Now);
+                    _logger.LogError(ex,"Invalid cast");
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Cleaner worker - {Date} - An error occurred while cleaning old emails.", DateTime.Now);
+                    _logger.LogError(ex, "An error occurred while cleaning old emails.");
                 }
                 Task.Delay(TimeSpan.FromHours(24), stoppingToken).Wait(stoppingToken);
             }

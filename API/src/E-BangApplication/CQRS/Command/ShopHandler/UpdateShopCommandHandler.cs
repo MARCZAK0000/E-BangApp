@@ -1,4 +1,5 @@
-﻿using E_BangApplication.Authentication;
+﻿using CustomLogger.Abstraction;
+using E_BangApplication.Authentication;
 using E_BangDomain.Entities;
 using E_BangDomain.Enums;
 using E_BangDomain.MaybePattern;
@@ -15,12 +16,12 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
         private readonly IShopRepository _shopRepository;
         private readonly IActionRepository _actionRepository;
         private readonly IUserContext _userContext;
-        private readonly ILogger<UpdateShopCommandHandler> _logger;
+        private readonly ICustomLogger<UpdateShopCommandHandler> _logger;
 
         public UpdateShopCommandHandler(IShopRepository shopRepository, 
             IActionRepository actionRepository, 
             IUserContext userContext, 
-            ILogger<UpdateShopCommandHandler> logger)
+            ICustomLogger<UpdateShopCommandHandler> logger)
         {
             _shopRepository = shopRepository;
             _actionRepository = actionRepository;
@@ -37,20 +38,15 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             bool hasPermission = _actionRepository.HasPermission(keyValuePairs, EAction.Update);
             if (!hasPermission)
             {
-                _logger.LogError("{Handler} - {date}: User has no permission to {actionName}",
-                    nameof(UpdateShopCommandHandler),
-                    DateTime.Now,
-                    Enum.GetName(typeof(EAction), EAction.Update));
+                string actionName = EAction.Update.ToString();
+                _logger.LogError("User has no permission to {ActionName}", actionName);
                 return response;
             }
 
             Maybe<Shop> shop = await _shopRepository.GetShopByIDAsync(request.ShopId, token);
             if(!shop.HasValue || shop.Value is null)
             {
-                _logger.LogError("{Handler} - {Date}: Shop with ID {ShopId} not found",
-                    nameof(UpdateShopCommandHandler),
-                    DateTime.Now,
-                    request.ShopId);
+                _logger.LogWarning("Shop with ID {ShopId} not found", request.ShopId);
                 return response;
             }
             shop.Value.ShopName = request.ShopName;
@@ -59,11 +55,9 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
 
             bool hasUpdate = await _shopRepository.UpdateShopAsync(shop.Value, token);
             if (hasUpdate)
-                _logger.LogInformation("{Handler} - {date}: Shop has been update - Id: {shopId}"
-                    , nameof(UpdateShopCommandHandler), DateTime.Now, request.ShopId);
+                _logger.LogTrace("Shop has been updated - Id: {shopId}", request.ShopId);
             else
-                _logger.LogInformation("{Handler} - {date}: Shop has not been update - Id: {shopId}"
-                   , nameof(UpdateShopCommandHandler), DateTime.Now, request.ShopId);
+                _logger.LogWarning("Shop has not been updated - Id: {shopId}", request.ShopId);
 
             response.IsSuccess = hasUpdate;
             return response;

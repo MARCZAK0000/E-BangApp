@@ -105,7 +105,7 @@ internal class Program
         }
         catch (Exception ex)
         {
-            logger.LogError("Fatal error ",ex);
+            logger.LogError(ex, "Fatal error ");
         }
         
     }

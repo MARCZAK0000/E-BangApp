@@ -1,4 +1,5 @@
-﻿using E_BangEmailWorker.Database;
+﻿using CustomLogger.Abstraction;
+using E_BangEmailWorker.Database;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace E_BangEmailWorker.Repository
@@ -6,8 +7,8 @@ namespace E_BangEmailWorker.Repository
     public class DatabaseRepository : IDatabaseRepository
     {
         private readonly ServiceDbContext _context;
-        private readonly ILogger<DatabaseRepository> _logger;
-        public DatabaseRepository(ServiceDbContext context, ILogger<DatabaseRepository> logger)
+        private readonly ICustomLogger<DatabaseRepository> _logger;
+        public DatabaseRepository(ServiceDbContext context, ICustomLogger<DatabaseRepository> logger)
         {
             _context = context;
             _logger = logger;
@@ -32,7 +33,7 @@ namespace E_BangEmailWorker.Repository
             catch (Exception ex)
             {
                 await dbContextTransaction.RollbackAsync(token);
-                _logger.LogError("Error in transaction: {ex}", ex.Message);
+                _logger.LogError(ex, "Error in transaction: {ex}", ex.Message);
                 throw;
             }
         }

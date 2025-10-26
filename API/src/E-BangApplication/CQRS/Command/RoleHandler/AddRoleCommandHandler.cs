@@ -1,4 +1,5 @@
-﻿using E_BangDomain.Entities;
+﻿using CustomLogger.Abstraction;
+using E_BangDomain.Entities;
 using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.Role;
 using E_BangDomain.ResponseDtos.Role;
@@ -15,9 +16,9 @@ namespace E_BangApplication.CQRS.Command.RoleHandler
     {
         private readonly IRoleRepository _roleRepository;
 
-        private readonly ILogger<AddRoleCommandHandler> _logger;
+        private readonly ICustomLogger<AddRoleCommandHandler> _logger;
 
-        public AddRoleCommandHandler(IRoleRepository roleRepository, ILogger<AddRoleCommandHandler> logger)
+        public AddRoleCommandHandler(IRoleRepository roleRepository, ICustomLogger<AddRoleCommandHandler> logger)
         {
             _roleRepository = roleRepository;
             _logger = logger;
@@ -37,7 +38,7 @@ namespace E_BangApplication.CQRS.Command.RoleHandler
             response.IsSuccess = isRoleAdded && isUpdateRoleLevelAsync;
             if (response.IsSuccess)
             {
-                _logger.LogInformation("{Date}: Role has been add: {roleName}", DateTime.Now, roles.RoleName);
+                _logger.LogInformation("Role has been add: {roleName}", roles.RoleName);
             }
             return response;
         }

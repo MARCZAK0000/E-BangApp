@@ -113,12 +113,12 @@ namespace BackgroundWorker
             }
             catch (ServiceNullReferenceException err)
             {
-                _logger.LogError("No service",err);
+                _logger.LogError(err,"No service");
                 throw;
             }
             catch (Exception err)
             {
-                _logger.LogError("Error", err);
+                _logger.LogError(err,"Error" );
                 throw;
             }
 

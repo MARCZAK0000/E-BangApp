@@ -4,8 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_BangInfrastructure.Database
 {
-    public class ProjectDbContext(DbContextOptions options) : IdentityDbContext<Account>(options)
+    public class ProjectDbContext : IdentityDbContext<Account>
     {
+        public ProjectDbContext(DbContextOptions<ProjectDbContext> options) : base(options)
+        {
+        }
         public DbSet<Account> Account { get; set; }
         public new DbSet<Users> Users { get; set; }
         public DbSet<UserAddress> UserAddresses { get; set; }

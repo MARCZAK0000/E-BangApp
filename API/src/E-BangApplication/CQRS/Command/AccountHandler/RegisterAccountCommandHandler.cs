@@ -1,6 +1,7 @@
 ﻿using E_BangApplication.Exceptions;
 using E_BangDomain.Entities;
 using E_BangDomain.HelperRepository;
+using E_BangDomain.NotificationEntity;
 using E_BangDomain.Repository;
 using E_BangDomain.RequestDtos.AccountRepositoryDtos;
 using E_BangDomain.ResponseDtos.Account;
@@ -19,13 +20,16 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
         private readonly IEmailRepository _emailRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IUserRepository _userRepository;
+        private readonly INotifcationRepository _notifcationRepository;
         public RegisterAccountCommandHandler(IAccountRepository accountRepository,
-            IEmailRepository emailRepository, IRoleRepository roleRepository, IUserRepository userRepository)
+            IEmailRepository emailRepository, IRoleRepository roleRepository, IUserRepository userRepository
+            , INotifcationRepository notifcationRepository)
         {
             _accountRepository = accountRepository;
             _emailRepository = emailRepository;
             _roleRepository = roleRepository;
             _userRepository = userRepository;
+            _notifcationRepository = notifcationRepository;
         }
 
         public async Task<RegisterAccountResponseDto> Handle(RegisterAccountCommand request, CancellationToken cancellationToken)
@@ -65,6 +69,19 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
             if (!isRoleAssigned)
             {
                 throw new InternalServerErrorException("Failed to assign role to the account.");
+            }
+            //Create notification settings for user
+            NotificationSetting notificationStatus = new()
+            {
+                AccountId = user.UserID,
+                IsEmailNotificationEnabled = true,
+                IsPushNotificationEnabled = true,
+                IsSmsNotificationEnabled = false,
+            };
+            bool isNotificationCreated = await _notifcationRepository.InsertNotificationSettings(user.UserID, notificationStatus, cancellationToken);
+            if (!isNotificationCreated)
+            {
+                throw new InternalServerErrorException("Failed to create notification settings for the account.");
             }
             string confirmEmailToken = await _accountRepository.GenerateConfirmEmailTokenAsync(account);
             await _emailRepository.SendRegistrationConfirmAccountEmailAsync(confirmEmailToken, account.Email, cancellationToken);

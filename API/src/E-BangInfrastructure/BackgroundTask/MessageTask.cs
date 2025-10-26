@@ -1,6 +1,7 @@
 ﻿using App.RabbitBuilder.Options;
 using App.RabbitBuilder.Service.Sender;
 using App.RabbitSharedClass.UniversalModel;
+using CustomLogger.Abstraction;
 using E_BangDomain.BackgroundTask;
 using E_BangDomain.Dictionary;
 using Microsoft.Extensions.Logging;
@@ -11,12 +12,12 @@ namespace E_BangInfrastructure.BackgroundTask
 {
     public class MessageTask : IMessageTask
     {
-        private readonly ILogger<MessageTask> _logger;
+        private readonly ICustomLogger<MessageTask> _logger;
 
         private readonly IRabbitSenderService _rabbitSenderService;
 
         private readonly RabbitOptionsExtended _rabbitOptions;
-        public MessageTask(ILogger<MessageTask> logger, IRabbitSenderService rabbitSenderService, RabbitOptionsExtended rabbitOptions)
+        public MessageTask(ICustomLogger<MessageTask> logger, IRabbitSenderService rabbitSenderService, RabbitOptionsExtended rabbitOptions)
         {
             _logger = logger;
             _rabbitSenderService = rabbitSenderService;
@@ -35,8 +36,8 @@ namespace E_BangInfrastructure.BackgroundTask
                 .Select(pr => pr.Value).FirstOrDefault() ?? throw new ArgumentNullException($"Queue with channel '{parameters.Channel}' not found in SenderQueues.");
             try
             {
-                _logger.LogInformation("Message Task: Add to Queue at {Date}, Message Queue: {queue}",
-                    DateTime.Now,  _rabbitOptions.SenderQueues?.ToString());
+                _logger.LogInformation("Message Task: Add to Queue Message Queue: {queue}",
+                    queueName);
                 string messageBody = JsonSerializer.Serialize(parameters.Message);
                 if(string.IsNullOrEmpty(messageBody))
                 {
@@ -46,7 +47,7 @@ namespace E_BangInfrastructure.BackgroundTask
             }
             catch (Exception e)
             {
-                _logger.LogError("Message Task: Error at {date}: {e} - {stackTrace}", DateTime.Now, e.Message, e.StackTrace);
+                _logger.LogError(e, "Message Task Error");
                 throw;
             }
         }

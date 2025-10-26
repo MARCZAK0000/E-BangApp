@@ -1,4 +1,5 @@
 ﻿using App.RabbitBuilder.Exceptions;
+using CustomLogger.Abstraction;
 using E_BangDomain.IQueueService;
 
 namespace E_BangAPI.BackgroundWorker
@@ -6,8 +7,8 @@ namespace E_BangAPI.BackgroundWorker
     public class BackgroundMessagerWorker : BackgroundService
     {
         private readonly IMessageSenderHandlerQueue _messageHandlerQueueService;
-        private readonly ILogger<BackgroundMessagerWorker> _logger;
-        public BackgroundMessagerWorker(IMessageSenderHandlerQueue messageHandlerQueueService, ILogger<BackgroundMessagerWorker> logger)
+        private readonly ICustomLogger<BackgroundMessagerWorker> _logger;
+        public BackgroundMessagerWorker(IMessageSenderHandlerQueue messageHandlerQueueService, ICustomLogger<BackgroundMessagerWorker> logger)
         {
             _messageHandlerQueueService = messageHandlerQueueService;
             _logger = logger;
@@ -29,7 +30,7 @@ namespace E_BangAPI.BackgroundWorker
                 }
                 catch (TooManyRetriesException ex)
                 {
-                    _logger.LogError("Background Messager Worker: Too many retries - {ErrorMessage}", ex.Message);
+                    _logger.LogError(ex, "Background Messager Worker: Too many retries - {ErrorMessage}", ex.Message);
                 }
                 catch (Exception ex)
                 {

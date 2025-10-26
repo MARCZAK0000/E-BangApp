@@ -1,3 +1,4 @@
+using CustomLogger.Extension;
 using E_BangAPI.BackgroundWorker;
 using E_BangAPI.Middleware;
 using E_BangApplication.Exetensions;
@@ -17,6 +18,7 @@ builder.Services.AddScoped<ErrorHandlerMiddleware>();
 builder.Services.AddHostedService<BackgroundMessagerWorker>();
 builder.Services.AddScoped<TransactionHandlerMiddleware>();
 builder.Services.AddSingleton<ActionStaticData>();
+builder.Services.AddCustomLogger();
 var app = builder.Build();
 using IServiceScope scope = app.Services.CreateScope();
 PendingMigrations pendingMigrations = scope.ServiceProvider.GetRequiredService<PendingMigrations>();

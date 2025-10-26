@@ -46,7 +46,7 @@ namespace BackgroundWorker
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError("An error occurred while processing a work item in EmailWorker at {datetime}: {ex}, {ex.endpoint}", DateTime.Now, ex.Message);
+                        _logger.LogError(ex, "An error occurred while processing a work item in EmailWorker");
                         if (System.Diagnostics.Debugger.IsAttached)
                         {
                             System.Diagnostics.Debugger.Break();
@@ -56,7 +56,7 @@ namespace BackgroundWorker
             }
             catch (Exception ex)
             {
-                _logger.LogError("An error occurred in EmailWorker at {datetime}: {ex}, {ex.endpoint}", DateTime.Now, ex.Message, ex.Source);
+                _logger.LogError(ex, "An error occurred in EmailWorker at {datetime}: {ex}, {ex.endpoint}");
                 if (System.Diagnostics.Debugger.IsAttached)
                 {
                     System.Diagnostics.Debugger.Break();

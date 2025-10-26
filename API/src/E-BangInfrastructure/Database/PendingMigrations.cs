@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Numerics;
+﻿using CustomLogger.Abstraction;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_BangInfrastructure.Database
 {
@@ -8,9 +7,9 @@ namespace E_BangInfrastructure.Database
     {
         private readonly ProjectDbContext _context;
 
-        private readonly ILogger<PendingMigrations> _logger;
+        private readonly ICustomLogger<PendingMigrations> _logger;
 
-        public PendingMigrations(ProjectDbContext context, ILogger<PendingMigrations> logger)
+        public PendingMigrations(ProjectDbContext context, ICustomLogger<PendingMigrations> logger)
         {
             _context = context;
             _logger = logger;
@@ -18,10 +17,10 @@ namespace E_BangInfrastructure.Database
 
         public void GetPendingMigrations()
         {
-            _logger.LogInformation("{nameof} at {date} : Connect To Database", nameof(PendingMigrations), DateTime.Now);
+            _logger.LogInformation("Connect To Database: {Name}", _context.Database.ProviderName ?? "Unkown");
             if (_context.Database.CanConnect())
             {
-                _logger.LogInformation("{nameof} at {date} : Get Pending Migrations", nameof(PendingMigrations), DateTime.Now);
+                _logger.LogInformation("Get Pending Migrations");
                 _context.Database.Migrate();
             }
         }

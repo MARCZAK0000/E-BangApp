@@ -1,4 +1,5 @@
-﻿using E_BangApplication.Authentication;
+﻿using CustomLogger.Abstraction;
+using E_BangApplication.Authentication;
 using E_BangDomain.Entities;
 using E_BangDomain.Enums;
 using E_BangDomain.Repository;
@@ -15,11 +16,11 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
         private readonly IShopRepository _shopRepository;
         private readonly IActionRepository _actionRepository;
         private readonly IUserContext _userContext;
-        private readonly ILogger<AddShopStaffCommandHandler> _logger;
+        private readonly ICustomLogger<AddShopStaffCommandHandler> _logger;
         private readonly IAccountRepository _accountRepository;
         public AddShopStaffCommandHandler(IShopRepository shopRepository,
             IActionRepository actionRepository, IUserContext userContext,
-            ILogger<AddShopStaffCommandHandler> logger, IAccountRepository accountRepository)
+            ICustomLogger<AddShopStaffCommandHandler> logger, IAccountRepository accountRepository)
         {
             _shopRepository = shopRepository;
             _actionRepository = actionRepository;
@@ -38,10 +39,9 @@ namespace E_BangApplication.CQRS.Command.ShopHandler
             bool hasPermission = _actionRepository.HasPermission(keyValuePairs, EAction.Create);
             if (!hasPermission)
             {
-                _logger.LogError("{Handler} - {date}: User has no permission to {actionName}",
-                    nameof(AddShopStaffCommandHandler),
-                    DateTime.Now,
-                    Enum.GetName(typeof(EAction), EAction.Create));
+                string permissionName = Enum.GetName(EAction.Create) ?? "Create";
+                _logger.LogError("User has no permission to {actionName}",
+                   permissionName);
                 return response;
             }
 

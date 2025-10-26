@@ -1,4 +1,5 @@
 ﻿using App.RabbitBuilder.Exceptions;
+using CustomLogger.Abstraction;
 using E_BangEmailWorker.Services;
 
 namespace E_BangEmailWorker;
@@ -6,12 +7,12 @@ namespace E_BangEmailWorker;
 public class Worker : BackgroundService
 {
     private IRabbitQueueService? rabbitQueue;
-    private readonly ILogger<Worker> _logger;
+    private readonly ICustomLogger<Worker> _logger;
     private IServiceScope? scope;
     private Task? _listenerTask;
     private CancellationToken handlerStopToken;
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    public Worker(ILogger<Worker> logger, IServiceScopeFactory serviceScopeFactory)
+    public Worker(ICustomLogger<Worker> logger, IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
         _serviceScopeFactory = serviceScopeFactory;
@@ -72,7 +73,7 @@ public class Worker : BackgroundService
 
     public override Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Worker initalized at {Date}", DateTime.Now);
+        _logger.LogInformation("Worker initalized");
         return base.StartAsync(cancellationToken);
     }
     public override async Task StopAsync(CancellationToken cancellationToken)
@@ -89,7 +90,7 @@ public class Worker : BackgroundService
             }
         }
         scope?.Dispose();
-        _logger.LogInformation($"Stop {DateTime.Now}");
+        _logger.LogInformation($"Stop of Worker");
         await base.StopAsync(cancellationToken);
     }
 }
