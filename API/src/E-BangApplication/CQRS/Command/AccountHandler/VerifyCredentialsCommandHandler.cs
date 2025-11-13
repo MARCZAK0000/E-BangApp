@@ -69,7 +69,7 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
                 response.IsSuccess = response.IsTokenGenerated = true;
 
                 ///EMAIL SENDING LOGIC HERE !!!!!!!!!!!!
-                await _emailRepository.SendTwoWayTokenEmailAsync(
+                await _emailRepository.SendTwoWayTokenEmailAsync(maybe.Value.Id,
                     twoWayToken, maybe.Value.Email!, token);
 
             }

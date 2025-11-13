@@ -4,6 +4,7 @@ using App.EmailHelper.EmailParameters.Header;
 using App.EmailHelper.Shared.Email;
 using App.EmailHelper.Shared.Enums;
 using App.RabbitSharedClass.Enum;
+using App.RabbitSharedClass.Notifications;
 using App.RabbitSharedClass.UniversalModel;
 using E_BangDomain.HelperRepository;
 using System.Text.Json;
@@ -18,7 +19,7 @@ namespace E_BangInfrastructure.HelperRepository
             _rabbitSenderRepository = rabbitSenderRepository;
         }
 
-        public async Task SendEmailConfirmAccountAsync(string token, string email, CancellationToken cancellationToken)
+        public async Task SendEmailConfirmAccountAsync(string accountID, string token, string email, CancellationToken cancellationToken)
         {
 
             ConfimEmailParameters confimEmailParameters = new()
@@ -48,10 +49,10 @@ namespace E_BangInfrastructure.HelperRepository
                 .ToJsonElement();
 
 
-            await AddToQueue(buildEmail);
+            await AddToQueue(accountID, buildEmail);
         }
 
-        public async Task SendForgetPasswordTokenEmailAsync(string token, string email, CancellationToken cancellationToken)
+        public async Task SendForgetPasswordTokenEmailAsync(string accountID, string token, string email, CancellationToken cancellationToken)
         {
             //var buildEmail = new EmailBody()
             //{
@@ -79,7 +80,7 @@ namespace E_BangInfrastructure.HelperRepository
             throw new NotImplementedException();
         }
 
-        public async Task SendRegistrationConfirmAccountEmailAsync(string token, string email, CancellationToken cancellationToken)
+        public async Task SendRegistrationConfirmAccountEmailAsync(string accountID, string token, string email, CancellationToken cancellationToken)
         {
             RegistrationAccountParameters confimEmailParameters = new()
             {
@@ -107,11 +108,11 @@ namespace E_BangInfrastructure.HelperRepository
                 .ToEmailComponentJson()
                 .ToJsonElement();
 
-            await AddToQueue(buildEmail);
+            await AddToQueue(accountID, buildEmail);
         }
-        public async Task SendTwoWayTokenEmailAsync(string token, string email, CancellationToken cancellationToken)
+        public async Task SendTwoWayTokenEmailAsync(string accountID, string token, string email, CancellationToken cancellationToken)
         {
-            TwoWayTokenParameters confimEmailParameters = new()
+            TwoWayTokenParameters twoWayTokenParameters = new()
             {
                 Email = email,
                 Token = token
@@ -130,7 +131,7 @@ namespace E_BangInfrastructure.HelperRepository
                 EmailComponent<DefaultHeaderParameters, TwoWayTokenParameters, DefaultFooterParameters>.Builder()
                 .WithHeader(EEmailHeaderType.Default, defaultHeaderParameters)
                 .WithFooter(EEmailFooterType.Defualt, defaultFooterParameters)
-                .WithBody(EEmailBodyType.ConfirmEmail, confimEmailParameters)
+                .WithBody(EEmailBodyType.TwoWayToken, twoWayTokenParameters)
                 .WithSubject("Confirm your email")
                 .WithAddressTo(email)
                 .Build()
@@ -138,9 +139,26 @@ namespace E_BangInfrastructure.HelperRepository
                 .ToJsonElement();
 
 
-            await AddToQueue(buildEmail);
+            await AddToQueue(accountID, buildEmail);
         }
-        private Task<bool> AddToQueue(JsonElement message)
+        private Task<bool> AddToQueue(string accountID, JsonElement message)
+        {
+            NotificationMessageModel notificationMessageModel = new()
+            {
+                AccountId = accountID,
+                ForceEmail = false,
+                ForceNotification = false,
+                ForceSms = false,
+                Message = message
+            };
+            var rabbitMessageDto = new RabbitMessageModel()
+            {
+                Message = notificationMessageModel.ToJsonElement(),
+                Channel = ERabbitChannel.NotificationChannel
+            };
+            return _rabbitSenderRepository.AddMessageToQueue(rabbitMessageDto, CancellationToken.None);
+        }
+        private Task<bool> AddToQueue(JsonElement message, bool forceEmail, bool forcePush, bool forceSMS)
         {
             var rabbitMessageDto = new RabbitMessageModel()
             {

@@ -84,7 +84,7 @@ namespace E_BangApplication.CQRS.Command.AccountHandler
                 throw new InternalServerErrorException("Failed to create notification settings for the account.");
             }
             string confirmEmailToken = await _accountRepository.GenerateConfirmEmailTokenAsync(account);
-            await _emailRepository.SendRegistrationConfirmAccountEmailAsync(confirmEmailToken, account.Email, cancellationToken);
+            await _emailRepository.SendRegistrationConfirmAccountEmailAsync(user.UserID, confirmEmailToken, account.Email, cancellationToken);
             response.IsSuccess = true;
             return response;
         }

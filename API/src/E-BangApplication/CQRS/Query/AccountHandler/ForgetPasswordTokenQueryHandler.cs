@@ -33,7 +33,7 @@ namespace E_BangApplication.CQRS.Query.AccountHandler
                 return response;
             }
             string forgetToken = await _accountRepository.GenerateForgetPasswordTokenAsync(maybe.Value);
-            await _emailRepository.SendForgetPasswordTokenEmailAsync(maybe.Value.Email!, forgetToken, token);
+            await _emailRepository.SendForgetPasswordTokenEmailAsync(maybe.Value.Id, maybe.Value.Email!, forgetToken, token);
             response.IsSuccess = true;
             return response;
         }

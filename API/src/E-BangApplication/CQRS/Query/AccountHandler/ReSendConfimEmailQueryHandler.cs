@@ -43,7 +43,7 @@ namespace E_BangApplication.CQRS.Query.AccountHandler
             string confirmToken = await _accountRepository.GenerateConfirmEmailTokenAsync(maybe.Value);
 
             ///SEND EMAIL TOKEN 
-            await _emailRepository.SendEmailConfirmAccountAsync(confirmToken, currentUser.EmailAddress, token);
+            await _emailRepository.SendEmailConfirmAccountAsync(maybe.Value.Id, confirmToken, currentUser.EmailAddress, token);
             response.IsSuccess = true;
             return response;
         }
