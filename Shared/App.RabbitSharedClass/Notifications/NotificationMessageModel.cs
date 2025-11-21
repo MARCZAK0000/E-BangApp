@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using App.RabbitSharedClass.UniversalModel;
+using System.Text.Json;
 
 namespace App.RabbitSharedClass.Notifications
 {
@@ -6,9 +7,7 @@ namespace App.RabbitSharedClass.Notifications
     {
         public JsonElement Message { get; set; }
         public string AccountId { get; set; } = string.Empty;
-        public bool ForceEmail { get; set; } = false;
-        public bool ForceNotification { get; set; } = false;
-        public bool ForceSms { get; set; } = false;
+        public required ForceNotification ForceNotification { get; set; } 
 
         public JsonElement ToJsonElement()
         {

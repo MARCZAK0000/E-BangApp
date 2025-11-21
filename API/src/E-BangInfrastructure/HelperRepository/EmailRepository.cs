@@ -49,7 +49,7 @@ namespace E_BangInfrastructure.HelperRepository
                 .ToJsonElement();
 
 
-            await AddToQueue(accountID, buildEmail);
+            await GenerateMessage(accountID, buildEmail, ForceNotificationDefaults.EmailOnly);
         }
 
         public async Task SendForgetPasswordTokenEmailAsync(string accountID, string token, string email, CancellationToken cancellationToken)
@@ -108,7 +108,7 @@ namespace E_BangInfrastructure.HelperRepository
                 .ToEmailComponentJson()
                 .ToJsonElement();
 
-            await AddToQueue(accountID, buildEmail);
+            await GenerateMessage(accountID, buildEmail, ForceNotificationDefaults.EmailOnly);
         }
         public async Task SendTwoWayTokenEmailAsync(string accountID, string token, string email, CancellationToken cancellationToken)
         {
@@ -138,33 +138,67 @@ namespace E_BangInfrastructure.HelperRepository
                 .ToEmailComponentJson()
                 .ToJsonElement();
 
+            ForceNotification allowEmailAndSms = new()
+            {
+                ForceEmail = true,
+                ForceSms = true
+            };
 
-            await AddToQueue(accountID, buildEmail);
+            await GenerateMessage(accountID, buildEmail, allowEmailAndSms);
         }
-        private Task<bool> AddToQueue(string accountID, JsonElement message)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountID"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        private Task<bool> GenerateMessage(string accountID, JsonElement message)
         {
             NotificationMessageModel notificationMessageModel = new()
             {
                 AccountId = accountID,
-                ForceEmail = false,
-                ForceNotification = false,
-                ForceSms = false,
+                ForceNotification = ForceNotificationDefaults.None,
                 Message = message
             };
-            var rabbitMessageDto = new RabbitMessageModel()
+
+            RabbitMessageModel rabbitMessageDto = new()
             {
                 Message = notificationMessageModel.ToJsonElement(),
                 Channel = ERabbitChannel.NotificationChannel
             };
-            return _rabbitSenderRepository.AddMessageToQueue(rabbitMessageDto, CancellationToken.None);
+
+            return AddToQueue(rabbitMessageDto);
         }
-        private Task<bool> AddToQueue(JsonElement message, bool forceEmail, bool forcePush, bool forceSMS)
+        /// <summary>
+        /// Generates and enqueues a notification message for the specified account.
+        /// </summary>
+        /// <remarks>This method creates a notification message using the provided parameters and enqueues
+        /// it for processing. The message is sent to the notification channel for further handling.</remarks>
+        /// <param name="accountId">The unique identifier of the account for which the notification is generated. Cannot be <see
+        /// langword="null"/> or empty.</param>
+        /// <param name="message">The content of the notification message, represented as a JSON element.</param>
+        /// <param name="forceNotification">Specifies whether the notification should bypass standard delivery rules and be sent immediately.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is <see langword="true"/> if the message
+        /// was successfully added to the queue; otherwise, <see langword="false"/>.</returns>
+        private Task<bool> GenerateMessage(string accountId, JsonElement message, ForceNotification forceNotification)
         {
-            var rabbitMessageDto = new RabbitMessageModel()
+           NotificationMessageModel notificationMessageModel = new()
             {
-                Message = message,
+                AccountId = accountId,
+                ForceNotification = forceNotification,
+                Message = message
+            };
+
+            RabbitMessageModel rabbitMessageDto = new()
+            {
+                Message = notificationMessageModel.ToJsonElement(),
                 Channel = ERabbitChannel.NotificationChannel
             };
+            return AddToQueue(rabbitMessageDto);
+        }
+
+        private Task<bool> AddToQueue(RabbitMessageModel rabbitMessageDto)
+        {
             return _rabbitSenderRepository.AddMessageToQueue(rabbitMessageDto, CancellationToken.None);
         }
     }
