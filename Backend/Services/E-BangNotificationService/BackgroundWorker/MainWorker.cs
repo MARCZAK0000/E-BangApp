@@ -127,42 +127,45 @@ namespace BackgroundWorker
 
         private Task InitListener(CancellationToken stoppingToken)
         {
-            return _rabbitListenerService.InitListenerQueueAsync(_rabbitOptionsExtended, _rabbitOptionsExtended.ListenerQueues.Where(pr=>pr.Name == "Notification").FirstOrDefault().Name , async (RabbitMessageModel rabbit) =>
+            var queueName = _rabbitOptionsExtended?.ListenerQueues?.Where(pr => pr.Name == "Notification").FirstOrDefault()?.Name;
+            if(_rabbitOptionsExtended == null || string.IsNullOrEmpty(queueName))
+            {
+                throw new ServiceNullReferenceException("Rabbit options or queue name is null");
+            }
+
+            return _rabbitListenerService.InitListenerQueueAsync(_rabbitOptionsExtended, queueName , async (RabbitMessageModel rabbit) =>
             {
                 NotificationMessageModel notificationMessageModel = JsonSerializer.Deserialize<NotificationMessageModel>(rabbit.Message) ?? throw new Exception("Failed to deserialize message");
                 RabbitMessageModel message = new()
                 {
                     Message = notificationMessageModel.Message,
                 };
+                //Get user notification settings
+                NotificationSettings notificationSettings;
 
-                if (notificationMessageModel.ForceEmail || notificationMessageModel.ForceNotification || notificationMessageModel.ForceSms)
+                //If force notification is set, use dummy settings
+                if (notificationMessageModel.ForceNotification.IsAnyForce())
                 {
-                    /// Create a dummy NotificationSettings object based on the flags in UniMessageModel
-                    NotificationSettings dummyNotificationSettings = new NotificationSettings
-                    {
-                        IsEmailNotificationEnabled = notificationMessageModel.ForceEmail,
-                        IsPushNotificationEnabled = notificationMessageModel.ForceNotification,
-                        IsSmsNotificationEnabled = notificationMessageModel.ForceSms,
-                        AccountId = notificationMessageModel.AccountId,
-                        LastUpdated = DateTime.Now
-                    };
+                    notificationSettings = NotificationSettingsExtensions.DummySettings(notificationMessageModel.ForceNotification, notificationMessageModel.AccountId);
+                }
+                //Otherwise, get from database
+                else
+                {
+                    notificationSettings = await NotificationDbContext!.NotificationSettings.Where(pr => pr.AccountId == notificationMessageModel.AccountId).FirstOrDefaultAsync(stoppingToken)
+                        ?? throw new NotificationSettingArgumentNullException("User notification settings not found for accountId: " + notificationMessageModel.AccountId);
+                }
 
-                    await HandleDecorator(message, dummyNotificationSettings, stoppingToken);
-                    return;
-                }
-                NotificationSettings? userNotificationSettings = await NotificationDbContext!.NotificationSettings.Where(pr => pr.AccountId == notificationMessageModel.AccountId).FirstOrDefaultAsync(stoppingToken);
-                if (userNotificationSettings is null)
-                {
-                    throw new NotificationSettingArgumentNullException("User notification settings not found for accountId: " + notificationMessageModel.AccountId);
-                }
-                await HandleDecorator(message, userNotificationSettings, stoppingToken);
+                await HandleDecorator(message, notificationSettings, stoppingToken);
             }, stoppingToken);
         }
 
-        private Task HandleDecorator(RabbitMessageModel parameters, NotificationSettings userNotificationSettings, CancellationToken cancellationToken)
+        private Task<bool> HandleDecorator(RabbitMessageModel parameters, NotificationSettings userNotificationSettings, CancellationToken cancellationToken)
         {
-            return NotificationDecorator!.HandleNotification(parameters, userNotificationSettings, cancellationToken);
+            if(NotificationDecorator == null)
+            {
+                throw new ServiceNullReferenceException("NotificationDecorator is null");
+            }
+            return NotificationDecorator.HandleNotification(parameters, userNotificationSettings, cancellationToken);
         }
-
     }
 }
