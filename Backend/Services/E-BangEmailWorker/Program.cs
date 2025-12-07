@@ -39,10 +39,11 @@ public class Program
             builder.Configuration.GetSection("EmailConnectionOptions").Bind(emailOptions);
             #region Service Registration
             builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            builder.Services.AddScoped<GeneratorDatabaseSeed>();
             builder.Services.AddScoped<IDatabaseRepository, DatabaseRepository>();
             builder.Services.AddScoped<IMessageRepository, MessageRepository>();
             builder.Services.AddScoped<IRabbitQueueService, RabbitQueueService>();
-            builder.Services.AddHostedService<CleanerWorker>();
+            //builder.Services.AddHostedService<CleanerWorker>();
             builder.Services.AddCustomLogger();
             builder.Services.AddRenderEmailService();
             builder.Services.AddEmailSenderService(cfg =>
@@ -68,7 +69,13 @@ public class Program
                 options.UseSqlServer(connectionString);
             });
 
-
+            builder.Services.AddDbContext<GeneratorDbContext>(options =>
+            {
+                string connectionString = isDocker ?
+                    Environment.GetEnvironmentVariable("GENERATOR_CONNECTION_STRING")! :
+                    builder.Configuration.GetConnectionString("GenratorDbConnectionString")!;
+                options.UseSqlite(connectionString);
+            });
             ///Strategy
             ///
             builder.Services.AddScoped<IEmailTemplate, DefaultFooterTemplate>();
@@ -83,7 +90,7 @@ public class Program
             builder.Services.AddScoped<ConfirmEmailTemplate>();
             builder.Services.AddScoped<TwoWayTokenTemplate>();
 
-            builder.Services.AddSingleton<StrategyFactory>();
+            builder.Services.AddTransient<StrategyFactory>();
             ///
             #endregion
             #region OptionsPattern
@@ -122,15 +129,14 @@ public class Program
             var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeed>();
             await seeder.MigrateAsync();
             await seeder.InvokeSeed();
-            if (!await seeder.CheckConfigurationValues())
-            {
-                throw new ArgumentException("Invalid Configuration");
-            }
+            await seeder.CheckConfigurationValues();
+            var generatorSeeder= scope.ServiceProvider.GetRequiredService<GeneratorDatabaseSeed>();
+            generatorSeeder.Migrate();
             host.Run();
         }
         catch (Exception err)
         {
-            logger.LogError(err, "Error ocured, {msg}",err.Message);
+            logger.LogError(err, "Error ocured, {0}",err.Message);
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 System.Diagnostics.Debugger.Break();

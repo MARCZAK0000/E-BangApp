@@ -7,6 +7,8 @@ using App.EmailHelper.EmailTemplates.Header;
 using App.EmailHelper.Shared.Enums;
 using App.EmailRender.Shared.Abstraction;
 using App.EmailRender.Shared.Strategy;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace E_BangEmailWorker.Strategy
 {
@@ -47,5 +49,6 @@ namespace E_BangEmailWorker.Strategy
                 { EEmailHeaderType.Custom, null! }
             };
         }
+
     }
 }

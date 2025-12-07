@@ -1,4 +1,5 @@
 using E_BangEmailWorker.Database;
+using E_BangEmailWorker.Exceptions;
 using E_BangEmailWorker.OptionsPattern;
 using E_BangEmailWorker.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -53,22 +54,19 @@ namespace E_BangEmailWorker.Seeder
             }
             _logger.LogDebug("DbConfiguration Initalized");
         }
-        public async Task<bool> CheckConfigurationValues()
+        public async Task CheckConfigurationValues()
         {
             using var scope = _serviceScopeFactory.CreateScope();
             ServiceDbContext serviceDbContext = scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
             if (!await serviceDbContext.Database.CanConnectAsync())
             {
-                return false;
+                throw new DatabaseNotReacheableException("Database not reachable");
             }
-            var configuration = await serviceDbContext.EmailSettings.FirstOrDefaultAsync();
-            if (configuration is null)
-            {
-                return false;
-            }
+            var configuration = await serviceDbContext.EmailSettings.FirstOrDefaultAsync() 
+                ?? throw new EmailConfigurationNullException("Database not seeded");
             if (!_connectionOptions.Equals(configuration))
             {
-                return false;
+                throw new EmailConfigurationIsNotEqualSoruceException("Database configuration does not match application configuration");
             }
             if (!_passwordHasher.VerifyPassword(_connectionOptions.Password, configuration.Password, configuration.Salt))
             {
@@ -79,7 +77,6 @@ namespace E_BangEmailWorker.Seeder
                 _logger.LogDebug("DbConfiguration: Password changed");
             }
             _logger.LogDebug("DbConfiguration: Configuration correct");
-            return true;
         }
     }
 }

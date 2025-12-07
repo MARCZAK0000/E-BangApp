@@ -21,9 +21,6 @@ public partial class ServiceDbContext : DbContext
 
     public virtual DbSet<ProcedureLog> ProcedureLogs { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=DbConnectionString");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<HistoryEmail>(entity =>

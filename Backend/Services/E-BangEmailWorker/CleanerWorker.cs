@@ -19,7 +19,7 @@ namespace E_BangEmailWorker
             _logger = logger;
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _scope = _serviceScopeFactory.CreateScope();
             var dbContext = _scope.ServiceProvider.GetRequiredService<ServiceDbContext>();
@@ -67,9 +67,8 @@ namespace E_BangEmailWorker
                 {
                     _logger.LogError(ex, "An error occurred while cleaning old emails.");
                 }
-                Task.Delay(TimeSpan.FromHours(24), stoppingToken).Wait(stoppingToken);
+                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             }
-            return Task.CompletedTask;
         }
         public override Task StopAsync(CancellationToken cancellationToken)
         {
